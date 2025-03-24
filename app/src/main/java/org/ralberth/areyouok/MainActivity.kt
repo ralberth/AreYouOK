@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
@@ -20,6 +22,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -100,10 +103,18 @@ fun MainScreen(
 //            Text("Off (ready to arm)")
             EnableDisableToggle(
                 isEnabled = uiState.enabled,
-                onChange = viewModel::setEnabled)
-            CountdownSelectSlider(startTime, onChange = { startTime = it })
-//            if (uiState.enabled)
-//                CountdownDisplay(20)
+                onChange = viewModel::updateEnabled
+            )
+            CountdownSelectSlider(
+                !uiState.enabled,
+                uiState.delayMins,
+                viewModel::updateDelayMins
+            )
+            CountdownDisplay(
+                uiState.enabled,
+                uiState.minsLeft,
+                uiState.delayMins
+            )
             Spacer(Modifier.weight(1f))
             Button(
                 enabled = uiState.enabled,
@@ -132,11 +143,12 @@ fun EnableDisableToggle(isEnabled: Boolean, onChange: (Boolean) -> Unit) {
 
 
 @Composable
-fun CountdownSelectSlider(minutes: Int, onChange: (Int) -> Unit) {
+fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Unit) {
     Row(modifier = Modifier.padding(24.dp)) {
         Column() {
             Text("Countdown Delay",fontWeight = FontWeight.Bold)
             Slider(
+                enabled = enabled,
                 value = minutes.toFloat(),
                 onValueChange = { onChange(it.toInt()) },
                 colors = SliderDefaults.colors(
@@ -144,7 +156,7 @@ fun CountdownSelectSlider(minutes: Int, onChange: (Int) -> Unit) {
                     activeTrackColor = MaterialTheme.colorScheme.secondary,
                     inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
                 ),
-                steps = 12,
+                steps = 10,
                 valueRange = 5f..60f
             )
             Text("$minutes minutes")
@@ -154,20 +166,21 @@ fun CountdownSelectSlider(minutes: Int, onChange: (Int) -> Unit) {
 
 
 
-//@Composable
-//fun CountdownDisplay(maxMins: Int) {
-//    var timerValue = remember { mutableStateOf(0L) }
-//    val percentLeft = minsLeft.toFloat() / maxMins.toFloat()
-//    Row(modifier = Modifier.padding(24.dp)) {
-//        Column() {
-//            Text("$minsLeft Minutes Until Next Check-In", fontWeight = FontWeight.Bold)
-//            LinearProgressIndicator(
-//                progress = { percentLeft },
-//                modifier = Modifier.fillMaxWidth().height(20.dp)
-//            )
-//        }
-//    }
-//}
+@Composable
+fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int) {
+    val percentLeft = if (isEnabled) minsLeft.toFloat() / delayMins.toFloat() else 0F
+    val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
+
+    Row(modifier = Modifier.padding(24.dp)) {
+        Column() {
+            Text(message, fontWeight = FontWeight.Bold)
+            LinearProgressIndicator(
+                progress = { percentLeft },
+                modifier = Modifier.fillMaxWidth().height(20.dp)
+            )
+        }
+    }
+}
 
 
 @Preview(showBackground = true)
