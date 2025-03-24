@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package org.ralberth.areyouok;
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel;

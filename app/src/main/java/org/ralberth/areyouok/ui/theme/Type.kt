@@ -1,4 +1,4 @@
-package com.example.helloworld.ui.theme
+package org.ralberth.areyouok.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

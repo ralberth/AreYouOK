@@ -1,4 +1,4 @@
-package com.example.helloworld
+package org.ralberth.areyouok
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.helloworld.ui.theme
+package org.ralberth.areyouok.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

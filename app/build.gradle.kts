@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.helloworld"
+    namespace = "org.ralberth.areyouok"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.helloworld"
+        applicationId = "org.ralberth.areyouok"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
