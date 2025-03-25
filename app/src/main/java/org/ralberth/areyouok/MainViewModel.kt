@@ -1,8 +1,8 @@
-package org.ralberth.areyouok;
+package org.ralberth.areyouok
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,17 +23,20 @@ data class MainUiState(
 
 
 @HiltViewModel
-class MainViewModel @Inject constructor(): ViewModel() {
+class MainViewModel @Inject constructor(
+    val soundEffects: SoundEffects
+): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    val timer = DelayCountdownTimer(
+    private val timer = DelayCountdownTimer(
         { updateMinsLeft(it) },
         { timeRanOut() }
     )
 
     fun updateEnabled(isEnabled: Boolean) {
+        soundEffects.toggle()
         _uiState.update {
             it.copy(
                 enabled = isEnabled,
@@ -62,10 +65,14 @@ class MainViewModel @Inject constructor(): ViewModel() {
         println("New minsLeft from timer: $newMinsLeft")
 
         var newBarColor: Color = ProgressOK
-        if (newMinsLeft >= 2 && newMinsLeft <= 3)
+        if (newMinsLeft in 2..3) {
             newBarColor = ProgressWarning
+            soundEffects.warning()
+        }
         if (newMinsLeft == 1)
             newBarColor = ProgressDanger
+        if (newMinsLeft == 0)
+            soundEffects.alarm()
 
         _uiState.update {
             it.copy(

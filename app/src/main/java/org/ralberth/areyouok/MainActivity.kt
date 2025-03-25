@@ -26,9 +26,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.ralberth.areyouok.ui.theme.ProgressDanger
-import org.ralberth.areyouok.ui.theme.ProgressOK
-import org.ralberth.areyouok.ui.theme.ProgressWarning
 
 
 @AndroidEntryPoint
@@ -80,9 +74,6 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel()
 ) {
-//    var running by remember { mutableStateOf(true) }
-    var startTime by remember { mutableStateOf(20) }
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
