@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.ralberth.areyouok.ui.theme.ProgressDanger
+import org.ralberth.areyouok.ui.theme.ProgressOK
+import org.ralberth.areyouok.ui.theme.ProgressWarning
 
 
 @AndroidEntryPoint
@@ -100,7 +104,7 @@ fun MainScreen(
                 .fillMaxHeight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            Text("Off (ready to arm)")
+            Text(uiState.message, fontWeight = FontWeight.Bold)
             EnableDisableToggle(
                 isEnabled = uiState.enabled,
                 onChange = viewModel::updateEnabled
@@ -113,12 +117,13 @@ fun MainScreen(
             CountdownDisplay(
                 uiState.enabled,
                 uiState.minsLeft,
-                uiState.delayMins
+                uiState.delayMins,
+                uiState.countdownBarColor
             )
             Spacer(Modifier.weight(1f))
             Button(
                 enabled = uiState.enabled,
-                onClick = { /* TO DO */ },
+                onClick = viewModel::checkin,
             ) {
                 Text("Check-in", fontSize = 24.sp)
             }
@@ -167,15 +172,17 @@ fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Uni
 
 
 @Composable
-fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int) {
+fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor: Color) {
     val percentLeft = if (isEnabled) minsLeft.toFloat() / delayMins.toFloat() else 0F
     val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
+
 
     Row(modifier = Modifier.padding(24.dp)) {
         Column() {
             Text(message, fontWeight = FontWeight.Bold)
             LinearProgressIndicator(
                 progress = { percentLeft },
+                color = barColor,
                 modifier = Modifier.fillMaxWidth().height(20.dp)
             )
         }

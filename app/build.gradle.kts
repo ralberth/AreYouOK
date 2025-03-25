@@ -60,9 +60,15 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib") // for math
 
+    // For Dependency Injection
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+
+    // For playing audio files (sounds)
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
+    implementation("androidx.media3:media3-ui:1.5.1")
 }
 
 
