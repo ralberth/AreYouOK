@@ -9,22 +9,30 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.ralberth.areyouok.ui.theme.ProgressDanger
 import org.ralberth.areyouok.ui.theme.ProgressOK
+import org.ralberth.areyouok.ui.theme.ProgressPaging
 import org.ralberth.areyouok.ui.theme.ProgressWarning
+import org.ralberth.areyouok.ui.theme.StatusDanger
+import org.ralberth.areyouok.ui.theme.StatusIdle
+import org.ralberth.areyouok.ui.theme.StatusOK
+import org.ralberth.areyouok.ui.theme.StatusWarning
 import javax.inject.Inject
 
 
 data class MainUiState(
+    // Configuration and big state -- things that don't change while the countdown timer runs
+    val enabled: Boolean = false,                 // True means we're actively counting-down or alerting people
+    val delayMins: Int = 20,                      // Number of minutes to count down after every button press
+    // Tactical stuff that changes while the timer is running
     val message: String = "Idle",
-    val enabled: Boolean = false, // True means we're actively counting-down or alerting people
-    val delayMins: Int = 20,      // Number of minutes to count down after every button press
-    val minsLeft: Int = 4,        // Minutes until the app starts alerting and texting people
+    val statusColor: Color = StatusIdle,
+    val minsLeft: Int = 4,                        // Minutes until the app starts alerting and texting people
     val countdownBarColor: Color = ProgressOK
 )
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val soundEffects: SoundEffects
+    private val soundEffects: SoundEffects
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
@@ -41,7 +49,8 @@ class MainViewModel @Inject constructor(
             it.copy(
                 enabled = isEnabled,
                 minsLeft = if (isEnabled) _uiState.value.delayMins else 0,
-                message = if (isEnabled) "Running" else "Idle"
+                message = if (isEnabled) "Running" else "Idle",
+                statusColor = if (isEnabled) StatusOK else StatusIdle
             )
         }
 
@@ -49,6 +58,7 @@ class MainViewModel @Inject constructor(
             timer.start(_uiState.value.delayMins)
             println("Timer started")
         } else {
+            println("Timer stopped")
             timer.cancel()
         }
     }
@@ -65,40 +75,52 @@ class MainViewModel @Inject constructor(
         println("New minsLeft from timer: $newMinsLeft")
 
         var newBarColor: Color = ProgressOK
+        var newStatusColor: Color = StatusOK
         if (newMinsLeft in 2..3) {
             newBarColor = ProgressWarning
-            soundEffects.warning()
+            newStatusColor = StatusWarning
+            soundEffects.yellowWarning()
         }
-        if (newMinsLeft == 1)
+        if (newMinsLeft == 1) {
             newBarColor = ProgressDanger
-        if (newMinsLeft == 0)
-            soundEffects.alarm()
+            newStatusColor = StatusDanger
+            soundEffects.redWarning()
+        }
+        if (newMinsLeft == 0) {
+            soundEffects.timesUp()
+        }
 
         _uiState.update {
             it.copy(
                 minsLeft = newMinsLeft,
-                countdownBarColor = newBarColor
+                countdownBarColor = newBarColor,
+                statusColor = newStatusColor
             )
         }
     }
 
     fun checkin() {
+        println("Reset timer")
         timer.reset()
+        soundEffects.stop()
         _uiState.update {
             it.copy(
                 minsLeft = _uiState.value.delayMins,
-                message = "Running"
+                message = "Running",
+                countdownBarColor = ProgressOK
             )
         }
     }
 
 
     fun timeRanOut() {
+        println("Time ran out: cancel timer, notify contacts")
         timer.cancel()
         _uiState.update {
             it.copy(
                 minsLeft = 0,
-                message = "Notifying Contacts"
+                message = "Notifying Contacts",
+                statusColor = ProgressPaging
             )
         }
     }

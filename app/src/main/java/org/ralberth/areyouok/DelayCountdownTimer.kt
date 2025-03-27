@@ -29,6 +29,7 @@ class MinuteTickTimer(
     }
 
     override fun onFinish() {
+        onMinuteElapsed(0)
         onComplete()
     }
 }

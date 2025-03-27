@@ -3,6 +3,8 @@ package org.ralberth.areyouok
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -22,7 +26,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,9 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.ralberth.areyouok.ui.theme.AreYouOkTheme
-import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dagger.hilt.android.AndroidEntryPoint
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @AndroidEntryPoint
@@ -82,7 +85,7 @@ fun MainScreen(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    Text("Are You OK?")
+                    Text("R U OK ?")
                 }
             )
         }
@@ -95,22 +98,26 @@ fun MainScreen(
                 .fillMaxHeight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(uiState.message, fontWeight = FontWeight.Bold)
+            StatusDisplayText(uiState.message, uiState.statusColor)
+            HorizontalDivider()
             EnableDisableToggle(
                 isEnabled = uiState.enabled,
                 onChange = viewModel::updateEnabled
             )
+            HorizontalDivider()
             CountdownSelectSlider(
                 !uiState.enabled,
                 uiState.delayMins,
                 viewModel::updateDelayMins
             )
+            HorizontalDivider()
             CountdownDisplay(
                 uiState.enabled,
                 uiState.minsLeft,
                 uiState.delayMins,
                 uiState.countdownBarColor
             )
+            HorizontalDivider()
             Spacer(Modifier.weight(1f))
             Button(
                 enabled = uiState.enabled,
@@ -123,6 +130,24 @@ fun MainScreen(
     }
 }
 
+
+
+@Composable
+fun StatusDisplayText(message: String, backgroundColor: Color) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp, vertical = 36.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            message,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
 
 @Composable
@@ -141,7 +166,7 @@ fun EnableDisableToggle(isEnabled: Boolean, onChange: (Boolean) -> Unit) {
 @Composable
 fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Unit) {
     Row(modifier = Modifier.padding(24.dp)) {
-        Column() {
+        Column {
             Text("Countdown Delay",fontWeight = FontWeight.Bold)
             Slider(
                 enabled = enabled,
@@ -169,7 +194,7 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
 
 
     Row(modifier = Modifier.padding(24.dp)) {
-        Column() {
+        Column {
             Text(message, fontWeight = FontWeight.Bold)
             LinearProgressIndicator(
                 progress = { percentLeft },
@@ -181,10 +206,10 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    AreYouOkTheme {
-        MainScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    AreYouOkTheme {
+//        MainScreen(Modifier, MainViewModel(SoundEffectsStub()))
+//    }
+//}
