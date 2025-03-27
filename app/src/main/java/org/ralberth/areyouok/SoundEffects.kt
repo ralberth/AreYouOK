@@ -15,6 +15,7 @@ class SoundEffects @Inject constructor(private val application: Application) {
 
     init {
         _timesUp.isLooping = true
+        println("Create SoundEffects object")
     }
 
     fun toggle()        {  this._toggle.start()         }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +42,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
+import java.text.SimpleDateFormat
+
+
+val logTimeFormatter = SimpleDateFormat("HH:MM:SS")
 
 
 @AndroidEntryPoint
@@ -118,14 +127,28 @@ fun MainScreen(
                 uiState.countdownBarColor
             )
             HorizontalDivider()
-            Spacer(Modifier.weight(1f))
             Button(
                 enabled = uiState.enabled,
                 onClick = viewModel::checkin,
+                modifier = Modifier.padding(24.dp)
             ) {
                 Text("Check-in", fontSize = 24.sp)
             }
-            Spacer(Modifier.weight(1f))
+            HorizontalDivider()
+            LazyColumn(
+                modifier = Modifier.fillMaxHeight().align(Alignment.Start)
+            ) {
+                items(uiState.messages) { message ->
+                    val ts = logTimeFormatter.format(message.logTime)
+                    Text(
+                        "$ts - ${message.message}",
+                        color = message.color,
+                        fontFamily = FontFamily.Monospace,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                }
+            }
         }
     }
 }

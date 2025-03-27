@@ -15,7 +15,18 @@ import org.ralberth.areyouok.ui.theme.StatusDanger
 import org.ralberth.areyouok.ui.theme.StatusIdle
 import org.ralberth.areyouok.ui.theme.StatusOK
 import org.ralberth.areyouok.ui.theme.StatusWarning
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Date
 import javax.inject.Inject
+
+
+
+data class LogMessage(
+    val message: String = "",
+    val color: Color = Color.Black,
+    val logTime: Date = Date()
+)
 
 
 data class MainUiState(
@@ -26,8 +37,18 @@ data class MainUiState(
     val message: String = "Idle",
     val statusColor: Color = StatusIdle,
     val minsLeft: Int = 4,                        // Minutes until the app starts alerting and texting people
-    val countdownBarColor: Color = ProgressOK
+    val countdownBarColor: Color = ProgressOK,
+    val messages: List<LogMessage> = ArrayList()
 )
+
+
+fun newListAddMessage(currList: List<LogMessage>, newLogMessage: LogMessage): List<LogMessage> {
+    val newList: ArrayList<LogMessage> = ArrayList(currList)
+    newList.add(newLogMessage)
+    if (newList.size >= 50)
+        newList.removeAt(0)
+    return newList
+}
 
 
 @HiltViewModel
@@ -45,12 +66,17 @@ class MainViewModel @Inject constructor(
 
     fun updateEnabled(isEnabled: Boolean) {
         soundEffects.toggle()
+        val newMessages = newListAddMessage(
+            _uiState.value.messages,
+            LogMessage(if (isEnabled) "Enabled" else "Disabled")
+        )
         _uiState.update {
             it.copy(
                 enabled = isEnabled,
                 minsLeft = if (isEnabled) _uiState.value.delayMins else 0,
                 message = if (isEnabled) "Running" else "Idle",
-                statusColor = if (isEnabled) StatusOK else StatusIdle
+                statusColor = if (isEnabled) StatusOK else StatusIdle,
+                messages = newMessages
             )
         }
 
@@ -103,11 +129,16 @@ class MainViewModel @Inject constructor(
         println("Reset timer")
         timer.reset()
         soundEffects.stop()
+        val newMessages = newListAddMessage(
+            _uiState.value.messages,
+            LogMessage("Check-in (${_uiState.value.minsLeft} min left)")
+        )
         _uiState.update {
             it.copy(
                 minsLeft = _uiState.value.delayMins,
                 message = "Running",
-                countdownBarColor = ProgressOK
+                countdownBarColor = ProgressOK,
+                messages = newMessages
             )
         }
     }
@@ -116,11 +147,16 @@ class MainViewModel @Inject constructor(
     fun timeRanOut() {
         println("Time ran out: cancel timer, notify contacts")
         timer.cancel()
+        val newMessages = newListAddMessage(
+            _uiState.value.messages,
+            LogMessage("Time ran out, notify contacts", Color.Red)
+        )
         _uiState.update {
             it.copy(
                 minsLeft = 0,
                 message = "Notifying Contacts",
-                statusColor = ProgressPaging
+                statusColor = ProgressPaging,
+                messages = newMessages
             )
         }
     }
