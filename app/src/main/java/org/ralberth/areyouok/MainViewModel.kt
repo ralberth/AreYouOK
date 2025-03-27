@@ -53,7 +53,8 @@ fun newListAddMessage(currList: List<LogMessage>, newLogMessage: LogMessage): Li
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val soundEffects: SoundEffects
+    private val soundEffects: SoundEffects,
+    private val alertSender: AlertSender
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
@@ -82,10 +83,12 @@ class MainViewModel @Inject constructor(
 
         if (isEnabled) {
             timer.start(_uiState.value.delayMins)
+            alertSender.enabled(_uiState.value.delayMins)
             println("Timer started")
         } else {
-            println("Timer stopped")
             timer.cancel()
+            alertSender.disabled()
+            println("Timer stopped")
         }
     }
 
@@ -129,6 +132,7 @@ class MainViewModel @Inject constructor(
         println("Reset timer")
         timer.reset()
         soundEffects.stop()
+        alertSender.checkin(_uiState.value.delayMins)
         val newMessages = newListAddMessage(
             _uiState.value.messages,
             LogMessage("Check-in (${_uiState.value.minsLeft} min left)")
@@ -147,6 +151,7 @@ class MainViewModel @Inject constructor(
     fun timeRanOut() {
         println("Time ran out: cancel timer, notify contacts")
         timer.cancel()
+        alertSender.unresponsive()
         val newMessages = newListAddMessage(
             _uiState.value.messages,
             LogMessage("Time ran out, notify contacts", Color.Red)

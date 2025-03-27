@@ -48,7 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import java.text.SimpleDateFormat
 
 
-val logTimeFormatter = SimpleDateFormat("HH:MM:SS")
+val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa")
 
 
 @AndroidEntryPoint
@@ -136,16 +136,16 @@ fun MainScreen(
             }
             HorizontalDivider()
             LazyColumn(
-                modifier = Modifier.fillMaxHeight().align(Alignment.Start)
+                modifier = Modifier.fillMaxHeight().align(Alignment.Start).padding(5.dp)
             ) {
                 items(uiState.messages) { message ->
                     val ts = logTimeFormatter.format(message.logTime)
                     Text(
-                        "$ts - ${message.message}",
+                        "$ts: ${message.message}",
                         color = message.color,
                         fontFamily = FontFamily.Monospace,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(5.dp)
+                        modifier = Modifier.padding(1.dp)
                     )
                 }
             }
