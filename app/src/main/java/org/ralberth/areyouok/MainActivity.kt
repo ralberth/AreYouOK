@@ -1,5 +1,6 @@
 package org.ralberth.areyouok
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,16 +47,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import java.text.SimpleDateFormat
+import javax.inject.Inject
 
 
 val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa")
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
+
+    @Inject
+    lateinit var permHelper: PermissionsHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        permHelper.registerComponentActivity(this)
+        permHelper.askForPermission(
+            PackageManager.FEATURE_TELEPHONY,
+            android.Manifest.permission.SEND_SMS
+        )
         setContent {
             AreYouOkTheme {
                 Surface(

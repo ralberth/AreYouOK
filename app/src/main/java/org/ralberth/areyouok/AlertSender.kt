@@ -1,5 +1,6 @@
 package org.ralberth.areyouok
 
+import android.content.pm.PackageManager
 import android.telephony.SmsManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -9,24 +10,38 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AlertSender @Inject constructor() {
-//    val smsManager: SmsManager = SmsManager.getDefault()
-//    val phoneNumber: String = "7032299874"
+class AlertSender @Inject constructor(
+    private val permHelper: PermissionsHelper
+) {
+    val smsManager: SmsManager = SmsManager.getDefault()
+    val phoneNumber: String = "7032299874"
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
+
 
     fun _send(msg: String) {
         val txtMsg = "[RUOK?] $msg"
-//        smsManager.sendTextMessage(phoneNumber,null, txtMsg,null,null)
-        println(txtMsg)
+        println("Sending sms message '$txtMsg' ...")
+        permHelper.guard(
+            PackageManager.FEATURE_TELEPHONY,
+            android.Manifest.permission.SEND_SMS,
+            success = {
+                smsManager.sendTextMessage(phoneNumber, null, txtMsg, null, null)
+                println("Sent via SMS!")
+            },
+            fallback = { println("Couldn't send sms message, permissions denied: '$txtMsg'") }
+        )
     }
+
 
     fun enabled(mins: Int) {
         _send("Alerting turned on.  Check-ins every $mins minutes.")
     }
 
+
     fun disabled() {
         _send("Alerting turned off.")
     }
+
 
     fun checkin(mins: Int) {
         val nextCheckin = Calendar.getInstance()
@@ -34,6 +49,7 @@ class AlertSender @Inject constructor() {
         val at: String = dtFormat.format(nextCheckin.getTime())
         _send("Check-in!  Next check-in at $at")
     }
+
 
     fun unresponsive() {
         _send("Last check-in missed.")
