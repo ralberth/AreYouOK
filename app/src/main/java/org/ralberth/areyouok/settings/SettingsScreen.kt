@@ -14,24 +14,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.ralberth.areyouok.RuokTopBar
-import org.ralberth.areyouok.RuokBottomBar
+import org.ralberth.areyouok.navigation.RuokNavigationActions
+import org.ralberth.areyouok.navigation.RuokTopBar
+import org.ralberth.areyouok.navigation.RuokBottomBar
 import org.ralberth.areyouok.settings.SettingsViewModel
-import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @Composable
 fun SettingsScreen(
+    navActions: RuokNavigationActions,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = viewModel()
 ) {
     Scaffold(
         topBar = { RuokTopBar("Settings") },
-        bottomBar = { RuokBottomBar({}, {}, {}) }
+        bottomBar = { RuokBottomBar(navActions) }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -72,10 +72,10 @@ fun DurationSelectSlider(minutes: Int, onChange: (Int) -> Unit) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    AreYouOkTheme {
-        SettingsScreen(Modifier, SettingsViewModel())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MainScreenPreview() {
+//    AreYouOkTheme {
+//        SettingsScreen(Modifier, SettingsViewModel())
+//    }
+//}

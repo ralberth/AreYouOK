@@ -1,6 +1,5 @@
-package com.example.android.architecture.blueprints.todoapp
+package org.ralberth.areyouok.navigation
 
-import android.app.Activity
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
@@ -10,14 +9,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.ralberth.areyouok.countdown.CountdownScreen
 import org.ralberth.areyouok.countdown.SettingsScreen
 import org.ralberth.areyouok.messages.MessagesScreen
@@ -43,15 +39,18 @@ fun RuokNavGraph(
         modifier = modifier
     ) {
         composable(RuokDestinations.COUNTDOWN_ROUTE) {
-                entry -> CountdownScreen(10) // FIXME: wire this up
+            entry -> CountdownScreen(
+                10, // FIXME: wire this up
+                RuokNavigationActions(navController)
+            )
         }
 
         composable(RuokDestinations.SETTINGS_ROUTE) {
-                entry -> SettingsScreen()
+                entry -> SettingsScreen(RuokNavigationActions(navController))
         }
 
         composable(RuokDestinations.MESSAGES_ROUTE) {
-                entry -> MessagesScreen()
+                entry -> MessagesScreen(RuokNavigationActions(navController))
         }
 
 

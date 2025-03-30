@@ -16,8 +16,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import org.ralberth.areyouok.RuokTopBar
-import org.ralberth.areyouok.RuokBottomBar
+import org.ralberth.areyouok.navigation.RuokTopBar
+import org.ralberth.areyouok.navigation.RuokBottomBar
+import org.ralberth.areyouok.navigation.RuokNavigationActions
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -27,12 +28,13 @@ val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa", Locale.US)
 
 @Composable
 fun MessagesScreen(
+    navActions: RuokNavigationActions,
     modifier: Modifier = Modifier,
     viewModel: MessagesViewModel = viewModel()
 ) {
     Scaffold(
         topBar = { RuokTopBar("Log Messages") },
-        bottomBar = { RuokBottomBar({}, {}, {}) }
+        bottomBar = { RuokBottomBar(navActions) }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

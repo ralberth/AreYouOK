@@ -1,6 +1,5 @@
-package com.example.android.architecture.blueprints.todoapp
+package org.ralberth.areyouok.navigation
 
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -25,28 +24,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import org.ralberth.areyouok.RuokTopBar
-import org.ralberth.areyouok.RuokBottomBar
-import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import org.ralberth.areyouok.navigation.RuokBottomBar
+import org.ralberth.areyouok.navigation.RuokNavigationActions
+import org.ralberth.areyouok.navigation.RuokTopBar
 
 
 @Composable
 fun CountdownScreen(
     delayMinutes: Int,
+    navActions: RuokNavigationActions,
     modifier: Modifier = Modifier,
     viewModel: CountdownViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = { RuokTopBar("R U OK?") },
-        bottomBar = { RuokBottomBar({}, {}, {}) }
+        bottomBar = { RuokBottomBar(navActions) }
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -141,10 +138,10 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun CountdownScreenPreview() {
-    AreYouOkTheme {
-        CountdownScreen(20, Modifier, CountdownViewModel(null, null))
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CountdownScreenPreview() {
+//    AreYouOkTheme {
+//        CountdownScreen(20, Modifier, CountdownViewModel(null, null))
+//    }
+//}
