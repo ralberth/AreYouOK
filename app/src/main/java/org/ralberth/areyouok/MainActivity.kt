@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,11 +44,15 @@ import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.android.architecture.blueprints.todoapp.RuokNavGraph
 import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 
-val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa")
+val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa", Locale.US)
 
 
 @AndroidEntryPoint
@@ -72,7 +74,7 @@ class MainActivity: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainApp()
+                    RuokNavGraph()
                 }
             }
         }
@@ -80,16 +82,16 @@ class MainActivity: ComponentActivity() {
 }
 
 
-@Composable
-fun MainApp() {
-    MainScreen(modifier = Modifier
-        .fillMaxSize()
-        .wrapContentSize(Alignment.Center)
-    )
-}
+//@Composable
+//fun MainApp() {
+//    MainScreen(modifier = Modifier
+//        .fillMaxSize()
+//        .wrapContentSize(Alignment.Center)
+//    )
+//}
 
 
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -225,7 +227,6 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
     val percentLeft = if (isEnabled) minsLeft.toFloat() / delayMins.toFloat() else 0F
     val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
 
-
     Row(modifier = Modifier.padding(24.dp)) {
         Column {
             Text(message, fontWeight = FontWeight.Bold)
@@ -237,7 +238,7 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
         }
     }
 }
-
+*/
 
 //@Preview(showBackground = true)
 //@Composable

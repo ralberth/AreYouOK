@@ -18,17 +18,17 @@ class SoundEffects @Inject constructor(private val application: Application) {
         println("Create SoundEffects object")
     }
 
-    fun toggle()        {  this._toggle.start()         }
-    fun yellowWarning() {  this._yellowWarning.start()  }
-    fun redWarning()    {  this._redWarning.start()     }
-    fun timesUp()       {  this._timesUp.start()        }
+    fun toggle()        {} // {  this._toggle.start()         }
+    fun yellowWarning() {} // {  this._yellowWarning.start()  }
+    fun redWarning()    {} // {  this._redWarning.start()     }
+    fun timesUp()       {} // {  this._timesUp.start()        }
 
     fun stop() {
         // Times-up is the only long-running sound.  No need to interrupt the other sounds
         // since they're so short
-        if (this._timesUp.isPlaying) {
-            this._timesUp.stop()
-            this._timesUp.prepare()   // can't start() until you prepare()
-        }
+//        if (this._timesUp.isPlaying) {
+//            this._timesUp.stop()
+//            this._timesUp.prepare()   // can't start() until you prepare()
+//        }
     }
 }

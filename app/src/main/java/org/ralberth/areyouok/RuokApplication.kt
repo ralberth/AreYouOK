@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 
 @HiltAndroidApp
-class MyApplication : Application() {
+class RuokApplication : Application() {
 
     @Inject
     lateinit var alertSender: AlertSender

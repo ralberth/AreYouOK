@@ -13,12 +13,17 @@ import javax.inject.Singleton
 class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
 ) {
-    val smsManager: SmsManager = SmsManager.getDefault()
-    val phoneNumber: String = "7032299874"
-    val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
+    private val smsManager: SmsManager = SmsManager.getDefault()
+    private val phoneNumber: String = "7032299874"
+    private val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
-    fun _send(msg: String) {
+    init {
+        println("Create AlertSender")
+    }
+
+
+    private fun send(msg: String) {
         val txtMsg = "[RUOK?] $msg"
         println("Sending sms message '$txtMsg' ...")
         permHelper.guard(
@@ -28,30 +33,30 @@ class AlertSender @Inject constructor(
                 smsManager.sendTextMessage(phoneNumber, null, txtMsg, null, null)
                 println("Sent via SMS!")
             },
-            fallback = { println("Couldn't send sms message, permissions denied: '$txtMsg'") }
+            fallback = { println("Couldn't send sms message, permission denied: '$txtMsg'") }
         )
     }
 
 
-    fun enabled(mins: Int) {
-        _send("Alerting turned on.  Check-ins every $mins minutes.")
+    fun enabled(minutes: Int) {
+        send("Alerting turned on.  Check-ins every $minutes minutes.")
     }
 
 
     fun disabled() {
-        _send("Alerting turned off.")
+        send("Alerting turned off.")
     }
 
 
-    fun checkin(mins: Int) {
-        val nextCheckin = Calendar.getInstance()
-        nextCheckin.add(Calendar.MINUTE, mins)
-        val at: String = dtFormat.format(nextCheckin.getTime())
-        _send("Check-in!  Next check-in at $at")
+    fun checkIn(minutes: Int) {
+        val nextCheckIn = Calendar.getInstance()
+        nextCheckIn.add(Calendar.MINUTE, minutes)
+        val at: String = dtFormat.format(nextCheckIn.time)
+        send("Check-in!  Next check-in at $at")
     }
 
 
     fun unresponsive() {
-        _send("Last check-in missed.")
+        send("Last check-in missed.  CALL ME, I might be in trouble!")
     }
 }

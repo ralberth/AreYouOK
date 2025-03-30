@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+
+    // Kotlin serialization plugin for type safe routes and navigation arguments
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -69,6 +72,11 @@ dependencies {
 //    implementation("androidx.activity:1.2.0")
 //    implementation("androidx.fragment:1.3.0")
 //    implementation("androidx.activity:activity-compose:1.10.0")
+
+    // Extras to allow navigation within the app
+//    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0") // see https://stackoverflow.com/questions/75781288/unresolved-reference-hiltviewmodel/75975062#75975062
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }
 
 
