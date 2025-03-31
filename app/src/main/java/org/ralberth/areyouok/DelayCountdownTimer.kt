@@ -4,11 +4,11 @@ import android.os.CountDownTimer
 import kotlin.math.roundToInt
 
 
-//val TICK2MS = 60 * 1000   // one minute
+val TICK2MS: Long = 60 * 1000   // one minute
 
 // Uncomment for testing: sets the tick amount to 2 seconds so you
 // can debug easier
-val TICK2MS = 2000L
+//val TICK2MS = 2000L
 
 
 class MinuteTickTimer(

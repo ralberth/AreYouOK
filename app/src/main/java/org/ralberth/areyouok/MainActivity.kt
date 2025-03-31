@@ -1,11 +1,11 @@
 package org.ralberth.areyouok
 
 import android.content.pm.PackageManager
+import androidx.compose.material3.Icon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,21 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
-import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextOverflow
-import java.text.SimpleDateFormat
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import javax.inject.Inject
-
-
-val logTimeFormatter = SimpleDateFormat("hh:mm:ss aa")
 
 
 @AndroidEntryPoint
@@ -137,28 +131,23 @@ fun MainScreen(
                 uiState.countdownBarColor
             )
             HorizontalDivider()
+            Spacer(Modifier.weight(1f))
             Button(
                 enabled = uiState.enabled,
                 onClick = viewModel::checkin,
-                modifier = Modifier.padding(24.dp)
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(100.dp)
             ) {
-                Text("Check-in", fontSize = 24.sp)
+                Icon(
+                    Icons.Filled.Refresh,
+                    "Countdown"
+                )
+                Text(
+                    "  Check-in",
+                    fontSize = 24.sp
+                )
             }
-            HorizontalDivider()
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight().align(Alignment.Start).padding(5.dp)
-            ) {
-                items(uiState.messages) { message ->
-                    val ts = logTimeFormatter.format(message.logTime)
-                    Text(
-                        "$ts: ${message.message}",
-                        color = message.color,
-                        fontFamily = FontFamily.Monospace,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(1.dp)
-                    )
-                }
-            }
+            Spacer(Modifier.weight(1f))
         }
     }
 }
@@ -171,7 +160,7 @@ fun StatusDisplayText(message: String, backgroundColor: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .background(backgroundColor)
-            .padding(horizontal = 12.dp, vertical = 36.dp),
+            .padding(horizontal = 12.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -186,7 +175,7 @@ fun StatusDisplayText(message: String, backgroundColor: Color) {
 @Composable
 fun EnableDisableToggle(isEnabled: Boolean, onChange: (Boolean) -> Unit) {
     Row(
-        modifier = Modifier.padding(24.dp),
+        modifier = Modifier.padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Enable", fontWeight = FontWeight.Bold)
@@ -198,7 +187,7 @@ fun EnableDisableToggle(isEnabled: Boolean, onChange: (Boolean) -> Unit) {
 
 @Composable
 fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Unit) {
-    Row(modifier = Modifier.padding(24.dp)) {
+    Row(modifier = Modifier.padding(18.dp)) {
         Column {
             Text("Countdown Delay",fontWeight = FontWeight.Bold)
             Slider(
@@ -226,7 +215,7 @@ fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor
     val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
 
 
-    Row(modifier = Modifier.padding(24.dp)) {
+    Row(modifier = Modifier.padding(18.dp)) {
         Column {
             Text(message, fontWeight = FontWeight.Bold)
             LinearProgressIndicator(
