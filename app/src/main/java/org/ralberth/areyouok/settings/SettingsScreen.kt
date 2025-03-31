@@ -25,28 +25,18 @@ import org.ralberth.areyouok.settings.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
-    navActions: RuokNavigationActions,
-    modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = viewModel()
+//    navActions: RuokNavigationActions,
+//    modifier: Modifier = Modifier,
+//    viewModel: SettingsViewModel = viewModel()
+    delayMinutes: Int,
+    onUpdateDelayMinutes: (Int) -> Unit
 ) {
-    Scaffold(
-        topBar = { RuokTopBar("Settings") },
-        bottomBar = { RuokBottomBar(navActions) }
-    ) { innerPadding ->
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+//    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        Column(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxHeight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            DurationSelectSlider(
-                uiState.delayMins,
-                viewModel::updateDelayMins
-            )
-        }
-    }
+    DurationSelectSlider(
+        delayMinutes,
+        onUpdateDelayMinutes
+    )
 }
 
 

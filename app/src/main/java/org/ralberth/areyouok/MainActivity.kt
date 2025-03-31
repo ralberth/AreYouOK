@@ -4,12 +4,29 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import org.ralberth.areyouok.countdown.CountdownScreen
+import org.ralberth.areyouok.countdown.SettingsScreen
+import org.ralberth.areyouok.messages.MessagesScreen
+import org.ralberth.areyouok.navigation.RuokBottomBar
 import org.ralberth.areyouok.navigation.RuokNavGraph
+import org.ralberth.areyouok.navigation.RuokTopBar
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import javax.inject.Inject
 
@@ -33,7 +50,8 @@ class MainActivity: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RuokNavGraph()
+//                    RuokNavGraph()
+                    MainApp()
                 }
             }
         }
@@ -41,13 +59,36 @@ class MainActivity: ComponentActivity() {
 }
 
 
-//@Composable
-//fun MainApp() {
-//    MainScreen(modifier = Modifier
-//        .fillMaxSize()
-//        .wrapContentSize(Alignment.Center)
-//    )
-//}
+@Composable
+fun MainApp() {
+    val visibleScreen = remember { mutableStateOf("countdown") }
+    val delayMinutes = remember { mutableIntStateOf(20) }
+    val messages = remember { mutableStateOf(listOf()) }
+
+    Scaffold(
+        topBar = { RuokTopBar("R U OK?") },
+        bottomBar = { RuokBottomBar({ visibleScreen.value = it }) },
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxHeight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            when (visibleScreen.value) {
+                "countdown" -> CountdownScreen(
+                    delayMinutes.intValue,
+                    { messages.value.add(it) }
+                )
+                "settings" -> SettingsScreen(delayMinutes.intValue, { delayMinutes.intValue = it })
+                "messages" -> MessagesScreen()
+            }
+        }
+    }
+}
 
 
 /*

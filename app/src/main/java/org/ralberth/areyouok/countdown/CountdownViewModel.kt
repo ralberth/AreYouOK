@@ -32,6 +32,13 @@ data class CountdownUiState(
 )
 
 
+ugh, if countdown ui elements are not drawn and we're looking at the messages screen, will countdownviewmodel things fire, will it play alerts, send messages, and text people?
+We might have a problem where we need to keep all three as Activities or at least use NavHost in some way.
+Could adopt background/service things: have the UI strictly do UI things.
+have a service/background thing handle everything else, instead of making the ViewModels do it.
+Service sends texts, plays musics, logs messages, everything.
+
+
 @HiltViewModel
 class CountdownViewModel @Inject constructor(
     private val soundEffects: SoundEffects?,

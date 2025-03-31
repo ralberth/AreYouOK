@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,63 +27,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.ralberth.areyouok.navigation.RuokBottomBar
-import org.ralberth.areyouok.navigation.RuokNavigationActions
-import org.ralberth.areyouok.navigation.RuokTopBar
 
 
 @Composable
 fun CountdownScreen(
     delayMinutes: Int,
-    navActions: RuokNavigationActions,
+//    navActions: RuokNavigationActions,
     modifier: Modifier = Modifier,
     viewModel: CountdownViewModel = hiltViewModel()
 ) {
-    Scaffold(
-        topBar = { RuokTopBar("R U OK?") },
-        bottomBar = { RuokBottomBar(navActions) }
-    ) { innerPadding ->
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        Column(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxHeight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            StatusDisplayText(uiState.message, uiState.statusColor)
-            HorizontalDivider()
-            EnableDisableToggle(
-                isEnabled = uiState.enabled,
-                onChange = { viewModel.updateEnabled(it, delayMinutes) }
-            )
-            HorizontalDivider()
-            CountdownDisplay(
-                uiState.enabled,
-                uiState.minsLeft,
-                delayMinutes,
-                uiState.countdownBarColor
-            )
-            HorizontalDivider()
-            Spacer(Modifier.weight(1f))
-            Button(
-                enabled = uiState.enabled,
-                onClick = { viewModel.checkin(delayMinutes) },
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.height(100.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Refresh,
-                    "Countdown"
-                )
-                Text(
-                    "  Check-in",
-                    fontSize = 24.sp
-                )
-            }
-            Spacer(Modifier.weight(1f))
-        }
+    StatusDisplayText(uiState.message, uiState.statusColor)
+    HorizontalDivider()
+    EnableDisableToggle(
+        isEnabled = uiState.enabled,
+        onChange = { viewModel.updateEnabled(it, delayMinutes) }
+    )
+    HorizontalDivider()
+    CountdownDisplay(
+        uiState.enabled,
+        uiState.minsLeft,
+        delayMinutes,
+        uiState.countdownBarColor
+    )
+    HorizontalDivider()
+//        Spacer(Modifier.weight(1f))
+    Button(
+        enabled = uiState.enabled,
+        onClick = { viewModel.checkin(delayMinutes) },
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.height(100.dp)
+    ) {
+        Icon(
+            Icons.Filled.Refresh,
+            "Countdown"
+        )
+        Text(
+            "  Check-in",
+            fontSize = 24.sp
+        )
     }
+//        Spacer(Modifier.weight(1f))
 }
 
 

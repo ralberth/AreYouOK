@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -41,52 +42,53 @@ fun RuokTopBar(title: String) {
 
 
 @Composable
-fun RuokBottomBar(navActions: RuokNavigationActions) {
+fun BottomBarButton(label: String, icon: ImageVector, onClick: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(18.dp, 0.dp)
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(icon, label)
+        }
+        Text(
+            label,
+            fontSize = 12.sp,
+            color = Color.DarkGray
+        )
+    }
+
+}
+
+@Composable
+fun RuokBottomBar(
+    onSwitchScreen: (String) -> Unit
+//    navActions: RuokNavigationActions
+) {
     BottomAppBar(
         actions = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(18.dp, 0.dp)
-                ) {
-                    IconButton(onClick = { navActions.navigateToCountdown() }) {
-                        Icon(Icons.Filled.Refresh, "Countdown")
-                    }
-                    Text(
-                        "Countdown",
-                        fontSize = 12.sp,
-                        color = Color.DarkGray
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(18.dp, 0.dp)
-                ) {
-                    IconButton(onClick = { navActions.navigateToSettings() }) {
-                        Icon(Icons.Filled.Settings, "Settings")
-                    }
-                    Text(
-                        "Settings",
-                        fontSize = 12.sp,
-                        color = Color.DarkGray
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(18.dp, 0.dp)
-                ) {
-                    IconButton(onClick = { navActions.navigateToMessages() }) {
-                        Icon(Icons.AutoMirrored.Filled.List, "Messages")
-                    }
-                    Text(
-                        "Messages",
-                        fontSize = 12.sp,
-                        color = Color.DarkGray
-                    )
-                }
+                BottomBarButton(
+                    "Countdown",
+                    Icons.Filled.Refresh,
+//                    { navActions.navigateToCountdown() }
+                    { onSwitchScreen("countdown") }
+                )
+                BottomBarButton(
+                    "Settings",
+                    Icons.Filled.Settings,
+//                    { navActions.navigateToSettings() }
+                    { onSwitchScreen("settings") }
+
+                )
+                BottomBarButton(
+                    "Messages",
+                    Icons.AutoMirrored.Filled.List,
+//                    { navActions.navigateToMessages() }
+                    { onSwitchScreen("messages") }
+                )
             }
         }
     )

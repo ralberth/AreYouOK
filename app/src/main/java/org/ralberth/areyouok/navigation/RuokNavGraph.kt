@@ -38,20 +38,20 @@ fun RuokNavGraph(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(RuokDestinations.COUNTDOWN_ROUTE) {
-            entry -> CountdownScreen(
-                10, // FIXME: wire this up
-                RuokNavigationActions(navController)
-            )
-        }
+//        composable(RuokDestinations.COUNTDOWN_ROUTE) {
+//            entry -> CountdownScreen(
+//                10, // FIXME: wire this up
+//                RuokNavigationActions(navController)
+//            )
+//        }
 
-        composable(RuokDestinations.SETTINGS_ROUTE) {
-                entry -> SettingsScreen(RuokNavigationActions(navController))
-        }
-
-        composable(RuokDestinations.MESSAGES_ROUTE) {
-                entry -> MessagesScreen(RuokNavigationActions(navController))
-        }
+//        composable(RuokDestinations.SETTINGS_ROUTE) {
+//                entry -> SettingsScreen(RuokNavigationActions(navController))
+//        }
+//
+//        composable(RuokDestinations.MESSAGES_ROUTE) {
+//                entry -> MessagesScreen(RuokNavigationActions(navController))
+//        }
 
 
 
