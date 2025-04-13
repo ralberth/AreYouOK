@@ -1,5 +1,7 @@
 package org.ralberth.areyouok
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,32 +22,49 @@ import javax.inject.Inject
 
 data class MainUiState(
     // Configuration and big state -- things that don't change while the countdown timer runs
+    var needsAlarmPermission: Boolean = true,
     val enabled: Boolean = false,                 // True means we're actively counting-down or alerting people
     val delayMins: Int = 20,                      // Number of minutes to count down after every button press
     // Tactical stuff that changes while the timer is running
     val message: String = "Idle",
     val statusColor: Color = StatusIdle,
     val minsLeft: Int = 4,                        // Minutes until the app starts alerting and texting people
-    val countdownBarColor: Color = ProgressOK
+    val countdownBarColor: Color = ProgressOK,
 )
 
 
+@RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val soundEffects: SoundEffects,
-    private val alertSender: AlertSender
+    private val alarms: RuokAlarms
+//    private val alertSender: AlertSender
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    init {
+        _uiState.value.needsAlarmPermission = ! alarms.canSetAlarms()
+    }
 
     private val timer = DelayCountdownTimer(
         { updateMinsLeft(it) },
         { timeRanOut() }
     )
 
+//    fun fixMissingAlarmsPermission() {
+//        println("Fixit!")
+//        _uiState.update {
+//            it.copy(
+//                needsAlarmPermission = false
+//            )
+//        }
+//    }
+
     fun updateEnabled(isEnabled: Boolean) {
         soundEffects.toggle()
+        alarms.setAlarms(4)
         _uiState.update {
             it.copy(
                 enabled = isEnabled,
@@ -57,11 +76,11 @@ class MainViewModel @Inject constructor(
 
         if (isEnabled) {
             timer.start(_uiState.value.delayMins)
-            alertSender.enabled(_uiState.value.delayMins)
+//            alertSender.enabled(_uiState.value.delayMins)
             println("Timer started")
         } else {
             timer.cancel()
-            alertSender.disabled()
+//            alertSender.disabled()
             soundEffects.stop()
             println("Timer stopped")
         }
@@ -107,7 +126,9 @@ class MainViewModel @Inject constructor(
         println("Reset timer")
         timer.reset()
         soundEffects.stop()
-        alertSender.checkin(_uiState.value.delayMins)
+//        alertSender.checkin(_uiState.value.delayMins)
+        alarms.cancelAllAlarms()
+        alarms.setAlarms(4)
         _uiState.update {
             it.copy(
                 minsLeft = _uiState.value.delayMins,
@@ -121,7 +142,7 @@ class MainViewModel @Inject constructor(
     fun timeRanOut() {
         println("Time ran out: cancel timer, notify contacts")
         timer.cancel()
-        alertSender.unresponsive()
+//        alertSender.unresponsive()
         _uiState.update {
             it.copy(
                 minsLeft = 0,

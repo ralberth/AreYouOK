@@ -19,6 +19,9 @@ class AlertSender @Inject constructor(
 
 
     fun _send(msg: String) {
+
+        // FIXME: have to get perms before sending messages...might be passed-out at this time
+
         val txtMsg = "[RUOK?] $msg"
         println("Sending sms message '$txtMsg' ...")
         permHelper.guard(

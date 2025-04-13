@@ -111,6 +111,11 @@ fun MainScreen(
                 .fillMaxHeight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.needsAlarmPermission) {
+                NeedAlarmsPermissionBanner()  // onFixit = { viewModel.fixMissingAlarmsPermission() })
+                HorizontalDivider()
+            }
+
             StatusDisplayText(uiState.message, uiState.statusColor)
             HorizontalDivider()
             EnableDisableToggle(
@@ -153,6 +158,25 @@ fun MainScreen(
 }
 
 
+@Composable
+fun NeedAlarmsPermissionBanner() {   // onFixit: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+//            .background(backgroundColor)
+            .padding(horizontal = 12.dp, vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            "Need permission to set timers",
+            color = Color.Red
+        )
+//        Spacer(Modifier.weight(1f))
+//        OutlinedButton(onClick=onFixit) {
+//            Text("Fix it")
+//        }
+    }
+}
 
 @Composable
 fun StatusDisplayText(message: String, backgroundColor: Color) {
