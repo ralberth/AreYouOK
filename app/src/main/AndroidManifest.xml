@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".RuokAlarmReceiver" />
+        <receiver android:name=".alarms.RuokAlarmReceiver" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package org.ralberth.areyouok
+package org.ralberth.areyouok.alarms
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -15,26 +15,28 @@ import javax.inject.Singleton
 // val MINUTE: Long = 60000  // 60 seconds, use for production
 val MINUTE: Long = 10000 // 10 seconds, use this only for testing
 
+val EXTRA_KEY_MINS_LEFT: String = "MINUTES_LEFT"
+
 
 @Singleton
 class RuokAlarms @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val channels: RuokNotifier
 ) {
     init {
         print("Create RuokAlarms singleton")
     }
 
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    val intent0: PendingIntent = _createPendingIntent(100, "send SMS")
-    val intent1: PendingIntent = _createPendingIntent(101, "1 minute left")
-    val intent2: PendingIntent = _createPendingIntent(102, "2 minutes left")
-    val intent3: PendingIntent = _createPendingIntent(103, "3 minutes left")
+    val intent0: PendingIntent = _createPendingIntent(100, 0)
+    val intent1: PendingIntent = _createPendingIntent(101, 1)
+    val intent2: PendingIntent = _createPendingIntent(102, 2)
+    val intent3: PendingIntent = _createPendingIntent(103, 3)
 
 
-    fun _createPendingIntent(rqstCode: Int, message: String): PendingIntent {
-        // Our intent is to call RuokAlarmReceiver and tell it "ALARM_MSG"=message
+    fun _createPendingIntent(rqstCode: Int, minsLeft: Int): PendingIntent {
         val intent: Intent = Intent(context, RuokAlarmReceiver::class.java).apply {
-            putExtra("ALARM_MSG", message)
+            putExtra(EXTRA_KEY_MINS_LEFT, minsLeft)
         }
 
         return PendingIntent.getBroadcast(
@@ -46,12 +48,12 @@ class RuokAlarms @Inject constructor(
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    fun _setAlarm(timeMS: Long, rqstCode: Int, message: String) {
+    fun _setAlarm(timeMS: Long, rqstCode: Int, minsLeft: Int) {
         if (canSetAlarms()) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 timeMS,
-                _createPendingIntent(rqstCode, message)
+                _createPendingIntent(rqstCode, minsLeft)
             )
         } else {
             println("Can't schedule exact alarms")
@@ -69,10 +71,10 @@ class RuokAlarms @Inject constructor(
         val time1 = time0 - MINUTE
         val time2 = time1 - MINUTE
         val time3 = time2 - MINUTE
-        _setAlarm(time0, 100, "Send text alerts, alarm ran out")
-        _setAlarm(time1, 101, "one minute left")
-        _setAlarm(time2, 102, "two minutes left")
-        _setAlarm(time3, 103, "three minutes left")
+        _setAlarm(time0, 100, 0)
+        _setAlarm(time1, 101, 1)
+        _setAlarm(time2, 102, 2)
+        _setAlarm(time3, 103, 3)
     }
 
     fun cancelAllAlarms() {
