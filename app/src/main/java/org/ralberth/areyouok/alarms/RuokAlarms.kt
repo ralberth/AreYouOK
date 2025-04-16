@@ -46,6 +46,8 @@ class RuokAlarms @Inject constructor(
         )
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("ScheduleExactAlarm")
     fun _setAlarm(timeMS: Long, rqstCode: Int, minsLeft: Int) {
         if (canSetAlarms()) {
@@ -59,11 +61,14 @@ class RuokAlarms @Inject constructor(
         }
     }
 
+
     @RequiresApi(Build.VERSION_CODES.S) // in order to call canScheduleExactAlarms()
     fun canSetAlarms(): Boolean {
         return alarmManager.canScheduleExactAlarms()
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.S)
     fun setAlarms(minsInFuture: Int) {
         val now: Long = System.currentTimeMillis()
         val time0 = now + (minsInFuture * MINUTE)
@@ -75,6 +80,7 @@ class RuokAlarms @Inject constructor(
         _setAlarm(time2, 102, 2)
         _setAlarm(time3, 103, 3)
     }
+
 
     fun cancelAllAlarms() {
         // .cancelAll() only for higher android API level

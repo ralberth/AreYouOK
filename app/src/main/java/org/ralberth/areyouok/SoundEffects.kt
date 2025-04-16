@@ -7,15 +7,21 @@ import javax.inject.Singleton
 
 
 @Singleton
-class SoundEffects @Inject constructor(private val application: Application) {
-    private val _toggle: MediaPlayer        = MediaPlayer.create(application, R.raw.toggle_sound)
+class SoundEffects @Inject constructor(application: Application) {
+
+    /*
+     * Going with the lower-level, simpler MediaPlayer for playing sounds.  We need something
+     * simple that always works when the app isn't running and might be triggered by an
+     * alert in the AlarmReceiver.  Also, don't need any UI controls for these.
+     */
+    private val _toggle:        MediaPlayer = MediaPlayer.create(application, R.raw.toggle_sound)
     private val _yellowWarning: MediaPlayer = MediaPlayer.create(application, R.raw.yellow_warning_sound)
-    private val _redWarning: MediaPlayer    = MediaPlayer.create(application, R.raw.red_warning_sound)
-    private val _timesUp: MediaPlayer       = MediaPlayer.create(application, R.raw.times_up_sound)
+    private val _redWarning:    MediaPlayer = MediaPlayer.create(application, R.raw.red_warning_sound)
+    private val _timesUp:       MediaPlayer = MediaPlayer.create(application, R.raw.times_up_sound)
 
     init {
-        _timesUp.isLooping = true
         println("Create SoundEffects object")
+        _timesUp.isLooping = true  //  The final notification sound plays continuously
     }
 
     fun toggle()        {  this._toggle.start()         }

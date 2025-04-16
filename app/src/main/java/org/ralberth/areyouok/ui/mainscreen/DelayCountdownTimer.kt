@@ -11,8 +11,16 @@ val TICK2MS: Long = 60 * 1000   // one minute
 //val TICK2MS = 2000L
 
 
+/*
+ * PRIVATE class used only by DelayCountdownTimer below.
+ * This abstracts away the CountDownTimer that comes with the android runtime.  CountDownTimer
+ * deals in milliseconds instead of seconds, and has more callbacks than we need.  Wrap it
+ * here for simplicity.
+ *
+ * One edge case: when time runs out, this calls *BOTH* onMinuteElapsed() and onComplete().
+ */
 class MinuteTickTimer(
-    val mins: Int,
+    mins: Int,                             // How many minutes total to countdown
     val onMinuteElapsed: (Int) -> Unit,    // Callback once a minute while this is running
     val onComplete: () -> Unit             // Callback once when timer runs out
 
@@ -20,6 +28,7 @@ class MinuteTickTimer(
     mins * TICK2MS,
     TICK2MS
 ) {
+    // Called by CountDownTimer parent class once every minute
     override fun onTick(millisUntilFinished: Long) {
         // millisUntilFinished might not be a precise multiple of MS_TO_MIN, so be safe
         // and do a floating-point division. This gets us a float that's as close to what
@@ -28,18 +37,26 @@ class MinuteTickTimer(
         onMinuteElapsed(minsElapsed)
     }
 
+
+    // Called by CountDownTimer parent class when time runs out
     override fun onFinish() {
         onMinuteElapsed(0)
         onComplete()
     }
 }
 
+
+/*
+ * Non-UI class that ticks down every minute, calling callbacks as it goes.
+ * Used *ONLY* by the UI to show progress on UI widgets.
+ */
 class DelayCountdownTimer(
     val onMinuteElapsed: (Int) -> Unit,    // Callback once a minute while this is running
     val onComplete: () -> Unit             // Callback once when timer runs out
 ) {
     var timer: MinuteTickTimer? = null
     var lastMins: Int = 0
+
 
     fun start(mins: Int) {
         lastMins = mins
@@ -51,10 +68,12 @@ class DelayCountdownTimer(
         timer!!.start()
     }
 
+
     fun reset() {
         this.cancel()
         this.start(this.lastMins)
     }
+
 
     fun cancel() {
         timer?.cancel()

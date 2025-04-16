@@ -7,9 +7,8 @@ import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
-import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_HIGH
-import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_LOW
-import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_MEDIUM
+import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_RUDE
+import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_POLITE
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +22,7 @@ class Coordinator @Inject constructor(
     private var delayMins: Int = 20
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     fun enabled(delayMins: Int) {
         this.delayMins = delayMins // used elsewhere in this class
         soundEffects.toggle()
@@ -32,6 +32,7 @@ class Coordinator @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun disabled() {
         soundEffects.stop()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
@@ -47,7 +48,7 @@ class Coordinator @Inject constructor(
             0 -> {
                 soundEffects.timesUp()
                 notifier.sendNotification(
-                    CHANNEL_HIGH,
+                    CHANNEL_RUDE,
                     "Times up!  Sent TXT message to family.",
                     Color.argb(200, 255, 0, 0)
                 )
@@ -56,7 +57,7 @@ class Coordinator @Inject constructor(
             1 -> {
                 soundEffects.redWarning()
                 notifier.sendNotification(
-                    CHANNEL_MEDIUM,
+                    CHANNEL_RUDE,
                     "* ONE MINUTE LEFT *",
                     Color.argb(200, 255, 0, 0)
                 )
@@ -64,7 +65,7 @@ class Coordinator @Inject constructor(
             2 -> {
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
-                    CHANNEL_LOW,
+                    CHANNEL_POLITE,
                     "Two minutes left",
                     Color.argb(200, 255, 255, 0)
                 )
@@ -72,7 +73,7 @@ class Coordinator @Inject constructor(
             3 -> {
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
-                    CHANNEL_LOW,
+                    CHANNEL_POLITE,
                     "Three minutes left",
                     Color.argb(200, 255, 255, 0)
                 )
@@ -81,6 +82,7 @@ class Coordinator @Inject constructor(
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     fun checkin() {
         soundEffects.toggle()
         alarms.cancelAllAlarms()
