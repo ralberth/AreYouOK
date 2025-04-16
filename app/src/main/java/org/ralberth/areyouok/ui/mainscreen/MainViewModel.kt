@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.coordinator.Coordinator
+import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.ui.theme.ProgressDanger
 import org.ralberth.areyouok.ui.theme.ProgressOK
 import org.ralberth.areyouok.ui.theme.ProgressPaging
@@ -25,6 +26,7 @@ import javax.inject.Inject
 data class MainUiState(
     // Configuration and big state -- things that don't change while the countdown timer runs
     var needsAlarmPermission: Boolean = true,
+    var needsNotifyPermission: Boolean = true,
     val enabled: Boolean = false,                 // True means we're actively counting-down or alerting people
     val delayMins: Int = 20,                      // Number of minutes to count down after every button press
     // Tactical stuff that changes while the timer is running
@@ -39,7 +41,8 @@ data class MainUiState(
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val coordinator: Coordinator,
-    private val alarms: RuokAlarms
+    alarms: RuokAlarms,
+    notifier: RuokNotifier
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
@@ -47,6 +50,7 @@ class MainViewModel @Inject constructor(
 
     init {
         _uiState.value.needsAlarmPermission = ! alarms.canSetAlarms()
+        _uiState.value.needsNotifyPermission = ! notifier.canSendNotifications()
     }
 
     private val timer = DelayCountdownTimer(

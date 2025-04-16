@@ -23,7 +23,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RuokAlarmReceiver: AppWidgetProvider() {
     init {
-        print("Create RuokAlarmReceiver entrypoint")
+        println("Create RuokAlarmReceiver entrypoint")
     }
 
     @Inject

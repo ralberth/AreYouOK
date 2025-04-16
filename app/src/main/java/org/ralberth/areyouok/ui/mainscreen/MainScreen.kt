@@ -65,7 +65,12 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (uiState.needsAlarmPermission) {
-                NeedAlarmsPermissionBanner()  // onFixit = { viewModel.fixMissingAlarmsPermission() })
+                NeedPermissionBanner("alarms (set timers)")  // onFixit = { viewModel.fixMissingAlarmsPermission() })
+                HorizontalDivider()
+            }
+
+            if (uiState.needsNotifyPermission) {
+                NeedPermissionBanner("notifications")
                 HorizontalDivider()
             }
 
@@ -112,7 +117,7 @@ fun MainScreen(
 
 
 @Composable
-fun NeedAlarmsPermissionBanner() {   // onFixit: () -> Unit) {
+fun NeedPermissionBanner(type: String) {   // onFixit: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +126,7 @@ fun NeedAlarmsPermissionBanner() {   // onFixit: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "Need permission to set timers",
+            "Need ${type} permission",
             color = Color.Red
         )
 //        Spacer(Modifier.weight(1f))
