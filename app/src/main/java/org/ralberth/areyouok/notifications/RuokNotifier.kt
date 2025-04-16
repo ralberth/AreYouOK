@@ -23,9 +23,10 @@ import javax.inject.Singleton
 //Intent for notifications opens MainActivity
 /*
  * This doesn't use a channel's ability to play sounds when notifications are sent.
- * Android tries to eb polite, so it won't play sounds on every notification.
+ * Android tries to be polite, so it won't play sounds on every notification.
  * This won't work for us, so there's a separate SoundEffects class that handles
- * playing all sounds.
+ * playing all sounds.  Also, the final sound when time runs out is played periodically
+ * instead of only one time when the notification goes out.
  */
 @Singleton
 class RuokNotifier @Inject constructor(
@@ -40,9 +41,6 @@ class RuokNotifier @Inject constructor(
     private val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     private var nextId: Int = 0
 
-    init {
-        println("create RuokNotifier singleton")
-    }
 
     // TODO: no need keeping this private val around, only ref them by channelId string
     @RequiresApi(Build.VERSION_CODES.O)
@@ -54,8 +52,8 @@ class RuokNotifier @Inject constructor(
                         "Notifications when time runs out (TXT messages sent)",
                         null,
                         true,
-                        AudioAttributes.USAGE_ALARM,
-                        R.raw.times_up_sound
+//                        AudioAttributes.USAGE_ALARM,
+//                        R.raw.times_up_sound
                     ),
         CHANNEL_MEDIUM to _createChannel(
                         CHANNEL_MEDIUM,
@@ -64,8 +62,8 @@ class RuokNotifier @Inject constructor(
                         "One minute before time runs out",
                         null,
                         true,
-                        AudioAttributes.USAGE_ALARM,
-                        R.raw.times_up_sound   // red_warning_sound
+//                        AudioAttributes.USAGE_ALARM,
+//                        R.raw.times_up_sound   // red_warning_sound
                     ),
         CHANNEL_LOW to _createChannel(
                         CHANNEL_LOW,
@@ -74,8 +72,8 @@ class RuokNotifier @Inject constructor(
                         "Time is running out",
                         null,
                         false,
-                        AudioAttributes.USAGE_NOTIFICATION,
-                        R.raw.yellow_warning_sound
+//                        AudioAttributes.USAGE_NOTIFICATION,
+//                        R.raw.yellow_warning_sound
                     )
     )
 
@@ -87,8 +85,8 @@ class RuokNotifier @Inject constructor(
         channelDescription: String,
         lightColor: Int?,
         bypassDoNotDisturb: Boolean,
-        soundUsage: Int,  // AudioAttributes.USAGE_NOTIFICATION or USAGE_ALARM
-        soundResourceId: Int  // like "R.raw.mysoundfile"
+//        soundUsage: Int,  // AudioAttributes.USAGE_NOTIFICATION or USAGE_ALARM
+//        soundResourceId: Int  // like "R.raw.mysoundfile"
     ) {
         val channel = NotificationChannel(
             channelId,
@@ -102,48 +100,49 @@ class RuokNotifier @Inject constructor(
         }
         channel.setBypassDnd(bypassDoNotDisturb)
 
-        val uri: Uri = with (context.resources) {
-            Uri.Builder()
-                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                .authority(getResourcePackageName(soundResourceId))
-                .appendPath(getResourceTypeName(soundResourceId))
-                .appendPath(getResourceEntryName(soundResourceId))
-                .build()
-        }
-        val audioAttrs = AudioAttributes.Builder()
-            .setUsage(soundUsage)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
-        channel.setSound(uri, audioAttrs)
+//        val uri: Uri = with (context.resources) {
+//            Uri.Builder()
+//                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+//                .authority(getResourcePackageName(soundResourceId))
+//                .appendPath(getResourceTypeName(soundResourceId))
+//                .appendPath(getResourceEntryName(soundResourceId))
+//                .build()
+//        }
+//        val audioAttrs = AudioAttributes.Builder()
+//            .setUsage(soundUsage)
+//            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+//            .build()
+//        channel.setSound(uri, audioAttrs)
 
         notificationMgr.createNotificationChannel(channel)
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun sendNotification(channelId: String, id: Int, title: String, message: String, iconColor: Int) {
+    fun sendNotification(channelId: String, message: String, iconColor: Int) {
         // Ugh, see https://developer.android.com/develop/ui/views/notifications/channels
         // Must set PRIORITY that matches the channel's IMPORTANCE.
-//        val prio = when (channelId) {
-//            CHANNEL_HIGH -> NotificationCompat.PRIORITY_HIGH
-//            CHANNEL_MEDIUM -> NotificationCompat.PRIORITY_HIGH
-//            else -> NotificationCompat.PRIORITY_DEFAULT
-//        }
+        val prio = when (channelId) {
+            CHANNEL_HIGH -> NotificationCompat.PRIORITY_HIGH
+            CHANNEL_MEDIUM -> NotificationCompat.PRIORITY_HIGH
+            else -> NotificationCompat.PRIORITY_DEFAULT
+        }
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setColor(iconColor)
-            .setContentTitle(title)
+            .setContentTitle("Check-in Reminder")
             .setContentText(message)
 //                .setContentIntent
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
 
-        this.nextId += 1
+//        this.nextId += 1
+        cancelAll()   // we only ever have one notification visible at a time
         notificationMgr.notify(this.nextId, builder.build())
     }
 
 
     fun cancelAll() {
         notificationMgr.cancelAll()
-        this.nextId = 0
+//        this.nextId = 0
     }
 }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.ralberth.areyouok.alarms.RuokAlarms
-import org.ralberth.areyouok.notifications.RuokNotifier
+import org.ralberth.areyouok.coordinator.Coordinator
 import org.ralberth.areyouok.ui.theme.ProgressDanger
 import org.ralberth.areyouok.ui.theme.ProgressOK
 import org.ralberth.areyouok.ui.theme.ProgressPaging
@@ -38,8 +38,8 @@ data class MainUiState(
 @RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val alarms: RuokAlarms,
-    private val ruokNotifier: RuokNotifier
+    private val coordinator: Coordinator,
+    private val alarms: RuokAlarms
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
@@ -65,14 +65,13 @@ class MainViewModel @Inject constructor(
         }
 
         if (isEnabled) {
-            timer.start(_uiState.value.delayMins)
-            alarms.setAlarms(_uiState.value.delayMins)
             println("Timer started")
+            timer.start(_uiState.value.delayMins)
+            coordinator.enabled(_uiState.value.delayMins)
         } else {
-            timer.cancel()
-            alarms.cancelAllAlarms()
-            ruokNotifier.cancelAll()
             println("Timer stopped")
+            timer.cancel()
+            coordinator.disabled()
         }
     }
 
@@ -87,6 +86,7 @@ class MainViewModel @Inject constructor(
     fun updateMinsLeft(newMinsLeft: Int) {
         println("New minsLeft from timer: $newMinsLeft")
 
+        // TODO: put this into the progressbar function itself (hide the logic there)
         var newBarColor: Color = ProgressOK
         var newStatusColor: Color = StatusOK
         if (newMinsLeft in 2..3) {
@@ -110,9 +110,7 @@ class MainViewModel @Inject constructor(
     fun checkin() {
         println("Reset timer")
         timer.reset()
-        alarms.cancelAllAlarms()
-        alarms.setAlarms(_uiState.value.delayMins)
-        ruokNotifier.cancelAll()
+        coordinator.checkin()
         _uiState.update {
             it.copy(
                 minsLeft = _uiState.value.delayMins,

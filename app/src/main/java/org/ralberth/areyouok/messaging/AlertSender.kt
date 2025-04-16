@@ -15,7 +15,8 @@ class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
 ) {
     val smsManager: SmsManager = SmsManager.getDefault()
-    val phoneNumber: String = "7039676933"
+//    val phoneNumber: String = "7039676933"
+    val phoneNumber: String = "7032299874"
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
