@@ -13,15 +13,14 @@ import javax.inject.Singleton
 
 
 // val MINUTE: Long = 60000  // 60 seconds, use for production
-val MINUTE: Long = 10000 // 10 seconds, use this only for testing
+val MINUTE: Long = 5000 // 10 seconds, use this only for testing
 
 val EXTRA_KEY_MINS_LEFT: String = "MINUTES_LEFT"
 
 
 @Singleton
 class RuokAlarms @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val channels: RuokNotifier
+    @ApplicationContext private val context: Context
 ) {
     init {
         print("Create RuokAlarms singleton")
