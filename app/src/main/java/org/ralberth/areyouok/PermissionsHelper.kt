@@ -17,7 +17,6 @@ import javax.inject.Singleton
 @Singleton
 class PermissionsHelper @Inject constructor(
     @ApplicationContext private val context: Context,
-//    private val activity: MainActivity // -- not sure I can wire this up here.  If not, use registerComponentActivity() below in MyApplication
 ) {
     private var activity: ComponentActivity? = null
     private val permissionsMap: MutableMap<String, Boolean> = mutableMapOf()
@@ -27,7 +26,7 @@ class PermissionsHelper @Inject constructor(
     }
 
     fun askForPermission(feature: String, permission: String) {
-        val mapKey: String = "$feature|$permission"
+        val mapKey = "$feature|$permission"
         println("ASK for permission $mapKey")
 
         // STEP 1: does the phone have the feature?

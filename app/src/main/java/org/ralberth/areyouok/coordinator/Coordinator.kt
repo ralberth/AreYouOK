@@ -12,6 +12,7 @@ import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_POLITE
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class Coordinator @Inject constructor(
     private val soundEffects: SoundEffects,

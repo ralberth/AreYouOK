@@ -2,6 +2,7 @@ package org.ralberth.areyouok.messaging
 
 import android.content.pm.PackageManager
 import android.telephony.SmsManager
+import org.ralberth.areyouok.Constants.Companion.NOTIFY_PHONE_NUMBER
 import org.ralberth.areyouok.PermissionsHelper
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -15,8 +16,6 @@ class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
 ) {
     val smsManager: SmsManager = SmsManager.getDefault()
-//    val phoneNumber: String = "7039676933"
-    val phoneNumber: String = "7032299874"
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
@@ -30,7 +29,7 @@ class AlertSender @Inject constructor(
             PackageManager.FEATURE_TELEPHONY,
             android.Manifest.permission.SEND_SMS,
             success = {
-                smsManager.sendTextMessage(phoneNumber, null, txtMsg, null, null)
+                smsManager.sendTextMessage(NOTIFY_PHONE_NUMBER, null, txtMsg, null, null)
                 println("Sent via SMS!")
             },
             fallback = { println("Couldn't send sms message, permissions denied: '$txtMsg'") }

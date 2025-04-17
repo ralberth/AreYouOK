@@ -8,12 +8,10 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.ralberth.areyouok.Constants.Companion.MS_PER_MIN
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
-// val MINUTE: Long = 60000  // 60 seconds, use for production
-val MINUTE: Long = 5000 // 10 seconds, use this only for testing
 
 val EXTRA_KEY_MINS_LEFT: String = "MINUTES_LEFT"
 
@@ -71,10 +69,10 @@ class RuokAlarms @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.S)
     fun setAlarms(minsInFuture: Int) {
         val now: Long = System.currentTimeMillis()
-        val time0 = now + (minsInFuture * MINUTE)
-        val time1 = time0 - MINUTE
-        val time2 = time1 - MINUTE
-        val time3 = time2 - MINUTE
+        val time0 = now + (minsInFuture * MS_PER_MIN)
+        val time1 = time0 - MS_PER_MIN
+        val time2 = time1 - MS_PER_MIN
+        val time3 = time2 - MS_PER_MIN
         _setAlarm(time0, 100, 0)
         _setAlarm(time1, 101, 1)
         _setAlarm(time2, 102, 2)
