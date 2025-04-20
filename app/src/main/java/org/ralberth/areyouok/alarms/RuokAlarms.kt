@@ -21,7 +21,7 @@ class RuokAlarms @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     init {
-        print("Create RuokAlarms singleton")
+        println("Create RuokAlarms")
     }
 
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

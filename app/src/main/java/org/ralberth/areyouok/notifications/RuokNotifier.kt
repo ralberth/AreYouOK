@@ -20,9 +20,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-//TODO: new Activity like phone alarmclock, pops-up whole new UI with animated clock.  Add button to check-in and cancel.
-//TODO: Maybe new AppState that is just a POJO.  methods like start() and checkin() handle sounds, alerts, alarms, everything.  This makes the viewmodel simpler.
-//Intent for notifications opens MainActivity
 /*
  * This doesn't use a channel's ability to play sounds when notifications are sent.
  * Android tries to be polite, so it won't play sounds on every notification.
@@ -97,6 +94,7 @@ class RuokNotifier @Inject constructor(
 
     fun _createIntent(): PendingIntent {
         val uiIntent = Intent(context, MainActivity::class.java)//.apply {
+        // FIXME: maybe send in the minutes left here so Activity can update Preferences, start the UI timer, etc.?
 //            data = "hither"
 //        }
         return PendingIntent.getActivity(

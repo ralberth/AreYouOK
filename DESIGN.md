@@ -1,3 +1,83 @@
+# Persisting State
+
+Problem: start app, start timers, force-quit app.  Re-running the app doesn't know there are alarms
+running or that the "Enabled" toggle was turned on.  It doesn't know how long until the alarms
+will trigger, so it can't draw the progress bar correctly.
+
+This app is a bit of a special snowflake: you can't *really* quit it if the Alarms are running.
+No matter what you do, starting the app or switching to it *has* to draw the screen correctly
+from some sort of persisted state.
+
+Ways the app can quit and/or lose state:
+
+1. **Configuration** change (like rotating phone)
+2. **Background** the app (take a phone call, hit circle or square to select another app)
+3. **System**-initiated termination (app is in the background, phone running out of memory)
+4. **User**-initiated termination (swipe-up the app on the list of all running apps screen)
+5. Phone **reboot**
+
+Configuration changes destroy the View/UI, but the Activity and ViewModel stay as-is.  Nothing
+to do, app just redraws normally for free.
+
+Background and foreground the app: a ViewModel handles this for free when the Activity is killed
+and created fresh.  Nothing to do, just happens automatically.
+
+System-initiated termination destroys the Activity and the ViewModel object.  Use the
+[SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle)
+APIs to save and rehydrate your ViewModel when the system terminates an Activity and subsequently
+creates a fresh Activity.
+
+User-initiated termination has no API or way to persist state, since this usually means the user
+wants to completely reset the app and ***not*** return to where it left off.  This app is a
+special snowflake and won't behave like this.  Accidentally killing it will keep the Alarms running
+and the UI will return to where you left off next time you open it.
+
+If the phone reboots, never mind, start over from scratch.
+
+
+## Configuration changes
+
+Nothing to do, ViewModel persists automatically.
+
+
+## Saved ViewModel State
+
+Docs for saving state:
+* https://developer.android.com/topic/libraries/architecture/saving-states
+* https://developer.android.com/develop/ui/compose/state-saving
+* https://developer.android.com/topic/libraries/architecture/viewmodel/viewmodel-savedstate
+
+We could use these so the app will efficiently save it's ViewModel when the system terminates
+the app, but we still have to implement something different in the next section below to handle
+the case when the user terminates the app.  There's no senes *right now* in building a different
+and efficient way to handle only the edge case of the system terminating the app.
+
+So, we're doing nothing with any type of state-saving API around Composables and ViewModels.
+
+
+## Handling User-Termination
+
+There are no hooks, callbacks, or APIs that fire or are guaranteed to execute or fire when the
+user force-terminates the app.  So, we need to use a different design:
+
+1. Anytime the UI or the Alarms do anything, persist the state of the whole system
+2. Anytime an Activity is created, rehydrate the ViewModel from this persistent state
+
+https://developer.android.com/training/data-storage has details on types of persistent storage.
+
+* https://developer.android.com/training/data-storage/shared-preferences
+* https://developer.android.com/develop/ui/views/components/settings/use-saved-values
+
+the SharedPreferences object that is being used, call PreferenceManager.getDefaultSharedPreferences().
+
+
+It might seem simple to just use the Coordinator as the controller for this, since a new
+Controller is created when the app is created, but there's an edge case: if the system is creating
+a new Activity, but it saved the ViewModel automatically, we have a valid ViewModel, but a new
+Controller that thinks it has to load state from disk.  So, the trigger to re-load state from
+disk has to come from the ViewModel when it detects that it's created fresh.
+
+
 # Background Processing
 
 The normal UI "foreground" app (Activity) can play sounds, interact with the user, and send

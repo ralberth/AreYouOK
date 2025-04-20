@@ -1,5 +1,7 @@
 package org.ralberth.areyouok.ui.mainscreen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 
 
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -64,12 +67,12 @@ fun MainScreen(
                 .fillMaxHeight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (uiState.needsAlarmPermission) {
+            if (! viewModel.hasAlarmPermission) {
                 NeedPermissionBanner("alarms (set timers)")  // onFixit = { viewModel.fixMissingAlarmsPermission() })
                 HorizontalDivider()
             }
 
-            if (uiState.needsNotifyPermission) {
+            if (! viewModel.hasNotifyPermission) {
                 NeedPermissionBanner("notifications")
                 HorizontalDivider()
             }

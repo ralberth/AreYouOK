@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.coordinator.Coordinator
+import org.ralberth.areyouok.datamodel.MainScreenState
+import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.ui.theme.ProgressDanger
 import org.ralberth.areyouok.ui.theme.ProgressOK
@@ -23,34 +25,24 @@ import org.ralberth.areyouok.ui.theme.StatusWarning
 import javax.inject.Inject
 
 
-data class MainUiState(
-    // Configuration and big state -- things that don't change while the countdown timer runs
-    var needsAlarmPermission: Boolean = true,
-    var needsNotifyPermission: Boolean = true,
-    val enabled: Boolean = false,                 // True means we're actively counting-down or alerting people
-    val delayMins: Int = 20,                      // Number of minutes to count down after every button press
-    // Tactical stuff that changes while the timer is running
-    val message: String = "Idle",
-    val statusColor: Color = StatusIdle,
-    val minsLeft: Int = 4,                        // Minutes until the app starts alerting and texting people
-    val countdownBarColor: Color = ProgressOK,
-)
-
-
 @RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val coordinator: Coordinator,
     alarms: RuokAlarms,
-    notifier: RuokNotifier
+    notifier: RuokNotifier,
+    private val ruokDatastore: RuokDatastore
 ): ViewModel() {
+    private val _uiState = MutableStateFlow(ruokDatastore.hydrateMainScreenState())
+    val uiState: StateFlow<MainScreenState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    // FIXME: these need new values when the user switches back to this app from another
+    var hasAlarmPermission: Boolean = alarms.canSetAlarms()
+    var hasNotifyPermission: Boolean = notifier.canSendNotifications()
 
     init {
-        _uiState.value.needsAlarmPermission = ! alarms.canSetAlarms()
-        _uiState.value.needsNotifyPermission = ! notifier.canSendNotifications()
+        println("Create new MainViewModel")
+        // FIXME: if we rehydrate a ViewModel from preferences and we're running, the timer below needs to be started
     }
 
     private val timer = DelayCountdownTimer(
@@ -77,6 +69,8 @@ class MainViewModel @Inject constructor(
             timer.cancel()
             coordinator.disabled()
         }
+
+        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
@@ -84,6 +78,7 @@ class MainViewModel @Inject constructor(
         _uiState.update {
             it.copy(delayMins = newDelayMins)
         }
+        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
@@ -109,6 +104,7 @@ class MainViewModel @Inject constructor(
                 statusColor = newStatusColor
             )
         }
+        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
     fun checkin() {
@@ -122,6 +118,7 @@ class MainViewModel @Inject constructor(
                 countdownBarColor = ProgressOK
             )
         }
+        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
@@ -135,5 +132,6 @@ class MainViewModel @Inject constructor(
                 statusColor = ProgressPaging
             )
         }
+        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 }
