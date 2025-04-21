@@ -67,6 +67,8 @@ fun MainScreen(
                 .fillMaxHeight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val appIsUsable = viewModel.hasAlarmPermission && viewModel.hasNotifyPermission
+
             if (! viewModel.hasAlarmPermission) {
                 NeedPermissionBanner("alarms (set timers)")  // onFixit = { viewModel.fixMissingAlarmsPermission() })
                 HorizontalDivider()
@@ -80,18 +82,19 @@ fun MainScreen(
             StatusDisplayText(uiState.message, uiState.statusColor)
             HorizontalDivider()
             EnableDisableToggle(
-                isEnabled = uiState.enabled,
+                appIsUsable = appIsUsable,
+                isEnabled = appIsUsable && uiState.whenEnabled != null,
                 onChange = viewModel::updateEnabled
             )
             HorizontalDivider()
             CountdownSelectSlider(
-                !uiState.enabled,
+                appIsUsable && uiState.whenEnabled == null,
                 uiState.delayMins,
                 viewModel::updateDelayMins
             )
             HorizontalDivider()
             CountdownDisplay(
-                uiState.enabled,
+                appIsUsable && uiState.whenEnabled != null,
                 uiState.minsLeft,
                 uiState.delayMins,
                 uiState.countdownBarColor
@@ -99,7 +102,7 @@ fun MainScreen(
             HorizontalDivider()
             Spacer(Modifier.weight(1f))
             Button(
-                enabled = uiState.enabled,
+                enabled = appIsUsable && uiState.whenEnabled != null,
                 onClick = viewModel::checkin,
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.height(100.dp)
@@ -120,11 +123,10 @@ fun MainScreen(
 
 
 @Composable
-fun NeedPermissionBanner(type: String) {   // onFixit: () -> Unit) {
+fun NeedPermissionBanner(type: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-//            .background(backgroundColor)
             .padding(horizontal = 12.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -132,12 +134,9 @@ fun NeedPermissionBanner(type: String) {   // onFixit: () -> Unit) {
             "Need ${type} permission",
             color = Color.Red
         )
-//        Spacer(Modifier.weight(1f))
-//        OutlinedButton(onClick=onFixit) {
-//            Text("Fix it")
-//        }
     }
 }
+
 
 @Composable
 fun StatusDisplayText(message: String, backgroundColor: Color) {
@@ -158,14 +157,18 @@ fun StatusDisplayText(message: String, backgroundColor: Color) {
 
 
 @Composable
-fun EnableDisableToggle(isEnabled: Boolean, onChange: (Boolean) -> Unit) {
+fun EnableDisableToggle(appIsUsable: Boolean, isEnabled: Boolean, onChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier.padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Enable", fontWeight = FontWeight.Bold)
         Spacer(Modifier.weight(1f))
-        Switch(checked=isEnabled, onCheckedChange=onChange)
+        Switch(
+            enabled = appIsUsable,
+            checked=isEnabled,
+            onCheckedChange=onChange
+        )
     }
 }
 
@@ -198,7 +201,6 @@ fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Uni
 fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor: Color) {
     val percentLeft = if (isEnabled) minsLeft.toFloat() / delayMins.toFloat() else 0F
     val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
-
 
     Row(modifier = Modifier.padding(18.dp)) {
         Column {

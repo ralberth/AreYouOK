@@ -22,6 +22,7 @@ import org.ralberth.areyouok.ui.theme.StatusDanger
 import org.ralberth.areyouok.ui.theme.StatusIdle
 import org.ralberth.areyouok.ui.theme.StatusOK
 import org.ralberth.areyouok.ui.theme.StatusWarning
+import java.time.Clock
 import javax.inject.Inject
 
 
@@ -37,8 +38,8 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<MainScreenState> = _uiState.asStateFlow()
 
     // FIXME: these need new values when the user switches back to this app from another
-    var hasAlarmPermission: Boolean = alarms.canSetAlarms()
-    var hasNotifyPermission: Boolean = notifier.canSendNotifications()
+    var hasAlarmPermission: Boolean = true   // alarms.canSetAlarms()
+    var hasNotifyPermission: Boolean = true   // notifier.canSendNotifications()
 
     init {
         println("Create new MainViewModel")
@@ -53,7 +54,7 @@ class MainViewModel @Inject constructor(
     fun updateEnabled(isEnabled: Boolean) {
         _uiState.update {
             it.copy(
-                enabled = isEnabled,
+                whenEnabled = if (isEnabled) Clock.systemUTC().instant() else null,
                 minsLeft = if (isEnabled) _uiState.value.delayMins else 0,
                 message = if (isEnabled) "Running" else "Idle",
                 statusColor = if (isEnabled) StatusOK else StatusIdle

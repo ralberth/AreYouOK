@@ -10,7 +10,11 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
+/*
+ *
+ * Ideas for other emojis:
+ *      ❓ ( (?)🪧🚑🚨⚕️
+ */
 @Singleton
 class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
@@ -23,7 +27,7 @@ class AlertSender @Inject constructor(
 
         // FIXME: have to get perms before sending messages...might be passed-out at this time
 
-        val txtMsg = "[RUOK?] $msg"
+        val txtMsg: String = "⚕️ $msg"
         println("Sending sms message '$txtMsg' ...")
         permHelper.guard(
             PackageManager.FEATURE_TELEPHONY,
@@ -38,12 +42,12 @@ class AlertSender @Inject constructor(
 
 
     fun enabled(mins: Int) {
-        _send("Alerting turned on.  Check-ins every $mins minutes.")
+        _send("⚪ Alerting turned on.  Check-ins every $mins minutes.")
     }
 
 
     fun disabled() {
-        _send("Alerting turned off.")
+        _send("⚫ Alerting turned off.")
     }
 
 
@@ -51,11 +55,11 @@ class AlertSender @Inject constructor(
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
         val at: String = dtFormat.format(nextCheckin.getTime())
-        _send("Check-in!  Next check-in at $at")
+        _send("👍 Check-in!  Next check-in at $at")
     }
 
 
     fun unresponsive() {
-        _send("!!! MISSED LAST CHECK-IN !!!")
+        _send("🚨 MISSED LAST CHECK-IN 🚨")
     }
 }

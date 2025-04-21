@@ -66,10 +66,9 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 
-    // For asking permission to send SMS
-//    implementation("androidx.activity:1.2.0")
-//    implementation("androidx.fragment:1.3.0")
-//    implementation("androidx.activity:activity-compose:1.10.0")
+    // For Clock and other datetime (Kotlin-specific)
+//    implementation("kotlinx.datetime:0.6.2")
+//    implementation("kotlinx.datetime.format:0.6.2")
 }
 
 

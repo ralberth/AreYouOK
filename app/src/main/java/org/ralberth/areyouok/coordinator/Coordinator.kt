@@ -85,6 +85,7 @@ class Coordinator @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.S)
     fun checkin() {
+        soundEffects.stop()
         soundEffects.toggle()
         alarms.cancelAllAlarms()
         alarms.setAlarms(this.delayMins)

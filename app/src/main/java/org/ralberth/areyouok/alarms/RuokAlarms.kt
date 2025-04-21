@@ -60,9 +60,10 @@ class RuokAlarms @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.S) // in order to call canScheduleExactAlarms()
+    // TODO: can't call this on my phone, canScheduleExactAlarms() is method-not-found exception
+    // @RequiresApi(Build.VERSION_CODES.S) // in order to call canScheduleExactAlarms()
     fun canSetAlarms(): Boolean {
-        return alarmManager.canScheduleExactAlarms()
+        return true   // alarmManager.canScheduleExactAlarms()
     }
 
 
