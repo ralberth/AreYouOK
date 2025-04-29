@@ -12,8 +12,11 @@ android {
 
     defaultConfig {
         applicationId = "org.ralberth.areyouok"
-        minSdk = 24
-        targetSdk = 35
+        minSdk = 29           // This is the version of my Samsung Galaxy S9
+
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk = 29        // TODO: must be higher to list on Google Play
+
         versionCode = 1
         versionName = "1.0"
 

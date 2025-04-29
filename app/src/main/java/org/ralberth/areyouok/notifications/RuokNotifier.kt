@@ -27,7 +27,6 @@ import javax.inject.Singleton
  * playing all sounds.  Also, the final sound when time runs out is played periodically
  * instead of only one time when the notification goes out.
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @Singleton
 class RuokNotifier @Inject constructor(
     @ApplicationContext private val context: Context
@@ -53,7 +52,7 @@ class RuokNotifier @Inject constructor(
     init {
         // Highest prio: always shows notifications, bypass do-not-disturb, use lights
         // Used for T-1 minute and when time runs out
-        _createChannel(
+        createChannel(
             CHANNEL_RUDE,
             NotificationManager.IMPORTANCE_HIGH,
             Color.BLUE,
@@ -62,7 +61,7 @@ class RuokNotifier @Inject constructor(
 
         // Polite: don't pop-up toasts, respect do-not-disturb
         // Used when there is more than 1 minute left
-        _createChannel(
+        createChannel(
             CHANNEL_POLITE,
             NotificationManager.IMPORTANCE_DEFAULT,
             null,
@@ -70,8 +69,7 @@ class RuokNotifier @Inject constructor(
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun _createChannel(
+    private fun createChannel(
         channelId: String,
         importance: Int,
         lightColor: Int?,
@@ -92,7 +90,7 @@ class RuokNotifier @Inject constructor(
     }
 
 
-    fun _createIntent(): PendingIntent {
+    private fun createIntent(): PendingIntent {
         val uiIntent = Intent(context, MainActivity::class.java)//.apply {
         // FIXME: maybe send in the minutes left here so Activity can update Preferences, start the UI timer, etc.?
 //            data = "hither"
@@ -111,7 +109,6 @@ class RuokNotifier @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun sendNotification(channelId: String, message: String, iconColor: Int) {
         // Ugh, see https://developer.android.com/develop/ui/views/notifications/channels
         // Must set PRIORITY that matches the channel's IMPORTANCE.
@@ -125,7 +122,7 @@ class RuokNotifier @Inject constructor(
             .setColor(iconColor)
             .setContentTitle("Check-in Reminder")
             .setContentText(message)
-            .setContentIntent(_createIntent())
+            .setContentIntent(createIntent())
             .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
 
         cancelAll()   // we only ever have one notification visible at a time

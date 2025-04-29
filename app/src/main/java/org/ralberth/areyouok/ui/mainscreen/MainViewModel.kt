@@ -26,7 +26,6 @@ import java.time.Clock
 import javax.inject.Inject
 
 
-@RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val coordinator: Coordinator,

@@ -1,8 +1,6 @@
 package org.ralberth.areyouok.coordinator
 
 import android.graphics.Color
-import android.os.Build
-import androidx.annotation.RequiresApi
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.messaging.AlertSender
@@ -20,10 +18,9 @@ class Coordinator @Inject constructor(
     private val notifier: RuokNotifier,
     private val alertSender: AlertSender
 ) {
-    private var delayMins: Int = 20
+    private var delayMins: Int = 20   // cached here between calls to enabled() and checkin()
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
     fun enabled(delayMins: Int) {
         this.delayMins = delayMins // used elsewhere in this class
         soundEffects.toggle()
@@ -33,7 +30,6 @@ class Coordinator @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun disabled() {
         soundEffects.stop()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
@@ -43,7 +39,6 @@ class Coordinator @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun minutesLeft(minsLeft: Int) {
         when (minsLeft) {
             0 -> {
@@ -83,7 +78,6 @@ class Coordinator @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
     fun checkin() {
         soundEffects.stop()
         soundEffects.toggle()

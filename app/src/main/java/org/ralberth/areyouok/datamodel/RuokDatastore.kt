@@ -35,7 +35,6 @@ class RuokDatastore @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun hydrateMainScreenState(): MainScreenState {
         if (prefs.contains("delayMins"))
             println("Hydrate viewmodel: previous state found in preferences")
@@ -72,11 +71,11 @@ class RuokDatastore @Inject constructor(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 private fun SharedPreferences.getInstant(key: String): Instant? {
     val strVal = this.getString(key, null)
     return if (strVal != null) Instant.parse(strVal) else null
 }
+
 
 private fun SharedPreferences.Editor.putInstant(key: String, inst: Instant?) {
     putString(key, inst?.toString())
@@ -87,6 +86,7 @@ private fun SharedPreferences.getColor(key: String, defaultValue: Color): Color 
     val strVal = this.getString(key, null)
     return if (strVal != null) Color(strVal.toULong()) else defaultValue
 }
+
 
 private fun SharedPreferences.Editor.putColor(key: String, color: Color?) {
     val strVal: String? = if (color != null) color.value.toString() else null

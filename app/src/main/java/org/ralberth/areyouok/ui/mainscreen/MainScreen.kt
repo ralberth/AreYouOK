@@ -39,7 +39,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -131,7 +130,7 @@ fun NeedPermissionBanner(type: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            "Need ${type} permission",
+            "Need $type permission",
             color = Color.Red
         )
     }

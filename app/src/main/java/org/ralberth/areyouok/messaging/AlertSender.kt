@@ -23,11 +23,11 @@ class AlertSender @Inject constructor(
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
-    fun _send(msg: String) {
+    private fun send(msg: String) {
 
         // FIXME: have to get perms before sending messages...might be passed-out at this time
 
-        val txtMsg: String = "⚕️ $msg"
+        val txtMsg = "⚕️ $msg"
         println("Sending sms message '$txtMsg' ...")
         permHelper.guard(
             PackageManager.FEATURE_TELEPHONY,
@@ -42,24 +42,24 @@ class AlertSender @Inject constructor(
 
 
     fun enabled(mins: Int) {
-        _send("⚪ Alerting turned on.  Check-ins every $mins minutes.")
+        send("⚪ Alerting turned on.  Check-ins every $mins minutes.")
     }
 
 
     fun disabled() {
-        _send("⚫ Alerting turned off.")
+        send("⚫ Alerting turned off.")
     }
 
 
     fun checkin(mins: Int) {
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
-        val at: String = dtFormat.format(nextCheckin.getTime())
-        _send("👍 Check-in!  Next check-in at $at")
+        val at: String = dtFormat.format(nextCheckin.time)
+        send("👍 Check-in!  Next check-in at $at")
     }
 
 
     fun unresponsive() {
-        _send("🚨 MISSED LAST CHECK-IN 🚨")
+        send("🚨 MISSED LAST CHECK-IN 🚨")
     }
 }
