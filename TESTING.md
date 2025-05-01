@@ -77,7 +77,7 @@ running at all.  Wait 5 minutes and confirm all alarms trigger notifications and
 
 Enable and press the power side button to lock the device and turn off the display.  Do not interact
 with the phone.  Wait 5 minutes to confirm all alarms trigger *sounds*.  Wake-up the phone, login,
-and confirm at lest the last Notification message is active.
+and confirm at lest the last Notification message is active and all TXT messages were sent.
 
 
 ## Notifications
@@ -112,8 +112,8 @@ the lock screen (and sound plays).
 
 ### Notification Actions
 
-Enable and wait for a notification.  Try to swipe the notification right and left.  Confirm it can't
-be dismissed.
+Enable and wait for a notification.  Try to swipe the notification right and left.  Confirm it
+disappears and nothing bad happens.
 
 Enable and wait for a notification with the app visible normally.  Tap the notification to bring up
 the app and confirm it shows enabled with the right Countdown Delay, the progress bar set correctly,
