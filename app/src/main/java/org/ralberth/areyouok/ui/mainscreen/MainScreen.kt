@@ -1,7 +1,5 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -69,7 +67,7 @@ fun MainScreen(
             val appIsUsable = viewModel.hasAlarmPermission && viewModel.hasNotifyPermission
 
             if (! viewModel.hasAlarmPermission) {
-                NeedPermissionBanner("alarms (set timers)")  // onFixit = { viewModel.fixMissingAlarmsPermission() })
+                NeedPermissionBanner("alarms (set timers)")
                 HorizontalDivider()
             }
 
@@ -78,30 +76,35 @@ fun MainScreen(
                 HorizontalDivider()
             }
 
-            StatusDisplayText(uiState.message, uiState.statusColor)
+            StatusDisplayText(uiState.minsLeft)
             HorizontalDivider()
+
             EnableDisableToggle(
                 appIsUsable = appIsUsable,
-                isEnabled = appIsUsable && uiState.whenEnabled != null,
+                isEnabled = appIsUsable && uiState.countdownStart != null,
                 onChange = viewModel::updateEnabled
             )
             HorizontalDivider()
+
             CountdownSelectSlider(
-                appIsUsable && uiState.whenEnabled == null,
-                uiState.delayMins,
-                viewModel::updateDelayMins
+                appIsUsable && uiState.countdownStart == null,
+                uiState.countdownLength,
+                viewModel::updateCountdownLength
             )
             HorizontalDivider()
+
             CountdownDisplay(
-                appIsUsable && uiState.whenEnabled != null,
-                uiState.minsLeft,
-                uiState.delayMins,
-                uiState.countdownBarColor
+                uiState.countdownStart,
+                uiState.countdownStop,
+                uiState.countdownLength,
+                uiState.minsLeft
             )
             HorizontalDivider()
+
             Spacer(Modifier.weight(1f))
+
             Button(
-                enabled = appIsUsable && uiState.whenEnabled != null,
+                enabled = appIsUsable && uiState.countdownStart != null,
                 onClick = viewModel::checkin,
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.height(100.dp)
@@ -115,6 +118,7 @@ fun MainScreen(
                     fontSize = 24.sp
                 )
             }
+
             Spacer(Modifier.weight(1f))
         }
     }
@@ -132,24 +136,6 @@ fun NeedPermissionBanner(type: String) {
         Text(
             "Need $type permission",
             color = Color.Red
-        )
-    }
-}
-
-
-@Composable
-fun StatusDisplayText(message: String, backgroundColor: Color) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .padding(horizontal = 12.dp, vertical = 18.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            message,
-            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -190,25 +176,6 @@ fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Uni
                 valueRange = 5f..60f
             )
             Text("$minutes minutes")
-        }
-    }
-}
-
-
-
-@Composable
-fun CountdownDisplay(isEnabled: Boolean, minsLeft: Int, delayMins: Int, barColor: Color) {
-    val percentLeft = if (isEnabled) minsLeft.toFloat() / delayMins.toFloat() else 0F
-    val message     = if (isEnabled) "$minsLeft Minutes Until Next Check-In"  else ""
-
-    Row(modifier = Modifier.padding(18.dp)) {
-        Column {
-            Text(message, fontWeight = FontWeight.Bold)
-            LinearProgressIndicator(
-                progress = { percentLeft },
-                color = barColor,
-                modifier = Modifier.fillMaxWidth().height(20.dp)
-            )
         }
     }
 }

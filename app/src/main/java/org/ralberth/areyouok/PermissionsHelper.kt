@@ -19,7 +19,6 @@ class PermissionsHelper @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private var activity: ComponentActivity? = null
-    private val permissionsMap: MutableMap<String, Boolean> = mutableMapOf()
 
     fun registerComponentActivity(mainActivity: ComponentActivity) {
         this.activity = mainActivity
@@ -32,7 +31,6 @@ class PermissionsHelper @Inject constructor(
         // STEP 1: does the phone have the feature?
         if (! context.packageManager.hasSystemFeature(feature)) {
             println("Device doesn't have $feature")
-            permissionsMap.put(mapKey, false)
             return
         }
 
@@ -40,7 +38,6 @@ class PermissionsHelper @Inject constructor(
         val hasPerm: Int = ContextCompat.checkSelfPermission(context, permission)
         if (hasPerm == PERMISSION_GRANTED) {
             println("Already have permission $permission")
-            permissionsMap.put(mapKey, true)
             return
         }
 
@@ -50,7 +47,6 @@ class PermissionsHelper @Inject constructor(
                 ActivityResultContracts.RequestPermission()
             ) {
                 isGranted: Boolean ->
-                    permissionsMap.put(mapKey, isGranted)
                     println("ASKED for perm $mapKey, result $isGranted")
             }
         launcher.launch(permission)   // This runs the callback to launcher above
@@ -58,14 +54,12 @@ class PermissionsHelper @Inject constructor(
 
 
     fun guard(
-        feature: String,       // like PackageManager.FEATURE_TELEPHONY
         permission: String,    // like android.Manifest.permission.SEND_SMS
         success: () -> Unit,   // call this if you have/get permission
         fallback: () -> Unit   // call this if you don't
     ) {
-        val mapKey = "$feature|$permission"
-        val hasPerms: Boolean? = permissionsMap[mapKey]
-        if (hasPerms != null && hasPerms)
+        val hasPerm: Int = ContextCompat.checkSelfPermission(context, permission)
+        if (hasPerm == PERMISSION_GRANTED)
             success()
         else
             fallback()

@@ -11,13 +11,13 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 // Colors for status text background at top
-val StatusIdle      = Color.LightGray
-val StatusOK        = Color.Green
-val StatusWarning   = Color.Yellow
-val StatusDanger    = Color.Red
+val StatusTextIdle      = Color.LightGray
+val StatusTextRunning   = Color.Green
+val StatusTextWarning   = Color.Yellow
+val StatusTextDanger    = Color.Red
+val StatusTextPaging    = Color(0xFFCE93D8)
 
 // Colors for progress bar from normal to warning to immediate
-val ProgressOK      = PurpleGrey80
-val ProgressWarning = Color.Yellow
-val ProgressDanger  = Color.Red
-val ProgressPaging  = Color(0xFFCE93D8)
+val ProgressBarOK      = PurpleGrey80
+val ProgressBarWarning = Color.Yellow
+val ProgressBarDanger  = Color.Red

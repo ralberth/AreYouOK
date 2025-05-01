@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-const val REQUEST_CODE = 101
+const val BASE_REQUEST_CODE = 100
 const val EXTRA_KEY_MINS_LEFT = "MINUTES_LEFT"
 
 
@@ -35,7 +35,7 @@ class RuokAlarms @Inject constructor(
 
         val pi = PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE,
+            BASE_REQUEST_CODE + minsLeft,   // each alarm needs a unique requestCode
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -58,7 +58,7 @@ class RuokAlarms @Inject constructor(
     }
 
 
-    private fun canSetAlarms(): Boolean {
+    fun canSetAlarms(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             alarmManager.canScheduleExactAlarms()
         else

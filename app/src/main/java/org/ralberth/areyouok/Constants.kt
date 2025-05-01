@@ -14,6 +14,6 @@ class Constants {
          * makes testing and development quicker.
          */
 //        val MS_PER_MIN: Long = 60 * 1000
-        val MS_PER_MIN: Long = 10 * 1000   // Pretend every 10 seconds is a minute
+        val MS_PER_MIN: Long = 5 * 1000   // Pretend every 10 seconds is a minute
     }
 }

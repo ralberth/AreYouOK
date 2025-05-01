@@ -1,12 +1,8 @@
 package org.ralberth.areyouok.alarms
 
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.coordinator.Coordinator
@@ -42,10 +38,18 @@ class RuokAlarmReceiver: AppWidgetProvider() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
-//        val scheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-//        scheduler.schedule(job)
-
-        val minsLeft = intent?.getIntExtra(EXTRA_KEY_MINS_LEFT, 9) ?: return
-        coordinator.minutesLeft(minsLeft)
+        if (intent != null) {
+            val minsLeft = intent.getIntExtra(EXTRA_KEY_MINS_LEFT, -1)
+            if (minsLeft >= 0) {
+                println("Received broadcast message: $minsLeft minutes left")
+                coordinator.minutesLeft(minsLeft)
+            } else {
+                println("Received broadcast message: attribute \"$EXTRA_KEY_MINS_LEFT\" was missing")
+                throw IllegalArgumentException("missing attr on broadcast message")
+            }
+        } else {
+            println("Received broadcast message: no intent found!")
+            throw IllegalArgumentException("no intent on broadcast message")
+        }
     }
 }

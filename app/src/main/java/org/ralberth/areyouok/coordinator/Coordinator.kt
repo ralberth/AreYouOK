@@ -7,6 +7,7 @@ import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_RUDE
 import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_POLITE
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +23,7 @@ class Coordinator @Inject constructor(
 
 
     fun enabled(delayMins: Int) {
+        println("Coordinator.enabled($delayMins): set alarms, send TXT message")
         this.delayMins = delayMins // used elsewhere in this class
         soundEffects.toggle()
         alarms.setAlarms(delayMins)
@@ -31,6 +33,7 @@ class Coordinator @Inject constructor(
 
 
     fun disabled() {
+        println("Coordinator.disabled(): turn everything off, send TXT message")
         soundEffects.stop()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
         alarms.cancelAllAlarms()
@@ -39,9 +42,11 @@ class Coordinator @Inject constructor(
     }
 
 
+    @Throws(IllegalArgumentException::class)
     fun minutesLeft(minsLeft: Int) {
         when (minsLeft) {
             0 -> {
+                println("Coordinator.minutesLeft($minsLeft): send TXT message, sound alarm")
                 soundEffects.timesUp()
                 notifier.sendNotification(
                     CHANNEL_RUDE,
@@ -51,6 +56,7 @@ class Coordinator @Inject constructor(
                 alertSender.unresponsive()
             }
             1 -> {
+                println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
                 soundEffects.redWarning()
                 notifier.sendNotification(
                     CHANNEL_RUDE,
@@ -59,6 +65,7 @@ class Coordinator @Inject constructor(
                 )
             }
             2 -> {
+                println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
                     CHANNEL_POLITE,
@@ -67,6 +74,7 @@ class Coordinator @Inject constructor(
                 )
             }
             3 -> {
+                println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
                     CHANNEL_POLITE,
@@ -74,11 +82,15 @@ class Coordinator @Inject constructor(
                     Color.argb(200, 255, 255, 0)
                 )
             }
+            else -> {
+                throw IllegalArgumentException("Coordinator.minsLeft($minsLeft) called with bad value")
+            }
         }
     }
 
 
     fun checkin() {
+        println("Coordinator.checkin(): reschedule all alarms, cancel notifications, send TXT message")
         soundEffects.stop()
         soundEffects.toggle()
         alarms.cancelAllAlarms()

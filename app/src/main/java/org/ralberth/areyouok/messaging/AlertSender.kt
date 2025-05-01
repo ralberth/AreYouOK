@@ -10,11 +10,8 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/*
- *
- * Ideas for other emojis:
- *      ❓ ( (?)🪧🚑🚨⚕️
- */
+// Ideas for other emojis: ❓ ( (?)🪧🚑🚨⚕️
+
 @Singleton
 class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
@@ -24,34 +21,33 @@ class AlertSender @Inject constructor(
 
 
     private fun send(msg: String) {
-
-        // FIXME: have to get perms before sending messages...might be passed-out at this time
-
         val txtMsg = "⚕️ $msg"
-        println("Sending sms message '$txtMsg' ...")
+        print("Sending sms message '$txtMsg' ...")
         permHelper.guard(
-            PackageManager.FEATURE_TELEPHONY,
             android.Manifest.permission.SEND_SMS,
             success = {
                 smsManager.sendTextMessage(NOTIFY_PHONE_NUMBER, null, txtMsg, null, null)
-                println("Sent via SMS!")
+                println("done")
             },
-            fallback = { println("Couldn't send sms message, permissions denied: '$txtMsg'") }
+            fallback = { println("permission denied") }
         )
     }
 
 
     fun enabled(mins: Int) {
+        println("AlertSender.enabled($mins): send \"Alerting turned on\"")
         send("⚪ Alerting turned on.  Check-ins every $mins minutes.")
     }
 
 
     fun disabled() {
+        println("AlertSender.disbaled(): send \"Alerting turned off\"")
         send("⚫ Alerting turned off.")
     }
 
 
     fun checkin(mins: Int) {
+        println("AlertSender.checkin($mins): send \"Check-in!\"")
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
         val at: String = dtFormat.format(nextCheckin.time)
@@ -60,6 +56,7 @@ class AlertSender @Inject constructor(
 
 
     fun unresponsive() {
+        println("AlertSender.unresponsive(): send \"MISSED LAST CHECK-IN\"")
         send("🚨 MISSED LAST CHECK-IN 🚨")
     }
 }

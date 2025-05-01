@@ -1,8 +1,5 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,15 +11,8 @@ import org.ralberth.areyouok.coordinator.Coordinator
 import org.ralberth.areyouok.datamodel.MainScreenState
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.notifications.RuokNotifier
-import org.ralberth.areyouok.ui.theme.ProgressDanger
-import org.ralberth.areyouok.ui.theme.ProgressOK
-import org.ralberth.areyouok.ui.theme.ProgressPaging
-import org.ralberth.areyouok.ui.theme.ProgressWarning
-import org.ralberth.areyouok.ui.theme.StatusDanger
-import org.ralberth.areyouok.ui.theme.StatusIdle
-import org.ralberth.areyouok.ui.theme.StatusOK
-import org.ralberth.areyouok.ui.theme.StatusWarning
 import java.time.Clock
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 
@@ -37,8 +27,8 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<MainScreenState> = _uiState.asStateFlow()
 
     // FIXME: these need new values when the user switches back to this app from another
-    var hasAlarmPermission: Boolean = true   // alarms.canSetAlarms()
-    var hasNotifyPermission: Boolean = true   // notifier.canSendNotifications()
+    var hasAlarmPermission: Boolean = alarms.canSetAlarms()
+    var hasNotifyPermission: Boolean = notifier.canSendNotifications()
 
     init {
         println("Create new MainViewModel")
@@ -51,71 +41,62 @@ class MainViewModel @Inject constructor(
     )
 
     fun updateEnabled(isEnabled: Boolean) {
-        _uiState.update {
-            it.copy(
-                whenEnabled = if (isEnabled) Clock.systemUTC().instant() else null,
-                minsLeft = if (isEnabled) _uiState.value.delayMins else 0,
-                message = if (isEnabled) "Running" else "Idle",
-                statusColor = if (isEnabled) StatusOK else StatusIdle
-            )
-        }
-
         if (isEnabled) {
-            println("Timer started")
-            timer.start(_uiState.value.delayMins)
-            coordinator.enabled(_uiState.value.delayMins)
+            println("ViewModel: UI countdown started")
+            timer.start(_uiState.value.countdownLength)
+            coordinator.enabled(_uiState.value.countdownLength)
+            val now = Clock.systemUTC().instant()
+            _uiState.update {
+                it.copy(
+                    countdownStart = now,
+                    countdownStop = now.plus(_uiState.value.countdownLength.toLong(), ChronoUnit.MINUTES),
+                    minsLeft = _uiState.value.countdownLength
+                )
+            }
         } else {
-            println("Timer stopped")
+            println("ViewModel: UI timer stopped")
             timer.cancel()
             coordinator.disabled()
+            _uiState.update {
+                it.copy(
+                    countdownStart = null,
+                    countdownStop = null,
+                    minsLeft = null
+                )
+            }
         }
-
         ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
-    fun updateDelayMins(newDelayMins: Int) {
+    fun updateCountdownLength(newCountdownLength: Int) {
         _uiState.update {
-            it.copy(delayMins = newDelayMins)
+            it.copy(countdownLength = newCountdownLength)
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
     fun updateMinsLeft(newMinsLeft: Int) {
-        println("New minsLeft from timer: $newMinsLeft")
-
-        // TODO: put this into the progressbar function itself (hide the logic there)
-        var newBarColor: Color = ProgressOK
-        var newStatusColor: Color = StatusOK
-        if (newMinsLeft in 2..3) {
-            newBarColor = ProgressWarning
-            newStatusColor = StatusWarning
-        }
-        if (newMinsLeft == 1) {
-            newBarColor = ProgressDanger
-            newStatusColor = StatusDanger
-        }
-
+        println("ViewModel.updateMinsLeft($newMinsLeft)")
         _uiState.update {
             it.copy(
-                minsLeft = newMinsLeft,
-                countdownBarColor = newBarColor,
-                statusColor = newStatusColor
+                minsLeft = newMinsLeft
             )
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
     fun checkin() {
-        println("Reset timer")
+        println("ViewModel.checkin()")
         timer.reset()
         coordinator.checkin()
+        val now = Clock.systemUTC().instant()
         _uiState.update {
             it.copy(
-                minsLeft = _uiState.value.delayMins,
-                message = "Running",
-                countdownBarColor = ProgressOK
+                countdownStart = now,
+                countdownStop = now.plus(_uiState.value.countdownLength.toLong(), ChronoUnit.MINUTES),
+                minsLeft = _uiState.value.countdownLength
             )
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
@@ -123,13 +104,11 @@ class MainViewModel @Inject constructor(
 
 
     fun timeRanOut() {
-        println("Time ran out: cancel timer, notify contacts")
+        println("ViewModel.timeRanOut(): cancel UI timer")
         timer.cancel()
         _uiState.update {
             it.copy(
-                minsLeft = 0,
-                message = "Notifying Contacts",
-                statusColor = ProgressPaging
+                minsLeft = 0
             )
         }
         ruokDatastore.saveMainScreenState(_uiState.value)

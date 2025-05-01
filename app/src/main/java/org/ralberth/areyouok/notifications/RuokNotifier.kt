@@ -10,8 +10,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.MainActivity
@@ -91,10 +89,7 @@ class RuokNotifier @Inject constructor(
 
 
     private fun createIntent(): PendingIntent {
-        val uiIntent = Intent(context, MainActivity::class.java)//.apply {
-        // FIXME: maybe send in the minutes left here so Activity can update Preferences, start the UI timer, etc.?
-//            data = "hither"
-//        }
+        val uiIntent = Intent(context, MainActivity::class.java)
         return PendingIntent.getActivity(
             context,
             123,
@@ -125,12 +120,14 @@ class RuokNotifier @Inject constructor(
             .setContentIntent(createIntent())
             .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
 
+        println("RuokNotifier.sendNotification(\"$channelId\", \"$message\")")
         cancelAll()   // we only ever have one notification visible at a time
         notificationMgr.notify(123, builder.build())
     }
 
 
     fun cancelAll() {
+        println("RuokNotifier.cancelAll()")
         notificationMgr.cancelAll()
     }
 }

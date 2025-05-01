@@ -154,8 +154,6 @@ really do anything with it (as-is).  From the docs:
 > To keep the process alive, schedule a JobService from the receiver using the JobScheduler so the
 > system knows the process is still working.
 
-This is why the `RuokAlarmReceiver` wraps calls to the `Coordinator` in `JobService` objects.
-
 
 # Old Stuff
 

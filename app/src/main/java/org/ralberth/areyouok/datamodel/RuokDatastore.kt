@@ -2,13 +2,8 @@ package org.ralberth.areyouok.datamodel
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.preference.PreferenceManager
-import androidx.annotation.RequiresApi
-import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.ui.theme.ProgressOK
-import org.ralberth.areyouok.ui.theme.StatusIdle
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,12 +19,10 @@ class RuokDatastore @Inject constructor(
 
     private fun dump(s: MainScreenState): String {
         val ary = arrayOf(
-            "whenEnabled=${s.whenEnabled?.toString()}",
-            "delayMins=${s.delayMins}",
-            "message=${s.message}",
-            "statusColor=${s.statusColor}",
-            "minsLeft=${s.minsLeft}",
-            "countdownBarColor=${s.countdownBarColor}"
+            "countdownStart=${s.countdownStart?.toString()}",
+            "countdownStop=${s.countdownStop?.toString()}",
+            "countdownLength=${s.countdownLength}",
+            "minsLeft=${s.minsLeft}"
         )
         return ary.joinToString(", ")
     }
@@ -41,14 +34,15 @@ class RuokDatastore @Inject constructor(
         else
             println("Hydrate viewmodel: brand new! No previous preferences!")
 
+        // FIXME: not sure why we can't just prefs.getInt("minsLeft", null) below...
+        var minsLeft: Int? = prefs.getInt("minsLeft", -1)
+        if (minsLeft == -1) minsLeft = null
 
         val ret = MainScreenState(
-            whenEnabled = prefs.getInstant("whenEnabled"),
-            delayMins = prefs.getInt("delayMins", 20),
-            message = prefs.getString("message", "Idle") ?: "Idle",
-            statusColor = prefs.getColor("statusColor", StatusIdle),
-            minsLeft = prefs.getInt("minsLeft", 4),
-            countdownBarColor = prefs.getColor("countdownBarColor", ProgressOK)
+            countdownStart = prefs.getInstant("countdownStart"),
+            countdownStop = prefs.getInstant("countdownStop"),
+            countdownLength = prefs.getInt("countdownLength", 30),
+            minsLeft = minsLeft
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -59,12 +53,10 @@ class RuokDatastore @Inject constructor(
         println("Save state ${dump(state)}")
 
         with (prefs.edit()) {
-            putInstant("whenEnabled", state.whenEnabled)
-            putInt("delayMins", state.delayMins)
-            putString("message", state.message)
-            putColor("statusColor", state.statusColor)
-            putInt("minsLeft", state.minsLeft)
-            putColor("countdownBarColor", state.countdownBarColor)
+            putInstant("countdownStart", state.countdownStart)
+            putInstant("countdownStop", state.countdownStop)
+            putInt("countdownLength", state.countdownLength)
+            putInt("minsLeft", if (state.minsLeft != null) state.minsLeft else -1)
             apply()
         }
     }
@@ -82,13 +74,13 @@ private fun SharedPreferences.Editor.putInstant(key: String, inst: Instant?) {
 }
 
 
-private fun SharedPreferences.getColor(key: String, defaultValue: Color): Color {
-    val strVal = this.getString(key, null)
-    return if (strVal != null) Color(strVal.toULong()) else defaultValue
-}
-
-
-private fun SharedPreferences.Editor.putColor(key: String, color: Color?) {
-    val strVal: String? = if (color != null) color.value.toString() else null
-    putString(key, strVal)
-}
+//private fun SharedPreferences.getColor(key: String, defaultValue: Color): Color {
+//    val strVal = this.getString(key, null)
+//    return if (strVal != null) Color(strVal.toULong()) else defaultValue
+//}
+//
+//
+//private fun SharedPreferences.Editor.putColor(key: String, color: Color?) {
+//    val strVal: String? = color?.value?.toString()
+//    putString(key, strVal)
+//}
