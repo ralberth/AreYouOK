@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -58,7 +59,18 @@ fun CountdownDisplay(start: Instant?, end: Instant?, length: Int, remaining: Int
                     color = barColor,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(20.dp)
+                        .height(10.dp)
+                )
+            } else {
+                // Create something with the smae height as above, but doesn't render anything
+                Row {
+                    Text(" ", fontWeight = FontWeight.Bold)
+                }
+                LinearProgressIndicator(
+                    progress = { 0f },
+                    modifier = Modifier.fillMaxWidth().height(10.dp),
+                    color = MaterialTheme.colorScheme.background,
+                    trackColor = MaterialTheme.colorScheme.background
                 )
             }
         }

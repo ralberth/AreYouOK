@@ -73,7 +73,7 @@ Enable and choose another application so RUOK? isn't visible on the screen (but 
 Wait 5 minutes and confirm all alarms trigger actions.
 
 Enable and quit the application.  Bring up the running app screen and quit RUOK? so it isn't
-running at all.  Wait 5 minutes and confirm all alarms trigger notifications.
+running at all.  Wait 5 minutes and confirm all alarms trigger notifications and send TXT msgs.
 
 Enable and press the power side button to lock the device and turn off the display.  Do not interact
 with the phone.  Wait 5 minutes to confirm all alarms trigger *sounds*.  Wake-up the phone, login,
