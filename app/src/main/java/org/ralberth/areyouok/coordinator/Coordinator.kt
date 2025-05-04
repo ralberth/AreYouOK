@@ -92,7 +92,7 @@ class Coordinator @Inject constructor(
     fun checkin() {
         println("Coordinator.checkin(): reschedule all alarms, cancel notifications, send TXT message")
         soundEffects.stop()
-        soundEffects.toggle()
+        soundEffects.checkIn()
         alarms.cancelAllAlarms()
         alarms.setAlarms(this.delayMins)
         notifier.cancelAll()

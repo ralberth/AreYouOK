@@ -15,6 +15,7 @@ class SoundEffects @Inject constructor(application: Application) {
      * alert in the AlarmReceiver.  Also, don't need any UI controls for these.
      */
     private val toggle:        MediaPlayer = MediaPlayer.create(application, R.raw.toggle_sound)
+    private val checkIn:       MediaPlayer = MediaPlayer.create(application, R.raw.checkin_sound)
     private val yellowWarning: MediaPlayer = MediaPlayer.create(application, R.raw.yellow_warning_sound)
     private val redWarning:    MediaPlayer = MediaPlayer.create(application, R.raw.red_warning_sound)
     private val timesUp:       MediaPlayer = MediaPlayer.create(application, R.raw.times_up_sound)
@@ -25,6 +26,7 @@ class SoundEffects @Inject constructor(application: Application) {
     }
 
     fun toggle()        {  this.toggle.start()         }
+    fun checkIn()       {  this.checkIn.start()        }
     fun yellowWarning() {  this.yellowWarning.start()  }
     fun redWarning()    {  this.redWarning.start()     }
     fun timesUp()       {  this.timesUp.start()        }
