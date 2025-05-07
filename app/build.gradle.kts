@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
+    testImplementation(libs.junitparams)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -72,6 +73,7 @@ dependencies {
     // For Clock and other datetime (Kotlin-specific)
 //    implementation("kotlinx.datetime:0.6.2")
 //    implementation("kotlinx.datetime.format:0.6.2")
+    testImplementation(kotlin("test"))
 }
 
 

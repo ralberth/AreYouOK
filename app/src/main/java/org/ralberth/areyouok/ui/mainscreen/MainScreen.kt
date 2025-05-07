@@ -93,12 +93,8 @@ fun MainScreen(
             )
             HorizontalDivider()
 
-            CountdownDisplay(
-                uiState.countdownStart,
-                uiState.countdownStop,
-                uiState.countdownLength,
-                uiState.minsLeft
-            )
+            CountdownDisplay(uiState.countdownStart, uiState.countdownStop)
+
             HorizontalDivider()
 
             Spacer(Modifier.weight(1f))

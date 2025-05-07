@@ -23,6 +23,13 @@ class MainViewModel @Inject constructor(
     notifier: RuokNotifier,
     private val ruokDatastore: RuokDatastore
 ): ViewModel() {
+    // Initializers, attributes, and "init {}" blocks fire in the order they appear below
+    // Order matters for the timer, etc.
+
+    init {
+        println("Create new MainViewModel")
+    }
+
     private val _uiState = MutableStateFlow(ruokDatastore.hydrateMainScreenState())
     val uiState: StateFlow<MainScreenState> = _uiState.asStateFlow()
 
@@ -30,21 +37,21 @@ class MainViewModel @Inject constructor(
     var hasAlarmPermission: Boolean = alarms.canSetAlarms()
     var hasNotifyPermission: Boolean = notifier.canSendNotifications()
 
-    init {
-        println("Create new MainViewModel")
-        // FIXME: if we rehydrate a ViewModel from preferences and we're running, the timer below needs to be started
-    }
-
     private val timer = DelayCountdownTimer(
         { updateMinsLeft(it) },
         { timeRanOut() }
     )
 
+    init {
+        // If this view model was rehydrated by android while the timers were running, then
+        // we need to turn the timer back on.
+//        if (uiState.value.countdownStop != null)
+//            timer.start(uiState.value.countdownStop)
+    }
+
     fun updateEnabled(isEnabled: Boolean) {
         if (isEnabled) {
             println("ViewModel: UI countdown started")
-            timer.start(_uiState.value.countdownLength)
-            coordinator.enabled(_uiState.value.countdownLength)
             val now = Clock.systemUTC().instant()
             _uiState.update {
                 it.copy(
@@ -53,6 +60,8 @@ class MainViewModel @Inject constructor(
                     minsLeft = _uiState.value.countdownLength
                 )
             }
+//            timer.start(_uiState.value.countdownStop)
+            coordinator.enabled(_uiState.value.countdownLength)
         } else {
             println("ViewModel: UI timer stopped")
             timer.cancel()

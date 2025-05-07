@@ -2,6 +2,7 @@ package org.ralberth.areyouok.ui.mainscreen;
 
 import android.os.CountDownTimer
 import org.ralberth.areyouok.Constants.Companion.MS_PER_MIN
+import java.time.Instant
 import kotlin.math.roundToInt
 
 
@@ -51,26 +52,33 @@ class DelayCountdownTimer(
     var timer: MinuteTickTimer? = null
     var lastMins: Int = 0
 
+    fun onTick(millisUntilFinished: Long) {
 
-    fun start(mins: Int) {
-        lastMins = mins
-        timer = MinuteTickTimer(
-            mins,
-            onMinuteElapsed,
-            onComplete
-        )
-        timer!!.start()
+    }
+
+    fun onFinish() {
+
+    }
+
+    fun start(stopTime: Instant) {
+//        lastMins = mins
+//        timer = CountdownTimer(
+//            stopTime.epochSecond,
+//            DelayCountdownTimer::onTick,
+//            DelayCountdownTimer::onFinish
+//        )
+//        timer!!.start()
     }
 
 
     fun reset() {
         this.cancel()
-        this.start(this.lastMins)
+//        this.start(this.lastMins)
     }
 
 
     fun cancel() {
         timer?.cancel()
-        timer = null
+//        timer = null
     }
 }
