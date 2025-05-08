@@ -44,11 +44,10 @@ fun MainScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 title = {
-                    Text("R U OK ?")
+                    RuokMasthead()
                 }
             )
         }
@@ -73,14 +72,14 @@ fun MainScreen(
                 HorizontalDivider()
             }
 
-            StatusDisplayText(uiState.countdownStop)
-            HorizontalDivider()
-
             EnableDisableToggle(
                 appIsUsable = appIsUsable,
                 isEnabled = appIsUsable && uiState.countdownStart != null,
                 onChange = viewModel::updateEnabled
             )
+            HorizontalDivider()
+
+            StatusDisplayText(uiState.countdownStop)
             HorizontalDivider()
 
             CountdownSelectSlider(
@@ -91,8 +90,6 @@ fun MainScreen(
             HorizontalDivider()
 
             CountdownDisplay(uiState.countdownStart, uiState.countdownStop)
-
-            HorizontalDivider()
 
             Spacer(Modifier.weight(1f))
 

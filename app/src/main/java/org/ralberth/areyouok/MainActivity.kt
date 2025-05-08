@@ -51,4 +51,3 @@ fun MainApp() {
         .wrapContentSize(Alignment.Center)
     )
 }
-

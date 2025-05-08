@@ -25,7 +25,7 @@ import org.ralberth.areyouok.minutesBeforeEnd
 fun StatusDisplayText(endTime: Instant?) {
     val minsLeft = minutesBeforeEnd(endTime)
     val message: String = when(minsLeft) {
-        null -> "Idle"
+        null -> ""
         3    -> "Running out of time"
         2    -> "Running out of time!"
         1    -> "ONE MINUTE LEFT"
@@ -33,7 +33,7 @@ fun StatusDisplayText(endTime: Instant?) {
         else -> "Running"
     }
 
-    val backgroundColor: Color = when(minsLeft) {
+    val textColor: Color = when(minsLeft) {
         null -> StatusTextIdle
         3    -> StatusTextWarning
         2    -> StatusTextWarning
@@ -45,14 +45,14 @@ fun StatusDisplayText(endTime: Instant?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(backgroundColor)
             .padding(horizontal = 12.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             message,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = textColor
         )
     }
 }
