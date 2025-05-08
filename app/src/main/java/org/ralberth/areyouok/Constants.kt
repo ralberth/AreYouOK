@@ -5,8 +5,8 @@ class Constants {
         /*
          * Who to send text messages to
          */
-         const val NOTIFY_PHONE_NUMBER: String = "7039676933"
-//        const val NOTIFY_PHONE_NUMBER: String = "7032299874"
+//         const val NOTIFY_PHONE_NUMBER: String = "7039676933"
+        const val NOTIFY_PHONE_NUMBER: String = "7032299874"
 
         /*
          * How many milliseconds are in a minute.

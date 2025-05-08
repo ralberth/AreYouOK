@@ -37,10 +37,10 @@ class MainViewModel @Inject constructor(
     var hasAlarmPermission: Boolean = alarms.canSetAlarms()
     var hasNotifyPermission: Boolean = notifier.canSendNotifications()
 
-    private val timer = DelayCountdownTimer(
-        { updateMinsLeft(it) },
-        { timeRanOut() }
-    )
+//    private val timer = DelayCountdownTimer(
+//        { updateMinsLeft(it) },
+//        { timeRanOut() }
+//    )
 
     init {
         // If this view model was rehydrated by android while the timers were running, then
@@ -57,20 +57,20 @@ class MainViewModel @Inject constructor(
                 it.copy(
                     countdownStart = now,
                     countdownStop = now.plus(_uiState.value.countdownLength.toLong(), ChronoUnit.MINUTES),
-                    minsLeft = _uiState.value.countdownLength
+//                    minsLeft = _uiState.value.countdownLength
                 )
             }
 //            timer.start(_uiState.value.countdownStop)
             coordinator.enabled(_uiState.value.countdownLength)
         } else {
             println("ViewModel: UI timer stopped")
-            timer.cancel()
+//            timer.cancel()
             coordinator.disabled()
             _uiState.update {
                 it.copy(
                     countdownStart = null,
                     countdownStop = null,
-                    minsLeft = null
+//                    minsLeft = null
                 )
             }
         }
@@ -86,40 +86,40 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun updateMinsLeft(newMinsLeft: Int) {
-        println("ViewModel.updateMinsLeft($newMinsLeft)")
-        _uiState.update {
-            it.copy(
-                minsLeft = newMinsLeft
-            )
-        }
-        ruokDatastore.saveMainScreenState(_uiState.value)
-    }
+//    fun updateMinsLeft(newMinsLeft: Int) {
+//        println("ViewModel.updateMinsLeft($newMinsLeft)")
+//        _uiState.update {
+//            it.copy(
+//                minsLeft = newMinsLeft
+//            )
+//        }
+//        ruokDatastore.saveMainScreenState(_uiState.value)
+//    }
 
     fun checkin() {
         println("ViewModel.checkin()")
-        timer.reset()
+//        timer.reset()
         coordinator.checkin()
         val now = Clock.systemUTC().instant()
         _uiState.update {
             it.copy(
                 countdownStart = now,
                 countdownStop = now.plus(_uiState.value.countdownLength.toLong(), ChronoUnit.MINUTES),
-                minsLeft = _uiState.value.countdownLength
+//                minsLeft = _uiState.value.countdownLength
             )
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 
-    fun timeRanOut() {
-        println("ViewModel.timeRanOut(): cancel UI timer")
-        timer.cancel()
-        _uiState.update {
-            it.copy(
-                minsLeft = 0
-            )
-        }
-        ruokDatastore.saveMainScreenState(_uiState.value)
-    }
+//    fun timeRanOut() {
+//        println("ViewModel.timeRanOut(): cancel UI timer")
+//        timer.cancel()
+//        _uiState.update {
+//            it.copy(
+//                minsLeft = 0
+//            )
+//        }
+//        ruokDatastore.saveMainScreenState(_uiState.value)
+//    }
 }

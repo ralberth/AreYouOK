@@ -22,7 +22,7 @@ class RuokDatastore @Inject constructor(
             "countdownStart=${s.countdownStart?.toString()}",
             "countdownStop=${s.countdownStop?.toString()}",
             "countdownLength=${s.countdownLength}",
-            "minsLeft=${s.minsLeft}"
+//            "minsLeft=${s.minsLeft}"
         )
         return ary.joinToString(", ")
     }
@@ -42,7 +42,7 @@ class RuokDatastore @Inject constructor(
             countdownStart = prefs.getInstant("countdownStart"),
             countdownStop = prefs.getInstant("countdownStop"),
             countdownLength = prefs.getInt("countdownLength", 30),
-            minsLeft = minsLeft
+//            minsLeft = minsLeft
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -56,7 +56,7 @@ class RuokDatastore @Inject constructor(
             putInstant("countdownStart", state.countdownStart)
             putInstant("countdownStop", state.countdownStop)
             putInt("countdownLength", state.countdownLength)
-            putInt("minsLeft", if (state.minsLeft != null) state.minsLeft else -1)
+      //      putInt("minsLeft", if (state.minsLeft != null) state.minsLeft else -1)
             apply()
         }
     }

@@ -10,5 +10,5 @@ data class MainScreenState(
     val countdownLength: Int,       // Number of minutes to countdown (for UI select)
 
     // Tactical stuff that changes while the countdown is running
-    val minsLeft: Int?              // Minutes left before timeToStop, for progressbar display
+//    val minsLeft: Int?              // Minutes left before timeToStop, for progressbar display
 )

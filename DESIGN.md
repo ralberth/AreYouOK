@@ -1,3 +1,20 @@
+
+This whole class and how the viewmodel work isn't the best.  New idea:
+1. UI is in charge of itself
+    1. Coroutine sleeps 1000ms and updates the countdown UI progressbar and time displays
+    2. Each component decides how to color itself based on it's arguments
+    3. ViewModel just keeps track of start/stop times and handles button-clicks
+    4. Since coroutine doesn't run when UI isn't foreground, no CPU use when app in background
+2. Coordinator:
+    1. Coordinator uses logic from start/stop time to decide on when alarms should fire
+    2. Alarms still pass EXTRA with minsLeft
+    3. AlarmReceiver uses minsLeft to call Coordinator to send txt messages, etc.
+3. Android Alarms handle sounds, notifications, text messages all in the "background" (?)
+    1. T-3 and T-2 play sounds and give Notifications
+    2. T-1 and T-0 play sounds and give Notifications and launch the MainActivity::class
+    3. No Intents need EXTRA since everything computes minsLeft from start/stop time
+
+
 # Target Android Version
 
 My Samsung Galaxy S9 runs Android version 10 ("Quince Tart"), API level 29.  It released Sep 2019.

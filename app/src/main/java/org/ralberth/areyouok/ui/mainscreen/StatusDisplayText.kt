@@ -12,15 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import java.time.Instant
 import org.ralberth.areyouok.ui.theme.StatusTextIdle
 import org.ralberth.areyouok.ui.theme.StatusTextWarning
 import org.ralberth.areyouok.ui.theme.StatusTextDanger
 import org.ralberth.areyouok.ui.theme.StatusTextPaging
 import org.ralberth.areyouok.ui.theme.StatusTextRunning
+import org.ralberth.areyouok.minutesBeforeEnd
 
 
 @Composable
-fun StatusDisplayText(minsLeft: Int?) {
+fun StatusDisplayText(endTime: Instant?) {
+    val minsLeft = minutesBeforeEnd(endTime)
     val message: String = when(minsLeft) {
         null -> "Idle"
         3    -> "Running out of time"

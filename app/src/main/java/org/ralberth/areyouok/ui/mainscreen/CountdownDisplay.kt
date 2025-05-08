@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -140,21 +141,25 @@ fun CountdownDisplay(start: Instant?, end: Instant?) {
                 Column {
                     Row {
                         Text("start ", color = Color.DarkGray)
-                        Text(instant2humanReadableTime(start), fontWeight = FontWeight.Bold)
+                        Text(instant2humanReadableTime(start))
                         Spacer(Modifier.weight(1f))
                         Text("end ", color = Color.DarkGray)
-                        Text(instant2humanReadableTime(end), fontWeight = FontWeight.Bold)
+                        Text(instant2humanReadableTime(end))
                         Spacer(Modifier.weight(1f))
                         Text("left ", color = Color.DarkGray)
-                        Text(duration2humanreadable(timeRemaining), fontWeight = FontWeight.Bold)
+                        Text(duration2humanreadable(timeRemaining))
                     }
 
+                    // TODO: still jumpy even with smooth values for progressPercent()
+                    println("progressPercent = ${progressPercent(start, end)}")
                     LinearProgressIndicator(
                         progress = { 1f - progressPercent(start, end) },
                         color = barColor,
+                        gapSize = (-15).dp,
+                        drawStopIndicator = {},
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(10.dp)
+                            .height(8.dp)
                     )
                 }
             }
