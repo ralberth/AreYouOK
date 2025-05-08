@@ -4,11 +4,14 @@ import java.time.Duration
 import java.time.Instant
 
 
-fun minutesBeforeEnd(end: Instant?, now: Instant = Instant.now()): Int? {
+//fun minutesBeforeEnd(end: Instant?, now: Instant = Instant.now()): Int? {
+fun minutesBeforeEnd(end: Instant?, now: Instant? = null): Int? {
+    val n = now ?: Instant.now()
+
     if (end == null)
         return null
 
-    val d: Duration = Duration.between(now, end)
+    val d: Duration = Duration.between(n, end)
     if (d.isNegative)
         return 0
 

@@ -1,9 +1,6 @@
 package org.ralberth.areyouok.ui.mainscreen
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,9 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import kotlinx.coroutines.delay
@@ -115,29 +109,10 @@ fun Ticker(targetTime: Instant?, content: @Composable (timeRemaining: Duration?)
 
 
 @Composable
-fun CountdownDisplay(start: Instant?, end: Instant?) {
-    val minsLeft = minutesBeforeEnd(end)
-    val barColor: Color = when(minsLeft) {
-        3    -> ProgressBarWarning
-        2    -> ProgressBarWarning
-        1    -> ProgressBarDanger
-        0    -> ProgressBarDanger
-        else -> ProgressBarOK
-    }
-
-    // TODO: probably hoist this into MainScreen
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if (start != null) 1.0f else 0f,
-        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
-        label = "alpha"
-    )
-
+fun CountdownDisplay(start: Instant?, end: Instant?, modifier: Modifier = Modifier) {
     Ticker(end) {
         timeRemaining ->
-            Row(modifier = Modifier
-                .padding(18.dp)
-                .graphicsLayer { alpha = animatedAlpha }
-            ) {
+            Row(modifier = modifier.padding(18.dp)) {
                 Column {
                     Row {
                         Text("start ", color = Color.DarkGray)
@@ -150,16 +125,22 @@ fun CountdownDisplay(start: Instant?, end: Instant?) {
                         Text(duration2humanreadable(timeRemaining))
                     }
 
+                    val minsLeft = minutesBeforeEnd(end)
+                    val barColor: Color = when(minsLeft) {
+                        3    -> ProgressBarWarning
+                        2    -> ProgressBarWarning
+                        1    -> ProgressBarDanger
+                        0    -> ProgressBarDanger
+                        else -> ProgressBarOK
+                    }
+
                     // TODO: still jumpy even with smooth values for progressPercent()
-                    println("progressPercent = ${progressPercent(start, end)}")
                     LinearProgressIndicator(
                         progress = { 1f - progressPercent(start, end) },
                         color = barColor,
                         gapSize = (-15).dp,
                         drawStopIndicator = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
+                        modifier = Modifier.fillMaxWidth().height(8.dp)
                     )
                 }
             }

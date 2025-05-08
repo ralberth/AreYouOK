@@ -21,7 +21,6 @@ class Coordinator @Inject constructor(
 ) {
     private var delayMins: Int = 20   // cached here between calls to enabled() and checkin()
 
-
     fun enabled(delayMins: Int) {
         println("Coordinator.enabled($delayMins): set alarms, send TXT message")
         this.delayMins = delayMins // used elsewhere in this class
@@ -50,7 +49,7 @@ class Coordinator @Inject constructor(
                 soundEffects.timesUp()
                 notifier.sendNotification(
                     CHANNEL_RUDE,
-                    "Times up!  Sent TXT message to family.",
+                    "🚨 Times up!  Sent TXT message to family. 🚨",
                     Color.argb(200, 255, 0, 0)
                 )
                 alertSender.unresponsive()
@@ -60,7 +59,7 @@ class Coordinator @Inject constructor(
                 soundEffects.redWarning()
                 notifier.sendNotification(
                     CHANNEL_RUDE,
-                    "* ONE MINUTE LEFT *",
+                    "😮 ONE MINUTE LEFT 😮",
                     Color.argb(200, 255, 0, 0)
                 )
             }
@@ -69,7 +68,7 @@ class Coordinator @Inject constructor(
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
                     CHANNEL_POLITE,
-                    "Two minutes left",
+                    "😥 Two minutes left 😥",
                     Color.argb(200, 255, 255, 0)
                 )
             }
@@ -78,7 +77,7 @@ class Coordinator @Inject constructor(
                 soundEffects.yellowWarning()
                 notifier.sendNotification(
                     CHANNEL_POLITE,
-                    "Three minutes left",
+                    "🪧 Three minutes left 🪧",
                     Color.argb(200, 255, 255, 0)
                 )
             }

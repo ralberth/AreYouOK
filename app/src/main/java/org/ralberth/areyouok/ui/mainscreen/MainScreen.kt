@@ -1,5 +1,8 @@
 package org.ralberth.areyouok.ui.mainscreen
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +21,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,8 +34,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +66,12 @@ fun MainScreen(
     ) { innerPadding ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+        val animatedAlpha by animateFloatAsState(
+            targetValue = if (uiState.countdownStop != null) 1.0f else 0f,
+            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+            label = "alpha"
+        )
+
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -72,45 +90,69 @@ fun MainScreen(
                 HorizontalDivider()
             }
 
-            EnableDisableToggle(
-                appIsUsable = appIsUsable,
-                isEnabled = appIsUsable && uiState.countdownStart != null,
-                onChange = viewModel::updateEnabled
-            )
-            HorizontalDivider()
-
-            StatusDisplayText(uiState.countdownStop)
-            HorizontalDivider()
-
             CountdownSelectSlider(
                 appIsUsable && uiState.countdownStart == null,
                 uiState.countdownLength,
                 viewModel::updateCountdownLength
             )
-            HorizontalDivider()
 
-            CountdownDisplay(uiState.countdownStart, uiState.countdownStop)
+            EnableDisableToggle(
+                appIsUsable = appIsUsable,
+                isEnabled = appIsUsable && uiState.countdownStart != null,
+                onChange = viewModel::updateEnabled
+            )
 
-            Spacer(Modifier.weight(1f))
+            StatusDisplayText(
+                uiState.countdownStop,
+                modifier = Modifier.graphicsLayer { alpha = animatedAlpha }
+            )
+
+            CountdownDisplay(
+                uiState.countdownStart,
+                uiState.countdownStop,
+                modifier = Modifier.graphicsLayer { alpha = animatedAlpha }
+            )
+
+            Spacer(Modifier.weight(1f).graphicsLayer { alpha = animatedAlpha })
 
             Button(
                 enabled = appIsUsable && uiState.countdownStart != null,
                 onClick = viewModel::checkin,
                 shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.height(100.dp)
+                modifier = Modifier.height(100.dp).graphicsLayer { alpha = animatedAlpha }
             ) {
                 Icon(
                     Icons.Filled.Refresh,
                     "Countdown"
                 )
                 Text(
-                    "  Check-in",
+                    " Check-in",
                     fontSize = 24.sp
                 )
             }
 
             Spacer(Modifier.weight(1f))
         }
+    }
+}
+
+
+@Composable
+fun PhoneNumberTextField() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 18.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("Phone number", fontWeight = FontWeight.Bold)
+        Spacer(Modifier.weight(1f))
+        OutlinedTextField(
+            value = "hithere",
+//                    label="Phone number",
+            onValueChange = {  },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+        )
     }
 }
 
@@ -152,7 +194,14 @@ fun EnableDisableToggle(appIsUsable: Boolean, isEnabled: Boolean, onChange: (Boo
 fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Unit) {
     Row(modifier = Modifier.padding(18.dp)) {
         Column {
-            Text("Countdown Delay",fontWeight = FontWeight.Bold)
+            Text(
+                buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Countdown Delay:   ")
+                    }
+                    append("$minutes minutes")
+                }
+            )
             Slider(
                 enabled = enabled,
                 value = minutes.toFloat(),
@@ -165,7 +214,6 @@ fun CountdownSelectSlider(enabled: Boolean, minutes: Int, onChange: (Int) -> Uni
                 steps = 10,
                 valueRange = 5f..60f
             )
-            Text("$minutes minutes")
         }
     }
 }

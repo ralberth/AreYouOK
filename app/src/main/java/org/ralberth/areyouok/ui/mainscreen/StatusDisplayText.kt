@@ -1,6 +1,5 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,7 @@ import org.ralberth.areyouok.minutesBeforeEnd
 
 
 @Composable
-fun StatusDisplayText(endTime: Instant?) {
+fun StatusDisplayText(endTime: Instant?, modifier: Modifier = Modifier) {
     val minsLeft = minutesBeforeEnd(endTime)
     val message: String = when(minsLeft) {
         null -> ""
@@ -43,7 +42,7 @@ fun StatusDisplayText(endTime: Instant?) {
     }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
