@@ -4,14 +4,14 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.Constants.Companion.MS_PER_MIN
 import org.ralberth.areyouok.RuokIntents
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+val MS_PER_MIN: Long = 60 * 1000
 
 @Singleton
 class RuokAlarms @Inject constructor(

@@ -52,6 +52,8 @@ class RuokIntents @Inject constructor(
         )
     }
 
+
+    // TODO: Created for a "Check-in" button on notifications, but not currently used.
     fun createCheckinPendingIntent(): PendingIntent {
         val intent: Intent = Intent(context, RuokAlarmReceiver::class.java).apply {
             putExtra(EXTRA_KEY_MSGTYPE, EXTRA_VAL_MSGTYPE_CHECKIN)

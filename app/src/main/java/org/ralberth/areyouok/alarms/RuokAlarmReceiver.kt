@@ -7,7 +7,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MINS_LEFT
-import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_CHECKIN
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_MINSLEFT
 import org.ralberth.areyouok.coordinator.Coordinator
 import javax.inject.Inject
@@ -64,10 +63,4 @@ class RuokAlarmReceiver: AppWidgetProvider() {
             throw IllegalArgumentException("missing attr on broadcast message")
         }
     }
-
-
-//    fun onReceiveCheckin() {
-//        println("Received broadcast message: check-in")
-//        coordinator.checkin()
-//    }
 }

@@ -110,7 +110,6 @@ class RuokNotifier @Inject constructor(
             .setContentTitle("Check-in Reminder")
             .setContentText(message)
             .setContentIntent(intentGenerator.createRuokUiPendingIntent())
-//            .addAction(ic_launcher_round, "Check-in", intentGenerator.createCheckinPendingIntent())
             .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
 
         println("RuokNotifier.sendNotification(\"$channelId\", \"$message\")")
