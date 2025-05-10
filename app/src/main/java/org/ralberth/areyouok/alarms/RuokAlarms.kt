@@ -8,17 +8,15 @@ import android.content.Intent
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.Constants.Companion.MS_PER_MIN
+import org.ralberth.areyouok.RuokIntents
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
-const val BASE_REQUEST_CODE = 100
-const val EXTRA_KEY_MINS_LEFT = "MINUTES_LEFT"
-
-
 @Singleton
 class RuokAlarms @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val intentGenerator: RuokIntents
 ) {
     init {
         println("Create RuokAlarms")
@@ -28,30 +26,13 @@ class RuokAlarms @Inject constructor(
     private var pendingIntents = emptyArray<PendingIntent>()
 
 
-    private fun createPendingIntent(minsLeft: Int, target: Class<RuokAlarmReceiver>): PendingIntent {
-        val intent: Intent = Intent(context, target).apply {
-            putExtra(EXTRA_KEY_MINS_LEFT, minsLeft)
-        }
-
-        val pi = PendingIntent.getBroadcast(
-            context,
-            BASE_REQUEST_CODE + minsLeft,   // each alarm needs a unique requestCode
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        pendingIntents += pi
-        return pi
-    }
-
-
     @SuppressLint("ScheduleExactAlarm")
     private fun setAlarm(timeMS: Long, minsLeft: Int) {
+        val pi = intentGenerator.createMinsLeftPendingIntent(minsLeft)
+        pendingIntents += pi
+
         if (canSetAlarms()) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                timeMS,
-                createPendingIntent(minsLeft, RuokAlarmReceiver::class.java)
-            )
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMS, pi)
         } else {
             println("Can't schedule exact alarms")
         }

@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MINS_LEFT
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_CHECKIN
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_MINSLEFT
 import org.ralberth.areyouok.coordinator.Coordinator
 import javax.inject.Inject
 
@@ -39,17 +43,31 @@ class RuokAlarmReceiver: AppWidgetProvider() {
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
         if (intent != null) {
-            val minsLeft = intent.getIntExtra(EXTRA_KEY_MINS_LEFT, -1)
-            if (minsLeft >= 0) {
-                println("Received broadcast message: $minsLeft minutes left")
-                coordinator.minutesLeft(minsLeft)
-            } else {
-                println("Received broadcast message: attribute \"$EXTRA_KEY_MINS_LEFT\" was missing")
-                throw IllegalArgumentException("missing attr on broadcast message")
+            val alarmType: String? = intent.getStringExtra(EXTRA_KEY_MSGTYPE)
+            when (alarmType) {
+                EXTRA_VAL_MSGTYPE_MINSLEFT -> onReceiveMinsLeft(intent)
+//                EXTRA_VAL_MSGTYPE_CHECKIN -> onReceiveCheckin()
+                null -> throw IllegalArgumentException("missing alarm type on broadcast message")
+                else -> throw IllegalArgumentException("Got invalid alarm type")
             }
-        } else {
-            println("Received broadcast message: no intent found!")
-            throw IllegalArgumentException("no intent on broadcast message")
         }
     }
+
+
+    fun onReceiveMinsLeft(intent: Intent) {
+        val minsLeft = intent.getIntExtra(EXTRA_KEY_MINS_LEFT, -1)
+        if (minsLeft >= 0) {
+            println("Received broadcast message: $minsLeft minutes left")
+            coordinator.minutesLeft(minsLeft)
+        } else {
+            println("Received broadcast message: attribute \"$EXTRA_KEY_MINS_LEFT\" was missing")
+            throw IllegalArgumentException("missing attr on broadcast message")
+        }
+    }
+
+
+//    fun onReceiveCheckin() {
+//        println("Received broadcast message: check-in")
+//        coordinator.checkin()
+//    }
 }

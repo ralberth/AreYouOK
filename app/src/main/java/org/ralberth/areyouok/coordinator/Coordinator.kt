@@ -3,6 +3,7 @@ package org.ralberth.areyouok.coordinator
 import android.graphics.Color
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
+import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.notifications.RuokNotifier.Companion.CHANNEL_RUDE
@@ -17,7 +18,8 @@ class Coordinator @Inject constructor(
     private val soundEffects: SoundEffects,
     private val alarms: RuokAlarms,
     private val notifier: RuokNotifier,
-    private val alertSender: AlertSender
+    private val alertSender: AlertSender,
+    private val prefs: RuokDatastore
 ) {
     private var delayMins: Int = 20   // cached here between calls to enabled() and checkin()
 
@@ -27,7 +29,7 @@ class Coordinator @Inject constructor(
         soundEffects.toggle()
         alarms.setAlarms(delayMins)
         notifier.cancelAll()  // just in case
-        alertSender.enabled(delayMins)
+        alertSender.enabled(prefs.getPhoneNumber(), delayMins)
     }
 
 
@@ -37,7 +39,7 @@ class Coordinator @Inject constructor(
         soundEffects.toggle()
         alarms.cancelAllAlarms()
         notifier.cancelAll()
-        alertSender.disabled()
+        alertSender.disabled(prefs.getPhoneNumber())
     }
 
 
@@ -52,7 +54,7 @@ class Coordinator @Inject constructor(
                     "🚨 Times up!  Sent TXT message to family. 🚨",
                     Color.argb(200, 255, 0, 0)
                 )
-                alertSender.unresponsive()
+                alertSender.unresponsive(prefs.getPhoneNumber())
             }
             1 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
@@ -95,6 +97,6 @@ class Coordinator @Inject constructor(
         alarms.cancelAllAlarms()
         alarms.setAlarms(this.delayMins)
         notifier.cancelAll()
-        alertSender.checkin(this.delayMins)
+        alertSender.checkin(prefs.getPhoneNumber(), this.delayMins)
     }
 }

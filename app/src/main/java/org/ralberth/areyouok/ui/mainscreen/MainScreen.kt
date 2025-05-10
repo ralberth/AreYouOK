@@ -1,5 +1,6 @@
 package org.ralberth.areyouok.ui.mainscreen
 
+import android.app.Activity
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -36,19 +37,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
+import org.ralberth.areyouok.MainActivity
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    activity: MainActivity,
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel()
 ) {
@@ -96,11 +101,19 @@ fun MainScreen(
                 viewModel::updateCountdownLength
             )
 
+            PhoneNumber(
+                appIsUsable && uiState.countdownStart == null,
+                uiState.phoneName,
+                uiState.phoneNumber,
+                activity::askForContactPhoneNumber
+            )
+
             EnableDisableToggle(
-                appIsUsable = appIsUsable,
+                appIsUsable = appIsUsable && uiState.phoneNumber.length > 0,
                 isEnabled = appIsUsable && uiState.countdownStart != null,
                 onChange = viewModel::updateEnabled
             )
+
 
             StatusDisplayText(
                 uiState.countdownStop,
@@ -138,21 +151,28 @@ fun MainScreen(
 
 
 @Composable
-fun PhoneNumberTextField() {
+fun PhoneNumber(enabled: Boolean, name: String, number: String, onChangeButtonPressed: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 18.dp),
+            .padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Phone number", fontWeight = FontWeight.Bold)
         Spacer(Modifier.weight(1f))
-        OutlinedTextField(
-            value = "hithere",
-//                    label="Phone number",
-            onValueChange = {  },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-        )
+
+        when {
+            name.length == 0 && number.length == 0 -> Text("Pick a contact")
+            name.length == 0 -> Text(number)   // number.length guaranteed > 0 at this point
+            else -> Column { Text(name); Text(number) }
+        }
+
+        TextButton(
+            enabled = enabled,
+            onClick = onChangeButtonPressed
+        ) {
+            Icon(Icons.Filled.Edit, "Change")
+        }
     }
 }
 
@@ -162,7 +182,7 @@ fun NeedPermissionBanner(type: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 18.dp),
+            .padding(18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

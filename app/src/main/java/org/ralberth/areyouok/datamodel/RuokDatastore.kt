@@ -22,7 +22,8 @@ class RuokDatastore @Inject constructor(
             "countdownStart=${s.countdownStart?.toString()}",
             "countdownStop=${s.countdownStop?.toString()}",
             "countdownLength=${s.countdownLength}",
-//            "minsLeft=${s.minsLeft}"
+            "phoneName=${s.phoneName}",
+            "phoneNumber=${s.phoneNumber}"
         )
         return ary.joinToString(", ")
     }
@@ -42,7 +43,8 @@ class RuokDatastore @Inject constructor(
             countdownStart = prefs.getInstant("countdownStart"),
             countdownStop = prefs.getInstant("countdownStop"),
             countdownLength = prefs.getInt("countdownLength", 30),
-//            minsLeft = minsLeft
+            phoneName = prefs.getString("phoneName", "") ?: "",
+            phoneNumber = prefs.getString("phoneNumber", "") ?: ""
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -56,9 +58,15 @@ class RuokDatastore @Inject constructor(
             putInstant("countdownStart", state.countdownStart)
             putInstant("countdownStop", state.countdownStop)
             putInt("countdownLength", state.countdownLength)
-      //      putInt("minsLeft", if (state.minsLeft != null) state.minsLeft else -1)
+            putString("phoneName", state.phoneName)
+            putString("phoneNumber", state.phoneNumber)
             apply()
         }
+    }
+
+
+    fun getPhoneNumber(): String {
+        return prefs.getString("phoneNumber", "") ?: ""
     }
 }
 
@@ -72,15 +80,3 @@ private fun SharedPreferences.getInstant(key: String): Instant? {
 private fun SharedPreferences.Editor.putInstant(key: String, inst: Instant?) {
     putString(key, inst?.toString())
 }
-
-
-//private fun SharedPreferences.getColor(key: String, defaultValue: Color): Color {
-//    val strVal = this.getString(key, null)
-//    return if (strVal != null) Color(strVal.toULong()) else defaultValue
-//}
-//
-//
-//private fun SharedPreferences.Editor.putColor(key: String, color: Color?) {
-//    val strVal: String? = color?.value?.toString()
-//    putString(key, strVal)
-//}

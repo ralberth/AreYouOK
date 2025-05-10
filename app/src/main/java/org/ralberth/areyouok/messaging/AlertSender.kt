@@ -1,8 +1,6 @@
 package org.ralberth.areyouok.messaging
 
-import android.content.pm.PackageManager
 import android.telephony.SmsManager
-import org.ralberth.areyouok.Constants.Companion.NOTIFY_PHONE_NUMBER
 import org.ralberth.areyouok.PermissionsHelper
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -10,7 +8,6 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Ideas for other emojis: ❓ ( (?)🪧🚑🚨⚕️
 
 @Singleton
 class AlertSender @Inject constructor(
@@ -20,13 +17,13 @@ class AlertSender @Inject constructor(
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
-    private fun send(msg: String) {
+    private fun send(phoneNumber: String, msg: String) {
         val txtMsg = "⚕️ $msg"
-        print("Sending sms message '$txtMsg' ...")
+        print("Sending sms message '$txtMsg' to '$phoneNumber' ...")
         permHelper.guard(
             android.Manifest.permission.SEND_SMS,
             success = {
-                smsManager.sendTextMessage(NOTIFY_PHONE_NUMBER, null, txtMsg, null, null)
+                smsManager.sendTextMessage(phoneNumber, null, txtMsg, null, null)
                 println("done")
             },
             fallback = { println("permission denied") }
@@ -34,29 +31,29 @@ class AlertSender @Inject constructor(
     }
 
 
-    fun enabled(mins: Int) {
+    fun enabled(phoneNumber: String, mins: Int) {
         println("AlertSender.enabled($mins): send \"Alerting turned on\"")
-        send("⚪ Alerting turned on.  Check-ins every $mins minutes.")
+        send(phoneNumber, "⚪ Alerting turned on.  Check-ins every $mins minutes.")
     }
 
 
-    fun disabled() {
+    fun disabled(phoneNumber: String) {
         println("AlertSender.disbaled(): send \"Alerting turned off\"")
-        send("⚫ Alerting turned off.")
+        send(phoneNumber, "⚫ Alerting turned off.")
     }
 
 
-    fun checkin(mins: Int) {
+    fun checkin(phoneNumber: String, mins: Int) {
         println("AlertSender.checkin($mins): send \"Check-in!\"")
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
         val at: String = dtFormat.format(nextCheckin.time)
-        send("👍 Check-in!  Next check-in at $at")
+        send(phoneNumber, "👍 Check-in!  Next check-in at $at")
     }
 
 
-    fun unresponsive() {
+    fun unresponsive(phoneNumber: String) {
         println("AlertSender.unresponsive(): send \"MISSED LAST CHECK-IN\"")
-        send("🚨 MISSED LAST CHECK-IN 🚨")
+        send(phoneNumber, "🚨 MISSED LAST CHECK-IN 🚨")
     }
 }

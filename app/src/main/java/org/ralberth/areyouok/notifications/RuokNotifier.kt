@@ -2,18 +2,18 @@ package org.ralberth.areyouok.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.MainActivity
 import org.ralberth.areyouok.R
+import org.ralberth.areyouok.R.mipmap.ic_launcher_round
+import org.ralberth.areyouok.RuokIntents
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,13 +27,15 @@ import javax.inject.Singleton
  */
 @Singleton
 class RuokNotifier @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val intentGenerator: RuokIntents
 ) {
     companion object {
         const val CHANNEL_RUDE:   String = "rude"
         const val CHANNEL_POLITE: String = "polite"
     }
 
+    private val bitmap = BitmapFactory.decodeResource(context.resources, ic_launcher_round)
     private val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
     private val silentMp3 = Uri.Builder()
@@ -88,17 +90,6 @@ class RuokNotifier @Inject constructor(
     }
 
 
-    private fun createIntent(): PendingIntent {
-        val uiIntent = Intent(context, MainActivity::class.java)
-        return PendingIntent.getActivity(
-            context,
-            123,
-            uiIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    }
-
-
     fun canSendNotifications(): Boolean {
         return notificationMgr.areNotificationsEnabled()
     }
@@ -114,10 +105,12 @@ class RuokNotifier @Inject constructor(
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(bitmap)
             .setColor(iconColor)
             .setContentTitle("Check-in Reminder")
             .setContentText(message)
-            .setContentIntent(createIntent())
+            .setContentIntent(intentGenerator.createRuokUiPendingIntent())
+//            .addAction(ic_launcher_round, "Check-in", intentGenerator.createCheckinPendingIntent())
             .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
 
         println("RuokNotifier.sendNotification(\"$channelId\", \"$message\")")
