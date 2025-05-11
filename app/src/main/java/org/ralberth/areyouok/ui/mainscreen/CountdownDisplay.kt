@@ -31,7 +31,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 
-var formatter = DateTimeFormatter.ofPattern("hh:mm a").withZone(ZoneId.systemDefault())
+var formatter = DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.systemDefault())
 
 
 fun instant2humanReadableTime(t: Instant?, zone: ZoneId = ZoneId.systemDefault()): String {
@@ -57,8 +57,8 @@ fun duration2humanreadable(d: Duration?): String {
 
     return when {
         hours == 0 && minutes == 0 -> String.format("%ds", seconds)
-        hours == 0                 -> String.format("%dm %ds", minutes, seconds)
-        else                       -> String.format("%dh %dm %ds", hours, minutes, seconds)
+        hours == 0                 -> String.format("%dm%ds", minutes, seconds)
+        else                       -> String.format("%dh%dm%ds", hours, minutes, seconds)
     }
 }
 
