@@ -19,6 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import dagger.hilt.android.AndroidEntryPoint
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_TXTMSG
+import org.ralberth.areyouok.RuokIntents.Companion.REQUEST_CODE_TXTMSG
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.ui.mainscreen.MainViewModel
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
@@ -57,6 +60,22 @@ class MainActivity: ComponentActivity() {
             }
         }
     }
+
+
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
+//        if (intent != null) {
+//            when (intent.getStringExtra(EXTRA_KEY_MSGTYPE)) {
+//                EXTRA_VAL_MSGTYPE_TXTMSG -> handleTxtmsgIntent(intent)
+//            }
+//        }
+//    }
+//
+//
+//    private fun handleTxtmsgIntent(intent: Intent) {
+//        println("Result of txtmsg: ${intent.}")
+////        Toast stuff!
+//    }
 
 
     fun askForContactPhoneNumber() {

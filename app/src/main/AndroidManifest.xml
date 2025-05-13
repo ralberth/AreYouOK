@@ -39,6 +39,7 @@
             </intent-filter>
         </activity>
         <receiver android:name=".alarms.RuokAlarmReceiver" />
+        <receiver android:name=".messaging.AlertErrorHandler" />
     </application>
 
 </manifest>

@@ -1,7 +1,10 @@
 package org.ralberth.areyouok.messaging
 
+import android.content.Context
 import android.telephony.SmsManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
+import org.ralberth.areyouok.RuokIntents
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -11,9 +14,11 @@ import javax.inject.Singleton
 
 @Singleton
 class AlertSender @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val intentGenerator: RuokIntents,
     private val permHelper: PermissionsHelper
 ) {
-    val smsManager: SmsManager = SmsManager.getDefault()
+    val smsManager: SmsManager = context.getSystemService(SmsManager::class.java)
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 
@@ -23,7 +28,13 @@ class AlertSender @Inject constructor(
         permHelper.guard(
             android.Manifest.permission.SEND_SMS,
             success = {
-                smsManager.sendTextMessage(phoneNumber, null, txtMsg, null, null)
+                smsManager.sendTextMessage(
+                    phoneNumber,
+                    null,
+                    txtMsg,
+                    intentGenerator.createTxtMessageSentPendingIntent(),
+                    null
+                )
                 println("done")
             },
             fallback = { println("permission denied") }

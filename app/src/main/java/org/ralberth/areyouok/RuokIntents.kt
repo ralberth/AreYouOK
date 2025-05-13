@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.alarms.RuokAlarmReceiver
+import org.ralberth.areyouok.messaging.AlertErrorHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,9 +19,11 @@ class RuokIntents @Inject constructor(
         const val EXTRA_VAL_MSGTYPE_MINSLEFT = "MINUTES_LEFT"
         const val EXTRA_VAL_MSGTYPE_RUOKUI = "RUOK_UI"
         const val EXTRA_VAL_MSGTYPE_CHECKIN = "CHECKIN"
+        const val EXTRA_VAL_MSGTYPE_TXTMSG = "TXT_MSG"
         const val EXTRA_KEY_MINS_LEFT = "MINUTES_LEFT"
         const val REQUEST_CODE_CHECKIN = 90
         const val REQUEST_CODE_RUOKUI = 91
+        const val REQUEST_CODE_TXTMSG = 92
         const val REQUEST_CODE_BASE_MINSLEFT = 100
     }
 
@@ -47,6 +50,19 @@ class RuokIntents @Inject constructor(
         return PendingIntent.getActivity(
             context,
             REQUEST_CODE_RUOKUI,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
+    fun createTxtMessageSentPendingIntent(): PendingIntent {
+        val intent: Intent = Intent(context, AlertErrorHandler::class.java).apply {
+            putExtra(EXTRA_KEY_MSGTYPE, EXTRA_VAL_MSGTYPE_TXTMSG)
+        }
+
+        return PendingIntent.getActivity(
+            context,
+            REQUEST_CODE_TXTMSG,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )

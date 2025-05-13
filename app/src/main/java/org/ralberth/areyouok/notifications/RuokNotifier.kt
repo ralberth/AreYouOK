@@ -1,125 +1,110 @@
 package org.ralberth.areyouok.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.ContentResolver
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.media.AudioAttributes
-import android.net.Uri
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.R
-import org.ralberth.areyouok.R.mipmap.ic_launcher_round
 import org.ralberth.areyouok.RuokIntents
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 /*
- * This doesn't use a channel's ability to play sounds when notifications are sent.
+ * There are two types of channels here for notifications:
+ *     1. Channels that handle "the timer is about to expire"
+ *     2. Error messages from background events, like sending TXTs
+ *
+ * All messages from #1 are important and must be seen and heard.  Because of this,
+ * we don't use a channel's ability to play sounds when notifications are sent.
  * Android tries to be polite, so it won't play sounds on every notification.
  * This won't work for us, so there's a separate SoundEffects class that handles
  * playing all sounds.  Also, the final sound when time runs out is played periodically
  * instead of only one time when the notification goes out.
+ *
+ * Messages from #2 can make a sound or not, based on whatever android thinks is
+ * best.  They're notifications about a problem that the user might not be able
+ * to affect, so being polite isn't that bad.
+ *
+ * The messages in the expire notification channels are special: we only ever want one
+ * of them visible to the user at a time.  For example, if there's a notification
+ * up about there being 2 minutes left, that can go away when we display another
+ * notification that there is 1 minute left.  Seeing two notifications with different
+ * "minutes left" is confusing.  Because of this, we keep track of certain Intents so
+ * we can clear them later.  All error notifications from "#2" above are not affected
+ * by this logic.
  */
 @Singleton
 class RuokNotifier @Inject constructor(
     @ApplicationContext private val context: Context,
     private val intentGenerator: RuokIntents
 ) {
-    companion object {
-        const val CHANNEL_RUDE:   String = "rude"
-        const val CHANNEL_POLITE: String = "polite"
-    }
+    private val timerAlertChannel = RuokChannel(
+        context,
+        "rude",
+        "Time's almost up alerts"
+    )
 
-    private val bitmap = BitmapFactory.decodeResource(context.resources, ic_launcher_round)
-    private val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val timerNotifyChannel = RuokChannel(
+        context,
+        "polite",
+        "Time's almost up notifications",
+        isHighImportance = false,
+        bypassDoNotDisturb = false
+    )
 
-    private val silentMp3 = Uri.Builder()
-        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-        .authority(context.resources.getResourcePackageName(R.raw.silent))
-        .appendPath(context.resources.getResourceTypeName(R.raw.silent))
-        .appendPath(context.resources.getResourceEntryName(R.raw.silent))
-        .build()
-    private val audioAttrs = AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_ALARM)
-        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        .build()
+    private val errorChannel = RuokChannel(
+        context,
+        "errors",
+        "Error messages",
+        soundResourceId = R.raw.error_sound
+    )
 
-    init {
-        // Highest prio: always shows notifications, bypass do-not-disturb, use lights
-        // Used for T-1 minute and when time runs out
-        createChannel(
-            CHANNEL_RUDE,
-            NotificationManager.IMPORTANCE_HIGH,
-            Color.BLUE,
-            true
-        )
 
-        // Polite: don't pop-up toasts, respect do-not-disturb
-        // Used when there is more than 1 minute left
-        createChannel(
-            CHANNEL_POLITE,
-            NotificationManager.IMPORTANCE_DEFAULT,
-            null,
-            false
-        )
-    }
+    private var nextNotificationId = 1   // every notification gets a unique ID, this is a "one-up"
+    private var lastTimerNotificationId: Int? = null   // last msg ID to RUDE or POLITE
 
-    private fun createChannel(
-        channelId: String,
-        importance: Int,
-        lightColor: Int?,
-        bypassDoNotDisturb: Boolean
-    ) {
-        val channel = NotificationChannel(
-            channelId,
-            "RUOK reminder channel (${channelId})",
-            importance
-        )
-        if (lightColor != null) {
-            channel.lightColor = lightColor
-            channel.shouldShowLights()
-        }
-        channel.setBypassDnd(bypassDoNotDisturb)
-        channel.setSound(silentMp3, audioAttrs)
-        notificationMgr.createNotificationChannel(channel)
+    private fun getNextNotificationId(): Int {
+        val next = nextNotificationId
+        nextNotificationId += 1
+        return next
     }
 
 
     fun canSendNotifications(): Boolean {
-        return notificationMgr.areNotificationsEnabled()
+        return errorChannel.notificationMgr.areNotificationsEnabled()
     }
 
 
-    fun sendNotification(channelId: String, message: String, iconColor: Int) {
-        // Ugh, see https://developer.android.com/develop/ui/views/notifications/channels
-        // Must set PRIORITY that matches the channel's IMPORTANCE.
-        val prio = when (channelId) {
-            CHANNEL_RUDE -> NotificationCompat.PRIORITY_HIGH
-            else -> NotificationCompat.PRIORITY_DEFAULT
+
+    fun sendTimerNotification(minsLeft: Int, message: String) {
+        val intent = intentGenerator.createRuokUiPendingIntent()
+
+        cancelLastTimerNotification()
+        val id = getNextNotificationId()
+        lastTimerNotificationId = id
+
+        val channel = if (minsLeft >= 2) timerNotifyChannel else timerAlertChannel
+        channel.sendNotification(
+            id,
+            "Timer Notification",
+            message,
+            intent
+        )
+    }
+
+
+    fun sendErrorNotification(message: String) {
+        errorChannel.sendNotification(
+            getNextNotificationId(),
+            "Error",
+            message
+        )
+    }
+
+    fun cancelLastTimerNotification() {
+        if (lastTimerNotificationId != null) {
+            errorChannel.notificationMgr.cancel(lastTimerNotificationId!!)
+            lastTimerNotificationId = null
         }
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setLargeIcon(bitmap)
-            .setColor(iconColor)
-            .setContentTitle("Check-in Reminder")
-            .setContentText(message)
-            .setContentIntent(intentGenerator.createRuokUiPendingIntent())
-            .setPriority(prio)  // NotificationCompat.PRIORITY_HIGH)
-
-        println("RuokNotifier.sendNotification(\"$channelId\", \"$message\")")
-        cancelAll()   // we only ever have one notification visible at a time
-        notificationMgr.notify(123, builder.build())
-    }
-
-
-    fun cancelAll() {
-        println("RuokNotifier.cancelAll()")
-        notificationMgr.cancelAll()
     }
 }
