@@ -1,6 +1,7 @@
 package org.ralberth.areyouok.messaging
 
 import android.content.Context
+import android.os.Build
 import android.telephony.SmsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
@@ -18,7 +19,12 @@ class AlertSender @Inject constructor(
     private val intentGenerator: RuokIntents,
     private val permHelper: PermissionsHelper
 ) {
-    val smsManager: SmsManager = context.getSystemService(SmsManager::class.java)
+    val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        context.getSystemService<SmsManager>(SmsManager::class.java)
+    } else {
+        SmsManager.getDefault()
+    }
+
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
 
 

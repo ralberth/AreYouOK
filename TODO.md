@@ -40,11 +40,13 @@ Add picture of person getting paged on notification that a TXT msg is being sent
 
 Better coloring and styling with app logo and/or emojis on Notification banners
 
+App interrupt anything, stop podcasts, unlock & display UI when at T-1 minute left (force the
+UI to the front).
 
 
 # TXT Messages
 
-Support sending to mulitple people in a group or backups for fall-back if the first person can't
+Support sending to multiple people in a group or backups for fall-back if the first person can't
 be sent (use Intents on smsManager).
 
 Support Google Chat as primary or backup

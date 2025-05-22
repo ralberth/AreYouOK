@@ -19,7 +19,6 @@ class RuokChannel(
     private val channelId: String,
     val channelName: String,
     isHighImportance: Boolean = true,
-//    lightColor: Int? = null,
     bypassDoNotDisturb: Boolean = true,
     soundResourceId: Int = R.raw.silent
 ) {
@@ -51,10 +50,6 @@ class RuokChannel(
         .build()
 
     private val channel = NotificationChannel(channelId, channelName, importance).apply {
-//        if (lightColor != null) {
-//            this.lightColor = lightColor
-//            this.shouldShowLights()
-//        }
         this.setBypassDnd(bypassDoNotDisturb)
         this.setSound(buildSoundUri(soundResourceId), audioAttrs)
     }
@@ -68,13 +63,11 @@ class RuokChannel(
         messageId: Int,
         title: String,
         message: String,
-        intent: PendingIntent? = null,
-//        iconColor: Int
+        intent: PendingIntent? = null
     ) {
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setLargeIcon(bitmap)
-//            .setColor(iconColor)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(priority)

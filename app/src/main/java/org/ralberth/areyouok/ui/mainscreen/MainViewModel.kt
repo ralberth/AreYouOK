@@ -23,9 +23,6 @@ class MainViewModel @Inject constructor(
     notifier: RuokNotifier,
     private val ruokDatastore: RuokDatastore
 ): ViewModel() {
-    // Initializers, attributes, and "init {}" blocks fire in the order they appear below
-    // Order matters for the timer, etc.
-
     init {
         println("Create new MainViewModel")
     }
@@ -82,8 +79,8 @@ class MainViewModel @Inject constructor(
 
 
     fun checkin() {
-        println("ViewModel.checkin()")
-        coordinator.checkin()
+        println("ViewModel.checkin(${uiState.value.countdownLength})")
+        coordinator.checkin(uiState.value.countdownLength)
         val now = Clock.systemUTC().instant()
         _uiState.update {
             it.copy(

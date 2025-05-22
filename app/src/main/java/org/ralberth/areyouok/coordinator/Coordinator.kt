@@ -1,5 +1,9 @@
 package org.ralberth.areyouok.coordinator
 
+import android.content.Context
+import android.os.VibrationEffect
+import android.os.Vibrator
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.datamodel.RuokDatastore
@@ -12,21 +16,24 @@ import javax.inject.Singleton
 
 @Singleton
 class Coordinator @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val soundEffects: SoundEffects,
     private val alarms: RuokAlarms,
     private val notifier: RuokNotifier,
     private val alertSender: AlertSender,
     private val prefs: RuokDatastore
 ) {
-    private var delayMins: Int = 20   // cached here between calls to enabled() and checkin()
+    // TODO: skip this here and add vibration pattern to the AlertChannel only
+    private val vibrator = context.getSystemService(Vibrator::class.java)
+    private val vibrationEffect = VibrationEffect.createOneShot(1000L, 128)
 
-    fun enabled(delayMins: Int) {
-        println("Coordinator.enabled($delayMins): set alarms, send TXT message")
-        this.delayMins = delayMins // used elsewhere in this class
+
+    fun enabled(countdownLength: Int) {
+        println("Coordinator.enabled($countdownLength): set alarms, send TXT message")
         soundEffects.toggle()
-        alarms.setAlarms(delayMins)
+        alarms.setAlarms(countdownLength)
         notifier.cancelLastTimerNotification()  // just in case
-        alertSender.enabled(prefs.getPhoneNumber(), delayMins)
+        alertSender.enabled(prefs.getPhoneNumber(), countdownLength)
     }
 
 
@@ -45,6 +52,7 @@ class Coordinator @Inject constructor(
         when (minsLeft) {
             0 -> {
                 println("Coordinator.minutesLeft($minsLeft): send TXT message, sound alarm")
+                vibrator.vibrate(vibrationEffect)
                 soundEffects.timesUp()
                 notifier.sendTimerNotification(
                     0,
@@ -55,6 +63,7 @@ class Coordinator @Inject constructor(
             }
             1 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
+                vibrator.vibrate(vibrationEffect)
                 soundEffects.redWarning()
                 notifier.sendTimerNotification(
                     1,
@@ -87,13 +96,13 @@ class Coordinator @Inject constructor(
     }
 
 
-    fun checkin() {
+    fun checkin(countdownLength: Int) {
         println("Coordinator.checkin(): reschedule all alarms, cancel notifications, send TXT message")
         soundEffects.stop()
         soundEffects.checkIn()
         alarms.cancelAllAlarms()
-        alarms.setAlarms(this.delayMins)
+        alarms.setAlarms(countdownLength)
         notifier.cancelLastTimerNotification()
-        alertSender.checkin(prefs.getPhoneNumber(), this.delayMins)
+        alertSender.checkin(prefs.getPhoneNumber(), countdownLength)
     }
 }
