@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.ralberth.areyouok.AlertSender
 import org.ralberth.areyouok.DelayCountdownTimer
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.ui.theme.ProgressDanger
