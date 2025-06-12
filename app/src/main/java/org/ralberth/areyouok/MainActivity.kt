@@ -11,17 +11,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
-import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_TXTMSG
-import org.ralberth.areyouok.RuokIntents.Companion.REQUEST_CODE_TXTMSG
+import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.ui.mainscreen.MainViewModel
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
@@ -55,7 +53,11 @@ class MainActivity: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainApp(this)
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "main") {
+                        composable("main") { MainScreen(navController, { askForContactPhoneNumber() }, viewModel) }
+                        composable("countdown") { CountdownScreen(navController, viewModel) }
+                    }
                 }
             }
         }
@@ -106,15 +108,4 @@ class MainActivity: ComponentActivity() {
             }
         }
     }
-}
-
-
-@Composable
-fun MainApp(activity: MainActivity) {
-    MainScreen(
-        activity,
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    )
 }

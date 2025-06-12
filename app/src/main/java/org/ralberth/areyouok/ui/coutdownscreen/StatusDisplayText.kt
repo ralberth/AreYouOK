@@ -1,4 +1,4 @@
-package org.ralberth.areyouok.ui.mainscreen
+package org.ralberth.areyouok.ui.coutdownscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

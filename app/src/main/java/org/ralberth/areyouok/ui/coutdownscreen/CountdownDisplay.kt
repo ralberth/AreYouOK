@@ -1,4 +1,4 @@
-package org.ralberth.areyouok.ui.mainscreen
+package org.ralberth.areyouok.ui.coutdownscreen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column

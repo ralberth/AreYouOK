@@ -70,9 +70,8 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
 
-    // For Clock and other datetime (Kotlin-specific)
-//    implementation("kotlinx.datetime:0.6.2")
-//    implementation("kotlinx.datetime.format:0.6.2")
+    implementation("androidx.navigation:navigation-compose:2.9.0")
+
     testImplementation(kotlin("test"))
 }
 
