@@ -1,9 +1,12 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -15,19 +18,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
+import org.ralberth.areyouok.ui.settings.TableBuilder
 
 
 @Composable
 fun CountdownScreen(
     navController: NavController,
-    viewModel: MainViewModel  // = viewModel()
+    viewModel: RuokViewModel  // = viewModel()
 ) {
-    RuokScaffold(
-        navBackCallback = { navController.navigate("main") }
-    ) {
+    RuokScaffold(navController, "countdown", "Countdown") {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         StatusDisplayText(uiState.countdownStop)
@@ -54,5 +57,34 @@ fun CountdownScreen(
                 fontSize = 20.sp
             )
         }
+
+        TableBuilder()
+            .columnWeights(1, 1, 5)
+            .row(
+                Icons.Filled.Done,
+                Icons.Filled.Face,
+                "Send \"starting\" text"
+            )
+            .row(
+                "",
+                Icons.Filled.Notifications,
+                "T-3 minutes left"
+            )
+            .row(
+                "",
+                Icons.Filled.Notifications,
+                "T-2 minutes left"
+            )
+            .row(
+                "",
+                Icons.Filled.Notifications,
+                "T-1 minutes left"
+            )
+            .row(
+                "",
+                Icons.Filled.Face,
+                "Sent \"Time ran out!\""
+            )
+            .build()
     }
 }

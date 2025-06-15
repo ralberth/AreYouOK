@@ -17,7 +17,7 @@ class RuokDatastore @Inject constructor(
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
 
-    private fun dump(s: MainScreenState): String {
+    private fun dump(s: RuokScreenState): String {
         val ary = arrayOf(
             "countdownStart=${s.countdownStart?.toString()}",
             "countdownStop=${s.countdownStop?.toString()}",
@@ -29,7 +29,7 @@ class RuokDatastore @Inject constructor(
     }
 
 
-    fun hydrateMainScreenState(): MainScreenState {
+    fun hydrateMainScreenState(): RuokScreenState {
         if (prefs.contains("delayMins"))
             println("Hydrate viewmodel: previous state found in preferences")
         else
@@ -39,7 +39,7 @@ class RuokDatastore @Inject constructor(
         var minsLeft: Int? = prefs.getInt("minsLeft", -1)
         if (minsLeft == -1) minsLeft = null
 
-        val ret = MainScreenState(
+        val ret = RuokScreenState(
             countdownStart = prefs.getInstant("countdownStart"),
             countdownStop = prefs.getInstant("countdownStop"),
             countdownLength = prefs.getInt("countdownLength", 30),
@@ -51,7 +51,7 @@ class RuokDatastore @Inject constructor(
     }
 
 
-    fun saveMainScreenState(state: MainScreenState) {
+    fun saveMainScreenState(state: RuokScreenState) {
         println("Save state ${dump(state)}")
 
         with (prefs.edit()) {

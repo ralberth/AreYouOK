@@ -1,0 +1,99 @@
+package org.ralberth.areyouok.ui.settings
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import org.ralberth.areyouok.ui.RuokScaffold
+import org.ralberth.areyouok.datamodel.RuokViewModel
+import kotlin.text.*
+
+
+@Composable
+fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    RuokScaffold(
+        navController = navController,
+        route = "durationselect",
+        title = "Select Duration",
+        description = "Total time after you click to enable the countdown before your " +
+                "contact is texted saying you might be in trouble."
+    ) {
+        Row(modifier = Modifier.padding(18.dp)) {
+            Column {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Countdown Duration:   ")
+                        }
+                        append("${uiState.countdownLength} minutes")
+                    }
+                )
+
+                Slider(
+                    value = uiState.countdownLength.toFloat(),
+                    onValueChange = { viewModel.updateCountdownLength(it.toInt()) },
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.secondary,
+                        activeTrackColor = MaterialTheme.colorScheme.secondary,
+                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    ),
+                    steps = 10,
+                    valueRange = 5f..60f
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(onClick = { navController.navigateUp() }) {
+                        Text("OK")
+                    }
+                }
+
+                TableBuilder()
+                    .columnWeights(2, 1, 1)
+                    .headerRow("", "Time", "Example")
+                    .row("Start",  "T-${uiState.countdownLength}", "12:00")
+                    .row(
+                        "1st notification",
+                        "T-3",
+                        "12:${String.format("%02d", uiState.countdownLength - 3)}"
+                    )
+                    .row(
+                        "2nd notification",
+                        "T-2",
+                        "12:${String.format("%02d", uiState.countdownLength - 2)}"
+                    )
+                    .row(
+                        "Alert",
+                        "T-1",
+                        "12:${String.format("%02d", uiState.countdownLength - 1)}"
+                    )
+                    .row(
+                        "Alarm",
+                        "T-0",
+                        "12:${String.format("%02d", uiState.countdownLength)}"
+                    )
+                    .build()
+            }
+        }
+    }
+}

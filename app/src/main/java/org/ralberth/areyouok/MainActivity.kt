@@ -21,7 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
-import org.ralberth.areyouok.ui.mainscreen.MainViewModel
+import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class MainActivity: ComponentActivity() {
     @Inject
     lateinit var permHelper: PermissionsHelper
 
-    val viewModel: MainViewModel by viewModels()
+    val viewModel: RuokViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +56,8 @@ class MainActivity: ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "main") {
-                        composable("main") { MainScreen(navController, { askForContactPhoneNumber() }, viewModel) }
+                        composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
+                        composable("durationselect") { DurationSelectScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }
                     }
                 }
