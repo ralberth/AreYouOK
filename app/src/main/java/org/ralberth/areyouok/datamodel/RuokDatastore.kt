@@ -23,7 +23,8 @@ class RuokDatastore @Inject constructor(
             "countdownStop=${s.countdownStop?.toString()}",
             "countdownLength=${s.countdownLength}",
             "phoneName=${s.phoneName}",
-            "phoneNumber=${s.phoneNumber}"
+            "phoneNumber=${s.phoneNumber}",
+            "location=${s.location}"
         )
         return ary.joinToString(", ")
     }
@@ -44,7 +45,8 @@ class RuokDatastore @Inject constructor(
             countdownStop = prefs.getInstant("countdownStop"),
             countdownLength = prefs.getInt("countdownLength", 30),
             phoneName = prefs.getString("phoneName", "") ?: "",
-            phoneNumber = prefs.getString("phoneNumber", "") ?: ""
+            phoneNumber = prefs.getString("phoneNumber", "") ?: "",
+            location = prefs.getString("location", "") ?: ""
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -60,6 +62,7 @@ class RuokDatastore @Inject constructor(
             putInt("countdownLength", state.countdownLength)
             putString("phoneName", state.phoneName)
             putString("phoneNumber", state.phoneNumber)
+            putString("location", state.location)
             apply()
         }
     }
@@ -67,6 +70,11 @@ class RuokDatastore @Inject constructor(
 
     fun getPhoneNumber(): String {
         return prefs.getString("phoneNumber", "") ?: ""
+    }
+
+
+    fun getLocation(): String {
+        return prefs.getString("location", "") ?: ""
     }
 }
 

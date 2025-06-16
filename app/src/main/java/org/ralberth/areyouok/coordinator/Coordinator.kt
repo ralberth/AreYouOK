@@ -33,7 +33,7 @@ class Coordinator @Inject constructor(
         soundEffects.toggle()
         alarms.setAlarms(countdownLength)
         notifier.cancelLastTimerNotification()  // just in case
-        alertSender.enabled(prefs.getPhoneNumber(), countdownLength)
+        alertSender.enabled(prefs.getPhoneNumber(), countdownLength, prefs.getLocation())
     }
 
 
@@ -59,7 +59,9 @@ class Coordinator @Inject constructor(
                     "🚨 Times up!  Sent TXT message to family. 🚨",
 //                    Color.argb(200, 255, 0, 0)
                 )
-                alertSender.unresponsive(prefs.getPhoneNumber())
+                alertSender.unresponsive(
+                    prefs.getPhoneNumber(),
+                    prefs.getLocation())
             }
             1 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")

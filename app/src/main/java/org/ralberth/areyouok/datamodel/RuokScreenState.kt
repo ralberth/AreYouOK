@@ -8,5 +8,6 @@ data class RuokScreenState(
     val countdownStop: Instant?,    // Timestamp when the coutdown expires
     val countdownLength: Int,       // Number of minutes to countdown (for UI select)
     val phoneName: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val location: String
 )

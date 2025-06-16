@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,68 +25,94 @@ import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
 import org.ralberth.areyouok.ui.settings.TableBuilder
+import org.ralberth.areyouok.ui.utils.Ticker
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.time.Duration
 
 
 @Composable
 fun CountdownScreen(
     navController: NavController,
-    viewModel: RuokViewModel  // = viewModel()
+    viewModel: RuokViewModel
 ) {
     RuokScaffold(navController, "countdown", "Countdown") {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
         StatusDisplayText(uiState.countdownStop)
 
-        CountdownDisplay(
-            uiState.countdownStart,
-            uiState.countdownStop
-        )
+        Ticker(uiState.countdownStop) {
+            timeRemaining ->
+                CountdownDisplay(
+                    uiState.countdownStart,
+                    uiState.countdownStop,
+                    timeRemaining
+                )
 
-//        Spacer(Modifier.weight(1f))  // .graphicsLayer { alpha = animatedAlpha })
+                Button(
+                    enabled = uiState.countdownStart != null,
+                    onClick = viewModel::checkin,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.height(60.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Refresh,
+                        "Check-in"
+                    )
+                    Text(
+                        " Check-in",
+                        fontSize = 20.sp
+                    )
+                }
 
-        Button(
-            enabled = uiState.countdownStart != null,
-            onClick = viewModel::checkin,
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier.height(60.dp)   // .graphicsLayer { alpha = animatedAlpha }
-        ) {
-            Icon(
-                Icons.Filled.Refresh,
-                "Check-in"
-            )
-            Text(
-                " Check-in",
-                fontSize = 20.sp
-            )
+                FilledTonalButton(
+                    onClick = { navController.navigate("callcontact") },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.height(60.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Call,
+                        "Check-in"
+                    )
+                    Text(
+                        " Call Contact",
+                        fontSize = 20.sp
+                    )
+                }
+
+
+                if (timeRemaining != null) {
+                    val minsLeft: Long = timeRemaining.toMinutes()
+
+                    TableBuilder()
+                        .columnWeights(1, 1, 5)
+                        .row(
+                            Icons.Filled.Done,
+                            Icons.Filled.Face,
+                            "Send \"starting\" text"
+                        )
+                        .row(
+                            if (minsLeft <= 3) Icons.Filled.Done else "",
+                            Icons.Filled.Notifications,
+                            "T-3 minutes left"
+                        )
+                        .row(
+                            if (minsLeft <= 2) Icons.Filled.Done else "",
+                            Icons.Filled.Notifications,
+                            "T-2 minutes left"
+                        )
+                        .row(
+                            if (minsLeft <= 1) Icons.Filled.Done else "",
+                            Icons.Filled.Notifications,
+                            "T-1 minutes left"
+                        )
+                        .row(
+                            if (minsLeft <= 0) Icons.Filled.Done else "",
+                            Icons.Filled.Face,
+                            "Sent \"Time ran out!\""
+                        )
+                        .build()
+                }
         }
-
-        TableBuilder()
-            .columnWeights(1, 1, 5)
-            .row(
-                Icons.Filled.Done,
-                Icons.Filled.Face,
-                "Send \"starting\" text"
-            )
-            .row(
-                "",
-                Icons.Filled.Notifications,
-                "T-3 minutes left"
-            )
-            .row(
-                "",
-                Icons.Filled.Notifications,
-                "T-2 minutes left"
-            )
-            .row(
-                "",
-                Icons.Filled.Notifications,
-                "T-1 minutes left"
-            )
-            .row(
-                "",
-                Icons.Filled.Face,
-                "Sent \"Time ran out!\""
-            )
-            .build()
     }
 }

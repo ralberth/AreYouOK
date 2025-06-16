@@ -22,7 +22,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.ui.mainscreen.CallContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
+import org.ralberth.areyouok.ui.settings.LocationScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import javax.inject.Inject
 
@@ -58,7 +60,9 @@ class MainActivity: ComponentActivity() {
                     NavHost(navController = navController, startDestination = "main") {
                         composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
+                        composable("locationselect") { LocationScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }
+                        composable("callcontact") { CallContactScreen(navController, viewModel) }
                     }
                 }
             }

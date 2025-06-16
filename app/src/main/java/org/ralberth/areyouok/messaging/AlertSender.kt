@@ -19,6 +19,28 @@ class AlertSender @Inject constructor(
     private val intentGenerator: RuokIntents,
     private val permHelper: PermissionsHelper
 ) {
+    companion object {
+        fun getTurnedOnMessage(mins: Int, location: String): String {
+            return "⚪ Alerting turned on.  Check-ins every $mins minutes.  Current location: $location"
+        }
+
+
+        fun getTurnedOffMessage(): String {
+            return "⚫ Alerting turned off."
+        }
+
+
+        fun getCheckinMessage(nextCheckin: String): String {
+            return "👍 Check-in!  Next check-in at $nextCheckin"
+        }
+
+
+        fun missedCheckinMessage(location: String): String {
+            return "🚨 MISSED LAST CHECK-IN 🚨  Last known location: $location"
+        }
+    }
+
+
     val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         context.getSystemService<SmsManager>(SmsManager::class.java)
     } else {
@@ -48,15 +70,16 @@ class AlertSender @Inject constructor(
     }
 
 
-    fun enabled(phoneNumber: String, mins: Int) {
+
+    fun enabled(phoneNumber: String, mins: Int, location: String) {
         println("AlertSender.enabled($mins): send \"Alerting turned on\"")
-        send(phoneNumber, "⚪ Alerting turned on.  Check-ins every $mins minutes.")
+        send(phoneNumber, getTurnedOnMessage(mins, location))
     }
 
 
     fun disabled(phoneNumber: String) {
         println("AlertSender.disbaled(): send \"Alerting turned off\"")
-        send(phoneNumber, "⚫ Alerting turned off.")
+        send(phoneNumber, getTurnedOffMessage())
     }
 
 
@@ -65,12 +88,12 @@ class AlertSender @Inject constructor(
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
         val at: String = dtFormat.format(nextCheckin.time)
-        send(phoneNumber, "👍 Check-in!  Next check-in at $at")
+        send(phoneNumber, getCheckinMessage(at))
     }
 
 
-    fun unresponsive(phoneNumber: String) {
+    fun unresponsive(phoneNumber: String, location: String) {
         println("AlertSender.unresponsive(): send \"MISSED LAST CHECK-IN\"")
-        send(phoneNumber, "🚨 MISSED LAST CHECK-IN 🚨")
+        send(phoneNumber, missedCheckinMessage(location))
     }
 }

@@ -73,6 +73,13 @@ fun MainScreen(
             }
         }
 
+        SummaryRow(
+            label = "Location",
+            onEdit = { navController.navigate("locationselect") }
+        ) {
+            Text(if (uiState.location == "") "Pick a location" else uiState.location)
+        }
+
         SummaryRow("Enable") {
             Switch(
                 enabled = appIsUsable && uiState.phoneNumber.length > 0,

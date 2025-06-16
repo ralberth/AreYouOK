@@ -68,6 +68,14 @@ class RuokViewModel @Inject constructor(
     }
 
 
+    fun updateLocation(newLocation: String) {
+        _uiState.update {
+            it.copy(location = newLocation)
+        }
+        ruokDatastore.saveMainScreenState(_uiState.value)
+    }
+
+
     fun updateCountdownLength(newCountdownLength: Int) {
         _uiState.update {
             it.copy(countdownLength = newCountdownLength)
