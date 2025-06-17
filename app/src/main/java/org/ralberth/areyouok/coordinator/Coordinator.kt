@@ -1,8 +1,13 @@
 package org.ralberth.areyouok.coordinator
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
@@ -106,5 +111,16 @@ class Coordinator @Inject constructor(
         alarms.setAlarms(countdownLength)
         notifier.cancelLastTimerNotification()
         alertSender.checkin(prefs.getPhoneNumber(), countdownLength)
+    }
+
+
+    fun callContact(phoneNumber: String) {
+        val intent = Intent(
+            Intent.ACTION_CALL,
+            "tel:${phoneNumber}".toUri()
+        )
+        intent.putExtra(EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our main/only Activity
+        context.startActivity(intent)
     }
 }

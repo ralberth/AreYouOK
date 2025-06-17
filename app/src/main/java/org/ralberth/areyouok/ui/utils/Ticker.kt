@@ -29,9 +29,15 @@ import java.time.Instant
  *    4. LifecycleResumeEffect is called anytime the Ticker becomes visible or invisible.
  *       We use this to change the coroutine from ticking down to not ticking down: there's
  *       no point in recomposing this every second when nothing is visible.
+ *
+ * FIXME: this continues past zero and calls content.invoke() with negative numbers
  */
 @Composable
-fun Ticker(targetTime: Instant?, content: @Composable (timeRemaining: Duration?) -> Unit) {
+fun Ticker(
+    targetTime: Instant?,
+    tickLengthMS: Long = 1000, // call content() every this many milliseconds
+    content: @Composable (timeRemaining: Duration?) -> Unit
+) {
     var timeRemaining by remember(targetTime) {
         mutableStateOf(
             if (targetTime != null) Duration.between(Instant.now(), targetTime) else null
@@ -50,7 +56,7 @@ fun Ticker(targetTime: Instant?, content: @Composable (timeRemaining: Duration?)
         if (isVisible && targetTime != null) {
             while (true) {
                 timeRemaining = Duration.between(Instant.now(), targetTime)
-                delay(1000)
+                delay(tickLengthMS)
             }
         }
     }

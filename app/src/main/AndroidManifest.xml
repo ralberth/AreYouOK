@@ -6,6 +6,7 @@
         android:name="android.hardware.telephony"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         android:required="true" />
@@ -18,6 +19,8 @@
     <uses-permission
         android:name="android.permission.SCHEDULE_EXACT_ALARM"
         android:required="true" />
+    <uses-permission
+        android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"

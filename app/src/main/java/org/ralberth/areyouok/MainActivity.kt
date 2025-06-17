@@ -50,6 +50,10 @@ class MainActivity: ComponentActivity() {
             PackageManager.FEATURE_TELEPHONY,
             android.Manifest.permission.SEND_SMS
         )
+        permHelper.askForPermission(
+            PackageManager.FEATURE_TELEPHONY,
+            android.Manifest.permission.CALL_PHONE
+        )
         setContent {
             AreYouOkTheme {
                 Surface(

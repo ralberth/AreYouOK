@@ -1,5 +1,8 @@
 package org.ralberth.areyouok.datamodel
 
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,5 +98,17 @@ class RuokViewModel @Inject constructor(
             )
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
+    }
+
+
+    /*
+     * Wrapper to same name in Coordinator.
+     * Our iffy design is that the Coordinator is in charge of all interactions and can be
+     * referenced from any entry-point, not just @Composables or ViewModels.  The Coordinator
+     * also has an ApplicationContext for interacting with the phone.  ViewModel doesn't.
+     */
+    fun callContact() {
+        println("ViewModel.callContact()")
+        coordinator.callContact(uiState.value.phoneNumber)
     }
 }
