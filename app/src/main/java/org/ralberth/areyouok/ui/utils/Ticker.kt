@@ -29,8 +29,6 @@ import java.time.Instant
  *    4. LifecycleResumeEffect is called anytime the Ticker becomes visible or invisible.
  *       We use this to change the coroutine from ticking down to not ticking down: there's
  *       no point in recomposing this every second when nothing is visible.
- *
- * FIXME: this continues past zero and calls content.invoke() with negative numbers
  */
 @Composable
 fun Ticker(
@@ -54,8 +52,20 @@ fun Ticker(
 
     LaunchedEffect(isVisible, targetTime) {
         if (isVisible && targetTime != null) {
+            // Don't let timeRemaining go negative and make 100% sure it emits a last value of
+            // zero for timeRemaining.seconds and timeRemaining.milliseconds.  This way, consumers
+            // get a final recomposition with the timer down to "zero".
+            var haveEmittedZeroValue = false
             while (true) {
-                timeRemaining = Duration.between(Instant.now(), targetTime)
+                var timeLeft = Duration.between(Instant.now(), targetTime)
+                if (timeLeft.isNegative)
+                    if (!haveEmittedZeroValue) {
+                        timeLeft = Duration.ofMillis(0L)
+                        haveEmittedZeroValue = true
+                    } else
+                        break
+                timeRemaining = timeLeft
+//                println("TICKER: timeLeft = ${timeLeft.toMillis()}ms, isNegative=${timeLeft.isNegative}, timeRemaining = ${timeRemaining!!.toMillis()}ms")
                 delay(tickLengthMS)
             }
         }

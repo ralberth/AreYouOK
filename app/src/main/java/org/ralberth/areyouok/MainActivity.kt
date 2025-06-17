@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
-import org.ralberth.areyouok.ui.mainscreen.CallContactScreen
+import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme

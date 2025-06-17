@@ -1,10 +1,9 @@
-package org.ralberth.areyouok.ui.mainscreen
+package org.ralberth.areyouok.ui.callcontactscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,8 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,8 +32,6 @@ import org.ralberth.areyouok.ui.utils.Ticker
 import java.time.Instant
 import java.time.Duration
 import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.min
 
 
 @Composable
@@ -48,12 +43,20 @@ fun CallContactScreen(
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         // Break this into CallContactScreen and CallContactUI to make @Preview below simple
         val targetTime = Instant.now().plusSeconds(5)
-        Ticker(targetTime, 100) { timeRemaining ->
-            CallContactUI(
-                timeRemaining,
-                uiState.phoneName,
-                uiState.phoneNumber
-            ) { navController.navigateUp() }
+        Ticker(targetTime, 1000) { timeRemaining ->
+            if (timeRemaining != null) {
+                CallContactUI(
+                    timeRemaining,
+                    uiState.phoneName,
+                    uiState.phoneNumber,
+                    { navController.navigateUp() }
+                )
+
+                if (timeRemaining.isZero) {
+                    viewModel.callContact()
+                    navController.navigateUp()
+                }
+            }
         }
     }
 }
@@ -61,46 +64,32 @@ fun CallContactScreen(
 
 @Composable
 fun CallContactUI(
-    timeRemaining: Duration?,
+    timeRemaining: Duration,
     name: String,
     number: String,
     onCancel: () -> Unit
 ) {
-    if (timeRemaining != null) {
-        Text("Calling")
-        Text(name)
-        Text(number)
-        Text("in")
+    Text("Calling")
+    Text(name)
+    Text(number)
+    Text("in")
 
-        val timeRemainingFrac = max(timeRemaining.toMillis().toFloat() / 1000f, 0f)  // FIXME: timer should stop at 0
-        val percentRemaining = timeRemainingFrac / 5f
-        val wholeSecondsRemaining = ceil(timeRemainingFrac).toInt()  // Not sure why this has to be this way
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                progress = { percentRemaining },
-                modifier = Modifier.size(80.dp)
-            )
-            Text(
-                text = wholeSecondsRemaining.toString(),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-//                when {
-//                    s > 3 -> Text("> 3")
-//                    s == 3 -> Text("3")
-//                    s == 2 -> Text("2")
-//                    s == 1 -> Text("1")
-//                    else -> {
-//                        Text("calling")
-//                        viewModel.callContact()
-//                        onCancel()  // navController.navigateUp()
-//                    }
-//                }
-    } else {
-        Text("Countdown not enabled")
+    val timeRemainingFrac = timeRemaining.toMillis().toFloat() / 1000f
+    val percentRemaining = timeRemainingFrac / 5f
+    val wholeSecondsRemaining = ceil(timeRemainingFrac).toInt()
+
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            progress = { percentRemaining },
+            modifier = Modifier.size(80.dp)
+        )
+        Text(
+            text = wholeSecondsRemaining.toString(),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 
     Button(
