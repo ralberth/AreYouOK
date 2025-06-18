@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,14 +29,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import org.ralberth.areyouok.ui.settings.DurationSelectUI
 
 
 @Composable
-fun BottomNavButton(navController: NavController, myRoute: String, navRoute: String, icon: ImageVector) {
+fun BottomNavButton(navController: NavController?, myRoute: String, navRoute: String, icon: ImageVector) {
     IconButton(
-        onClick = { if (myRoute != navRoute) navController.navigate(navRoute) }
+        onClick = { if (myRoute != navRoute) navController?.navigate(navRoute) }
     ) {
         Icon(
             imageVector = icon,
@@ -51,7 +52,7 @@ fun BottomNavButton(navController: NavController, myRoute: String, navRoute: Str
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RuokScaffold(
-    navController: NavController,
+    navController: NavController?, // always pass one.  This is optional for @Preview screens
     route: String,
     title: String? = null,
     description: String? = null,
@@ -67,7 +68,7 @@ fun RuokScaffold(
                     RuokMasthead()
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = { navController?.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Return to last screen"
@@ -135,5 +136,14 @@ fun RuokScaffold(
 
                 content()
             }
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+fun RuokScaffoldPreview() {
+    RuokScaffold(null, "a", "ScaffoldPreview", "Lorem Ipsum dolor sic amut.") {
+        Text("Hi There")
     }
 }

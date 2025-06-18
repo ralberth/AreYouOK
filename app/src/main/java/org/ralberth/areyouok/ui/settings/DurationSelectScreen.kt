@@ -17,6 +17,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -29,6 +31,22 @@ import kotlin.text.*
 fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    DurationSelectUI(
+        navController,
+        20,
+        { viewModel.updateCountdownLength(it) },
+        { navController.navigateUp() }
+    )
+}
+
+
+@Composable
+fun DurationSelectUI(
+    navController: NavController?,
+    countdownLength: Int,
+    onLengthChange: (Int) -> Unit,
+    onDone: () -> Unit
+) {
     RuokScaffold(
         navController = navController,
         route = "durationselect",
@@ -43,13 +61,13 @@ fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel)
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("Countdown Duration:   ")
                         }
-                        append("${uiState.countdownLength} minutes")
+                        append("${countdownLength} minutes")
                     }
                 )
 
                 Slider(
-                    value = uiState.countdownLength.toFloat(),
-                    onValueChange = { viewModel.updateCountdownLength(it.toInt()) },
+                    value = countdownLength.toFloat(),
+                    onValueChange = { onLengthChange(it.toInt()) },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.secondary,
@@ -63,7 +81,7 @@ fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel)
                     modifier = Modifier.fillMaxWidth().padding(20.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(onClick = { navController.navigateUp() }) {
+                    Button(onClick = onDone) {
                         Text("OK")
                     }
                 }
@@ -71,29 +89,36 @@ fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel)
                 TableBuilder()
                     .columnWeights(2, 1, 1)
                     .headerRow("", "Time", "Example")
-                    .row("Start",  "T-${uiState.countdownLength}", "12:00")
+                    .row("Start",  "T-${countdownLength}", "12:00")
                     .row(
                         "1st notification",
                         "T-3",
-                        "12:${String.format("%02d", uiState.countdownLength - 3)}"
+                        "12:${String.format("%02d", countdownLength - 3)}"
                     )
                     .row(
                         "2nd notification",
                         "T-2",
-                        "12:${String.format("%02d", uiState.countdownLength - 2)}"
+                        "12:${String.format("%02d", countdownLength - 2)}"
                     )
                     .row(
                         "Alert",
                         "T-1",
-                        "12:${String.format("%02d", uiState.countdownLength - 1)}"
+                        "12:${String.format("%02d", countdownLength - 1)}"
                     )
                     .row(
                         "Alarm",
                         "T-0",
-                        "12:${String.format("%02d", uiState.countdownLength)}"
+                        "12:${String.format("%02d", countdownLength)}"
                     )
                     .build()
             }
         }
     }
+}
+
+
+@PreviewLightDark
+@Composable
+fun DurationSelectUIPreview() {
+    DurationSelectUI(null, 30, {}, {})
 }

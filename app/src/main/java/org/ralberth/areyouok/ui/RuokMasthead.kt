@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
 
 
@@ -71,4 +72,11 @@ fun RuokMasthead() {
             withStyle(style = QStyle) { append("?") }
         }
     )
+}
+
+
+@PreviewLightDark
+@Composable
+fun RuokMastheadPreview() {
+    RuokMasthead()
 }

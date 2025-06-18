@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,22 +37,40 @@ fun CountdownScreen(
     navController: NavController,
     viewModel: RuokViewModel
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    CountdownUI(
+        navController,
+        uiState.countdownStart,
+        uiState.countdownStop,
+        viewModel::checkin,
+        { navController.navigate("callcontact") }
+    )
+}
+
+
+@Composable
+fun CountdownUI(
+    navController: NavController?,
+    countdownStart: Instant?,
+    countdownStop: Instant?,
+    onCheckin: () -> Unit,
+    onCallContact: () -> Unit
+) {
     RuokScaffold(navController, "countdown", "Countdown") {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        StatusDisplayText(uiState.countdownStop)
+        StatusDisplayText(countdownStop)
 
-        Ticker(uiState.countdownStop) {
+        Ticker(countdownStop) {
             timeRemaining ->
                 CountdownDisplay(
-                    uiState.countdownStart,
-                    uiState.countdownStop,
+                    countdownStart,
+                    countdownStop,
                     timeRemaining
                 )
 
                 Button(
-                    enabled = uiState.countdownStart != null,
-                    onClick = viewModel::checkin,
+                    enabled = countdownStart != null,
+                    onClick = onCheckin,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.height(60.dp)
                 ) {
@@ -66,7 +85,7 @@ fun CountdownScreen(
                 }
 
                 FilledTonalButton(
-                    onClick = { navController.navigate("callcontact") },
+                    onClick = onCallContact,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.height(60.dp)
                 ) {
@@ -115,4 +134,17 @@ fun CountdownScreen(
                 }
         }
     }
+}
+
+
+@PreviewLightDark
+@Composable
+fun CountdownUIPreview() {
+    CountdownUI(
+        null,
+        Instant.now(),
+        Instant.now().plusSeconds(20 * 60),
+        {},
+        {}
+    )
 }

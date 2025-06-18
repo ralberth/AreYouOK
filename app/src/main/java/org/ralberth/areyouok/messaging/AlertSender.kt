@@ -30,6 +30,10 @@ class AlertSender @Inject constructor(
         }
 
 
+        fun getLocationChangedMessage(newLocation: String): String {
+            return "🆕📍🗺️ New location: $newLocation"
+        }
+
         fun getCheckinMessage(nextCheckin: String): String {
             return "👍 Check-in!  Next check-in at $nextCheckin"
         }

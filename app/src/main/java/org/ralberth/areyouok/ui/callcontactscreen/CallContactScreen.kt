@@ -39,23 +39,21 @@ fun CallContactScreen(
     navController: NavController,
     viewModel: RuokViewModel
 ) {
-    RuokScaffold(navController, "callcontact", "Call Contact") {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        // Break this into CallContactScreen and CallContactUI to make @Preview below simple
-        val targetTime = Instant.now().plusSeconds(5)
-        Ticker(targetTime, 1000) { timeRemaining ->
-            if (timeRemaining != null) {
-                CallContactUI(
-                    timeRemaining,
-                    uiState.phoneName,
-                    uiState.phoneNumber,
-                    { navController.navigateUp() }
-                )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    // Break this into CallContactScreen and CallContactUI to make @Preview below simple
+    val targetTime = Instant.now().plusSeconds(5)
+    Ticker(targetTime, 1000) { timeRemaining ->
+        if (timeRemaining != null) {
+            CallContactUI(
+                timeRemaining,
+                uiState.phoneName,
+                uiState.phoneNumber,
+                { navController.navigateUp() }
+            )
 
-                if (timeRemaining.isZero) {
-                    viewModel.callContact()
-                    navController.navigateUp()
-                }
+            if (timeRemaining.isZero) {
+                viewModel.callContact()
+                navController.navigateUp()
             }
         }
     }
@@ -69,41 +67,43 @@ fun CallContactUI(
     number: String,
     onCancel: () -> Unit
 ) {
-    Text("Calling")
-    Text(name)
-    Text(number)
-    Text("in")
+    RuokScaffold(null, "callcontact", "Call Contact") {
+        Text("Calling")
+        Text(name)
+        Text(number)
+        Text("in")
 
-    val timeRemainingFrac = timeRemaining.toMillis().toFloat() / 1000f
-    val percentRemaining = timeRemainingFrac / 5f
-    val wholeSecondsRemaining = ceil(timeRemainingFrac).toInt()
+        val timeRemainingFrac = timeRemaining.toMillis().toFloat() / 1000f
+        val percentRemaining = timeRemainingFrac / 5f
+        val wholeSecondsRemaining = ceil(timeRemainingFrac).toInt()
 
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            progress = { percentRemaining },
-            modifier = Modifier.size(80.dp)
-        )
-        Text(
-            text = wholeSecondsRemaining.toString(),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                progress = { percentRemaining },
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = wholeSecondsRemaining.toString(),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
-    Button(
-        onClick = onCancel,
-        modifier = Modifier.height(60.dp)
-    ) {
-        Icon(
-            Icons.Filled.Close,
-            "Cancel"
-        )
-        Text(
-            " Cancel",
-            fontSize = 20.sp
-        )
+        Button(
+            onClick = onCancel,
+            modifier = Modifier.height(60.dp)
+        ) {
+            Icon(
+                Icons.Filled.Close,
+                "Cancel"
+            )
+            Text(
+                " Cancel",
+                fontSize = 20.sp
+            )
+        }
     }
 }
 
@@ -111,23 +111,10 @@ fun CallContactUI(
 @PreviewLightDark
 @Composable
 fun CallContactUIPreview() {
-    AreYouOkTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column(
-                modifier = Modifier.padding(10.dp),   // .fillMaxHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                CallContactUI(
-                    Duration.ofSeconds(3),
-                    "John Smith",
-                    "(123) 456-7890",
-                    { }
-                )
-            }
-        }
-    }
+    CallContactUI(
+        Duration.ofSeconds(3),
+        "John Smith",
+        "(123) 456-7890",
+        { }
+    )
 }
