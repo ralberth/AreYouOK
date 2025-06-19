@@ -45,6 +45,7 @@ fun CallContactScreen(
     Ticker(targetTime, 1000) { timeRemaining ->
         if (timeRemaining != null) {
             CallContactUI(
+                navController,
                 timeRemaining,
                 uiState.phoneName,
                 uiState.phoneNumber,
@@ -62,12 +63,13 @@ fun CallContactScreen(
 
 @Composable
 fun CallContactUI(
+    navController: NavController?,
     timeRemaining: Duration,
     name: String,
     number: String,
     onCancel: () -> Unit
 ) {
-    RuokScaffold(null, "callcontact", "Call Contact") {
+    RuokScaffold(navController, "callcontact", "Call Contact") {
         Text("Calling")
         Text(name)
         Text(number)
@@ -112,6 +114,7 @@ fun CallContactUI(
 @Composable
 fun CallContactUIPreview() {
     CallContactUI(
+        null,
         Duration.ofSeconds(3),
         "John Smith",
         "(123) 456-7890",

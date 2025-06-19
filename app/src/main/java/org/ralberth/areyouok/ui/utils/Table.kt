@@ -85,20 +85,20 @@ class TableBuilder() {
 
     @Composable
     fun build() {
-        LazyColumn(Modifier
+        Column(Modifier
             .fillMaxSize()
             .padding(20.dp)
         ) {
             if (headerRow.size >= 1) {
-                item {
+//                item {
                     Row {
                         for (i in 0..headerRow.size - 1)
                             TableCell(thing = headerRow[i], weight = columnWeights[i].toFloat())
                     }
-                }
+//                }
             }
             for (row in rows) {
-                item {
+//                item {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         var i: Int = 0
                         for (cell in row) {
@@ -106,7 +106,7 @@ class TableBuilder() {
                             i += 1
                         }
                     }
-                }
+//                }
             }
         }
     }

@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -59,6 +62,7 @@ fun RuokScaffold(
     content: @Composable() () -> Unit = {}
 ) {
     Scaffold(
+
         topBar = {
             CenterAlignedTopAppBar(
                 colors = topAppBarColors(
@@ -81,6 +85,13 @@ fun RuokScaffold(
         bottomBar = {
             BottomAppBar {
                 Spacer(Modifier.weight(1f))
+                BottomNavButton(
+                    navController = navController,
+                    myRoute = route,
+                    navRoute = "help",
+                    icon = Icons.Filled.Info
+                )
+                Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
@@ -109,7 +120,8 @@ fun RuokScaffold(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxHeight(1f),
+                    .fillMaxHeight(1f)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -143,7 +155,15 @@ fun RuokScaffold(
 @PreviewLightDark
 @Composable
 fun RuokScaffoldPreview() {
-    RuokScaffold(null, "a", "ScaffoldPreview", "Lorem Ipsum dolor sic amut.") {
+    RuokScaffold(
+        null,
+        "a",
+        "ScaffoldPreview",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, " +
+                "lacinia sit amet suscipit eget, malesuada quis lacus. Vestibulum pellentesque, " +
+                "est vitae facilisis fermentum, metus sapien interdum tellus, nec tempor sem " +
+                "dolor a tellus. "
+    ) {
         Text("Hi There")
     }
 }

@@ -33,7 +33,7 @@ fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel)
 
     DurationSelectUI(
         navController,
-        20,
+        uiState.countdownLength,
         { viewModel.updateCountdownLength(it) },
         { navController.navigateUp() }
     )

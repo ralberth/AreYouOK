@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.ui.HelpScreen
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
@@ -63,6 +64,7 @@ class MainActivity: ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "main") {
                         composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
+                        composable("help") { HelpScreen(navController) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
                         composable("locationselect") { LocationScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }
