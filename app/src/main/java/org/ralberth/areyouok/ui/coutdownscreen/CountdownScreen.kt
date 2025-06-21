@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
 import org.ralberth.areyouok.ui.settings.TableBuilder
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.utils.Ticker
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -140,11 +143,15 @@ fun CountdownUI(
 @PreviewLightDark
 @Composable
 fun CountdownUIPreview() {
-    CountdownUI(
-        null,
-        Instant.now(),
-        Instant.now().plusSeconds(20 * 60),
-        {},
-        {}
-    )
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            CountdownUI(
+                null,
+                Instant.now(),
+                Instant.now().plusSeconds(20 * 60),
+                {},
+                {}
+            )
+        }
+    }
 }

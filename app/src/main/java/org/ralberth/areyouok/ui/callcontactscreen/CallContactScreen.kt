@@ -70,17 +70,17 @@ fun CallContactUI(
     onCancel: () -> Unit
 ) {
     RuokScaffold(navController, "callcontact", "Call Contact") {
-        Text("Calling")
+        Text("Calling", modifier = Modifier.padding(top=30.dp))
         Text(name)
         Text(number)
-        Text("in")
+        Text("in", modifier = Modifier.padding(14.dp))
 
         val timeRemainingFrac = timeRemaining.toMillis().toFloat() / 1000f
         val percentRemaining = timeRemainingFrac / 5f
         val wholeSecondsRemaining = ceil(timeRemainingFrac).toInt()
 
         Box(
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center, modifier = Modifier.padding(14.dp)
         ) {
             CircularProgressIndicator(
                 progress = { percentRemaining },
@@ -113,11 +113,15 @@ fun CallContactUI(
 @PreviewLightDark
 @Composable
 fun CallContactUIPreview() {
-    CallContactUI(
-        null,
-        Duration.ofSeconds(3),
-        "John Smith",
-        "(123) 456-7890",
-        { }
-    )
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            CallContactUI(
+                null,
+                Duration.ofSeconds(3),
+                "John Smith",
+                "(123) 456-7890",
+                { }
+            )
+        }
+    }
 }

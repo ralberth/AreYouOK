@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.settings.DurationSelectUI
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @Composable
@@ -62,7 +64,6 @@ fun RuokScaffold(
     content: @Composable() () -> Unit = {}
 ) {
     Scaffold(
-
         topBar = {
             CenterAlignedTopAppBar(
                 colors = topAppBarColors(
@@ -85,13 +86,13 @@ fun RuokScaffold(
         bottomBar = {
             BottomAppBar {
                 Spacer(Modifier.weight(1f))
-                BottomNavButton(
-                    navController = navController,
-                    myRoute = route,
-                    navRoute = "help",
-                    icon = Icons.Filled.Info
-                )
-                Spacer(Modifier.weight(2f))
+//                BottomNavButton(
+//                    navController = navController,
+//                    myRoute = route,
+//                    navRoute = "help",
+//                    icon = Icons.Filled.Info
+//                )
+//                Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
@@ -123,7 +124,8 @@ fun RuokScaffold(
                     .fillMaxHeight(1f)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+
             ) {
                 if (title != null)
                     Text(
@@ -133,7 +135,6 @@ fun RuokScaffold(
                         modifier = Modifier
                             .background(Color.LightGray)
                             .fillMaxWidth()
-//                            .align(Alignment.CenterHorizontally)
                             .padding(5.dp)
 
                     )
@@ -155,15 +156,19 @@ fun RuokScaffold(
 @PreviewLightDark
 @Composable
 fun RuokScaffoldPreview() {
-    RuokScaffold(
-        null,
-        "a",
-        "ScaffoldPreview",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, " +
-                "lacinia sit amet suscipit eget, malesuada quis lacus. Vestibulum pellentesque, " +
-                "est vitae facilisis fermentum, metus sapien interdum tellus, nec tempor sem " +
-                "dolor a tellus. "
-    ) {
-        Text("Hi There")
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RuokScaffold(
+                null,
+                "a",
+                "ScaffoldPreview",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, " +
+                        "lacinia sit amet suscipit eget, malesuada quis lacus. Vestibulum pellentesque, " +
+                        "est vitae facilisis fermentum, metus sapien interdum tellus, nec tempor sem " +
+                        "dolor a tellus. "
+            ) {
+                Text("Hi There")
+            }
+        }
     }
 }

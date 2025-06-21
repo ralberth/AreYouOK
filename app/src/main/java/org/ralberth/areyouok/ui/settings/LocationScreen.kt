@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -22,6 +23,7 @@ import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.messaging.AlertSender
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @Composable
@@ -103,11 +105,15 @@ fun ChatItemBubble(message: String) {
 @PreviewLightDark
 @Composable
 fun LocationUIPreview() {
-    LocationUI(
-        null,
-        "Home by the sea",
-        40,
-        {},
-        {}
-    )
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            LocationUI(
+                null,
+                "Home by the sea",
+                40,
+                {},
+                {}
+            )
+        }
+    }
 }

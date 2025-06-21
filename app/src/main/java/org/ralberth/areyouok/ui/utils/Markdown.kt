@@ -85,14 +85,16 @@ fun MarkdownPreview() {
         # Big Title
         # Subtitle
         
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, lacinia sit amet suscipit eget, malesuada quis lacus. Vestibulum pellentesque, est vitae facilisis fermentum, metus sapien interdum tellus, nec tempor sem dolor a tellus.
-        Praesent vel ex non nibh scelerisque hendrerit et nec lorem. Vivamus libero ante, sagittis non facilisis sed, convallis eu massa. Nullam ac auctor justo.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, lacinia sit amet suscipit eget, malesuada quis lacus.
+        Praesent vel ex non nibh scelerisque hendrerit et nec lorem. Vivamus libero ante, sagittis non facilisis sed.
         
         ## Heading 1
-        ### Heading 2
-        #### Heading 3
         Vivamus tortor mauris, tempus ac dolor vitae, lobortis posuere mauris.
+
+        ### Heading 2
         Phasellus ultrices elementum massa, et mattis mi tempor sit amet. Vivamus sodales pulvinar ligula elementum faucibus. Proin ornare massa purus, luctus egestas lacus maximus eget.
+
+        #### Heading 3
         
         * Mauris mattis porta varius
         * Pellentesque habitant morbi tristique

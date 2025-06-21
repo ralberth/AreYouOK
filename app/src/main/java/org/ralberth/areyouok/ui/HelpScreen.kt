@@ -1,11 +1,13 @@
 package org.ralberth.areyouok.ui
 
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.navigation.NavController
 import org.ralberth.areyouok.R
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.utils.Markdown
 import java.io.InputStream
 
@@ -27,5 +29,9 @@ fun HelpScreen(navController: NavController?) {
 @PreviewLightDark
 @Composable
 fun HelpScreenPreview() {
-    HelpScreen(null)
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            HelpScreen(null)
+        }
+    }
 }

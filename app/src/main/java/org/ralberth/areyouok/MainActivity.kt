@@ -13,8 +13,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -61,10 +63,15 @@ class MainActivity: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // If the countdown is running, go straight to the countdown screen
+                    // TODO: if the user hasn't met the setup requirements, go there instead of main if the countdown isn't running
+                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                    val firstDestination = if (uiState.countdownStart != null) "countdown" else "main"
+
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "main") {
+                    NavHost(navController = navController, startDestination = firstDestination) {
                         composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
-                        composable("help") { HelpScreen(navController) }
+//                        composable("help") { HelpScreen(navController) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
                         composable("locationselect") { LocationScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }

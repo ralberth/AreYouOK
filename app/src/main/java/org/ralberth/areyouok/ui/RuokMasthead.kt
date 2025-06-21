@@ -1,7 +1,11 @@
 package org.ralberth.areyouok.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -14,6 +18,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 val RStyle = SpanStyle(
@@ -78,5 +83,9 @@ fun RuokMasthead() {
 @PreviewLightDark
 @Composable
 fun RuokMastheadPreview() {
-    RuokMasthead()
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RuokMasthead()
+        }
+    }
 }

@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import kotlin.text.*
 
 
@@ -120,5 +122,9 @@ fun DurationSelectUI(
 @PreviewLightDark
 @Composable
 fun DurationSelectUIPreview() {
-    DurationSelectUI(null, 30, {}, {})
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            DurationSelectUI(null, 30, {}, {})
+        }
+    }
 }
