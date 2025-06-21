@@ -6,6 +6,11 @@ import android.telephony.SmsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCheckinMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOffMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -19,32 +24,6 @@ class AlertSender @Inject constructor(
     private val intentGenerator: RuokIntents,
     private val permHelper: PermissionsHelper
 ) {
-    companion object {
-        fun getTurnedOnMessage(mins: Int, location: String): String {
-            return "⚪ Alerting turned on.  Check-ins every $mins minutes.  Current location: $location"
-        }
-
-
-        fun getTurnedOffMessage(): String {
-            return "⚫ Alerting turned off."
-        }
-
-
-        fun getLocationChangedMessage(newLocation: String): String {
-            return "🆕📍🗺️ New location: $newLocation"
-        }
-
-        fun getCheckinMessage(nextCheckin: String): String {
-            return "👍 Check-in!  Next check-in at $nextCheckin"
-        }
-
-
-        fun missedCheckinMessage(location: String): String {
-            return "🚨 MISSED LAST CHECK-IN 🚨  Last known location: $location"
-        }
-    }
-
-
     val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         context.getSystemService<SmsManager>(SmsManager::class.java)
     } else {
@@ -76,28 +55,30 @@ class AlertSender @Inject constructor(
 
 
     fun enabled(phoneNumber: String, mins: Int, location: String) {
-        println("AlertSender.enabled($mins): send \"Alerting turned on\"")
         send(phoneNumber, getTurnedOnMessage(mins, location))
     }
 
 
     fun disabled(phoneNumber: String) {
-        println("AlertSender.disbaled(): send \"Alerting turned off\"")
         send(phoneNumber, getTurnedOffMessage())
     }
 
 
     fun checkin(phoneNumber: String, mins: Int) {
-        println("AlertSender.checkin($mins): send \"Check-in!\"")
         val nextCheckin = Calendar.getInstance()
         nextCheckin.add(Calendar.MINUTE, mins)
         val at: String = dtFormat.format(nextCheckin.time)
-        send(phoneNumber, getCheckinMessage(at))
+        val msg = getCheckinMessage(at)
+        send(phoneNumber, msg)
+    }
+
+
+    fun locationChanged(phoneNumber: String, newLocation: String) {
+        send(phoneNumber, getLocationChangedMessage(newLocation))
     }
 
 
     fun unresponsive(phoneNumber: String, location: String) {
-        println("AlertSender.unresponsive(): send \"MISSED LAST CHECK-IN\"")
         send(phoneNumber, missedCheckinMessage(location))
     }
 }

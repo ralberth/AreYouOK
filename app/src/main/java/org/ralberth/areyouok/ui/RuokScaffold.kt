@@ -61,6 +61,8 @@ fun RuokScaffold(
     route: String,
     title: String? = null,
     description: String? = null,
+    showNavigateUp: Boolean = true,
+    onNavigateUp: () -> Unit = {},
     content: @Composable() () -> Unit = {}
 ) {
     Scaffold(
@@ -73,13 +75,14 @@ fun RuokScaffold(
                     RuokMasthead()
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController?.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Return to last screen"
-                        )
-                    }
-                },
+                    if (showNavigateUp)
+                        IconButton(onClick = { onNavigateUp(); navController?.navigateUp() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Return to last screen"
+                            )
+                        }
+                }
             )
         },
 

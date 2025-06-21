@@ -59,8 +59,12 @@ fun CountdownUI(
     onCheckin: () -> Unit,
     onCallContact: () -> Unit
 ) {
-    RuokScaffold(navController, "countdown", "Countdown") {
-
+    RuokScaffold(
+        navController,
+        "countdown",
+        "Countdown",
+        showNavigateUp = false
+    ) {
         StatusDisplayText(countdownStop)
 
         Ticker(countdownStop) {

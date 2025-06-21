@@ -72,10 +72,14 @@ class RuokViewModel @Inject constructor(
 
 
     fun updateLocation(newLocation: String) {
-        _uiState.update {
-            it.copy(location = newLocation)
+        if (newLocation != _uiState.value.location) {
+            _uiState.update {
+                it.copy(location = newLocation)
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+            if (_uiState.value.countdownStart != null)
+                coordinator.updateLocation(newLocation)
         }
-        ruokDatastore.saveMainScreenState(_uiState.value)
     }
 
 

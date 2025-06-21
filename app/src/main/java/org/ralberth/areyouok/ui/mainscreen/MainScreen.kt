@@ -39,6 +39,7 @@ fun MainScreen(
         navController = navController,
         route = "main",
         title = "Home",
+        showNavigateUp = false,
         description = "Turn on and your phone will text your point of contact if you don't check-in every period."
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()

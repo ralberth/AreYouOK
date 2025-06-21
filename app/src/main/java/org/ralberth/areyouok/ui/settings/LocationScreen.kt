@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,18 +26,22 @@ import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.messaging.AlertSender
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @Composable
 fun LocationScreen(navController: NavController, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var editBoxLocation by remember { mutableStateOf(uiState.location) }
     LocationUI(
         navController,
-        uiState.location,
+        editBoxLocation,
         uiState.countdownLength,
-        { viewModel.updateLocation(it) },
-        { navController.navigateUp() }  // change this to call controller.  If we're running, text the contact.
+        { editBoxLocation = it },
+        { viewModel.updateLocation(editBoxLocation); navController.navigateUp() }  // change this to call controller.  If we're running, text the contact.
     )
 }
 
@@ -51,7 +58,8 @@ fun LocationUI(
         navController = navController,
         route = "location",
         title = "Set Your Location",
-        description = "Where you physically are right now.  Sent to your POC so they know where you are."
+        description = "Where you physically are right now.  Sent to your POC so they know where you are.",
+        onNavigateUp = onDone
     ) {
         TextField(
             value = location,
@@ -74,13 +82,13 @@ fun LocationUI(
         ) {
             Text("How messages sent to your contact will look:")
             ChatItemBubble(
-                AlertSender.getTurnedOnMessage(
+                getTurnedOnMessage(
                     countdownLength,
                     location
                 )
             )
-            ChatItemBubble(AlertSender.getLocationChangedMessage(location))
-            ChatItemBubble(AlertSender.missedCheckinMessage(location))
+            ChatItemBubble(getLocationChangedMessage(location))
+            ChatItemBubble(missedCheckinMessage(location))
         }
     }
 }

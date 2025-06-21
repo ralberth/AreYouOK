@@ -114,6 +114,12 @@ class Coordinator @Inject constructor(
     }
 
 
+    fun updateLocation(newLocation: String) {
+        // ViewModel makes sure not to call us unless the countdown is alive
+        alertSender.locationChanged(prefs.getPhoneNumber(), newLocation)
+    }
+
+
     fun callContact(phoneNumber: String) {
         val intent = Intent(
             Intent.ACTION_CALL,
