@@ -13,6 +13,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,12 +35,13 @@ import kotlin.text.*
 @Composable
 fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var nextDuration by remember { mutableStateOf(uiState.countdownLength) }
 
     DurationSelectUI(
         navController,
-        uiState.countdownLength,
-        { viewModel.updateCountdownLength(it) },
-        { navController.navigateUp() }
+        nextDuration,
+        { nextDuration = it },
+        { viewModel.updateCountdownLength(nextDuration); navController.navigateUp() }
     )
 }
 
@@ -54,7 +58,8 @@ fun DurationSelectUI(
         route = "durationselect",
         title = "Select Duration",
         description = "Total time after you click to enable the countdown before your " +
-                "contact is texted saying you might be in trouble."
+                "contact is texted saying you might be in trouble.",
+        onNavigateUp = onDone
     ) {
         Row(modifier = Modifier.padding(18.dp)) {
             Column {

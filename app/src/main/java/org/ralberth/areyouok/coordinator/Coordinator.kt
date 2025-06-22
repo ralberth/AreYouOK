@@ -105,12 +105,24 @@ class Coordinator @Inject constructor(
 
     fun checkin(countdownLength: Int) {
         println("Coordinator.checkin(): reschedule all alarms, cancel notifications, send TXT message")
+        resetEverything(countdownLength)
+        alertSender.checkin(prefs.getPhoneNumber(), countdownLength)
+    }
+
+
+    fun durationChanged(newLength: Int) {
+        println("Coordinator.changeDuration(): reschedule all alarms, cancel notifications, send TXT message")
+        resetEverything(newLength)
+        alertSender.durationChanged(prefs.getPhoneNumber(), newLength)
+    }
+
+
+    private fun resetEverything(countdownLength: Int) {
         soundEffects.stop()
         soundEffects.checkIn()
         alarms.cancelAllAlarms()
         alarms.setAlarms(countdownLength)
         notifier.cancelLastTimerNotification()
-        alertSender.checkin(prefs.getPhoneNumber(), countdownLength)
     }
 
 

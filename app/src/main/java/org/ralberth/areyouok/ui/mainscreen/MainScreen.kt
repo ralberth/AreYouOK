@@ -58,7 +58,7 @@ fun MainScreen(
 
         SummaryRow(
             leftIcon = Icons.Filled.Refresh,
-            label = "Duration",
+            label = "Countdown Length",
             value = "${uiState.countdownLength} minutes",
             onEdit = { navController.navigate("durationselect") }
         )

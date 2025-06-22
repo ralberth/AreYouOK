@@ -84,10 +84,13 @@ class RuokViewModel @Inject constructor(
 
 
     fun updateCountdownLength(newCountdownLength: Int) {
-        _uiState.update {
+        val oldLength = _uiState.value.countdownLength
+       _uiState.update {
             it.copy(countdownLength = newCountdownLength)
         }
         ruokDatastore.saveMainScreenState(_uiState.value)
+        if (_uiState.value.countdownStop != null && oldLength != newCountdownLength)
+            coordinator.durationChanged(newCountdownLength)
     }
 
 

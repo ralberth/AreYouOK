@@ -17,6 +17,10 @@ class RuokMessageStrings {
             return "⚫ Alerting turned off."
         }
 
+        fun getDurationChangedMessage(newDuration: Int, checkinTime: String): String {
+            return "⏱️ Check-ins are now every $newDuration minutes.  Next check-in at $checkinTime"
+        }
+
         fun getLocationChangedMessage(newLocation: String): String {
             return "🆕📍🗺️ New location: $newLocation"
         }

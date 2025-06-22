@@ -7,6 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCheckinMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getDurationChangedMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOffMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
@@ -31,6 +32,13 @@ class AlertSender @Inject constructor(
     }
 
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
+
+
+    private fun nextCheckinTime(countdownLength: Int): String {
+        val nextCheckin = Calendar.getInstance()
+        nextCheckin.add(Calendar.MINUTE, countdownLength)
+        return dtFormat.format(nextCheckin.time)
+    }
 
 
     private fun send(phoneNumber: String, msg: String) {
@@ -65,16 +73,20 @@ class AlertSender @Inject constructor(
 
 
     fun checkin(phoneNumber: String, mins: Int) {
-        val nextCheckin = Calendar.getInstance()
-        nextCheckin.add(Calendar.MINUTE, mins)
-        val at: String = dtFormat.format(nextCheckin.time)
-        val msg = getCheckinMessage(at)
+        val nextCheckinTime = nextCheckinTime(mins)
+        val msg = getCheckinMessage(nextCheckinTime)
         send(phoneNumber, msg)
     }
 
 
     fun locationChanged(phoneNumber: String, newLocation: String) {
         send(phoneNumber, getLocationChangedMessage(newLocation))
+    }
+
+
+    fun durationChanged(phoneNumber: String, newDuration: Int) {
+        val nextCheckinTime = nextCheckinTime(newDuration)
+        send(phoneNumber, getDurationChangedMessage(newDuration, nextCheckinTime))
     }
 
 
