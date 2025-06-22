@@ -32,5 +32,9 @@ class RuokMessageStrings {
         fun missedCheckinMessage(location: String): String {
             return "🚨 MISSED LAST CHECK-IN 🚨  Last known location: $location"
         }
+
+        fun getChangedContact(newName: String): String {
+            return "🏃‍➡️🏃‍♀️ Contact changed to $newName.  They will get all further TXTs."
+        }
     }
 }

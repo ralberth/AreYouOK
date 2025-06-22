@@ -126,6 +126,12 @@ class Coordinator @Inject constructor(
     }
 
 
+    fun updatePhone(oldNumber: String, newName: String, newNumber: String, mins: Int, location: String) {
+        alertSender.changedContact(oldNumber, newName)
+        alertSender.enabled(newNumber, mins, location)
+    }
+
+
     fun updateLocation(newLocation: String) {
         // ViewModel makes sure not to call us unless the countdown is alive
         alertSender.locationChanged(prefs.getPhoneNumber(), newLocation)

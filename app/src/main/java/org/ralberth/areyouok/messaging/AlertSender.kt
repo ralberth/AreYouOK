@@ -6,6 +6,7 @@ import android.telephony.SmsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getChangedContact
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCheckinMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getDurationChangedMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
@@ -87,6 +88,11 @@ class AlertSender @Inject constructor(
     fun durationChanged(phoneNumber: String, newDuration: Int) {
         val nextCheckinTime = nextCheckinTime(newDuration)
         send(phoneNumber, getDurationChangedMessage(newDuration, nextCheckinTime))
+    }
+
+
+    fun changedContact(oldNumber: String, newName: String) {
+        send(oldNumber, getChangedContact(newName))
     }
 
 
