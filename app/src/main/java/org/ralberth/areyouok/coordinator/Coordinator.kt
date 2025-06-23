@@ -138,12 +138,15 @@ class Coordinator @Inject constructor(
 
 
     fun callContact(phoneNumber: String) {
+        for(i in 0..2)
+            alertSender.callingYouNow(prefs.getPhoneNumber(), i)
+
         val intent = Intent(
             Intent.ACTION_CALL,
             "tel:${phoneNumber}".toUri()
         )
         intent.putExtra(EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our main/only Activity
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our own Activity
         context.startActivity(intent)
     }
 }

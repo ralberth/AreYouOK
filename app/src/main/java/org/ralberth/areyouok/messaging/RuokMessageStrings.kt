@@ -36,5 +36,10 @@ class RuokMessageStrings {
         fun getChangedContact(newName: String): String {
             return "🏃‍➡️🏃‍♀️ Contact changed to $newName.  They will get all further TXTs."
         }
+
+        fun getCallingYouNow(i: Int): String {
+            val decorations = arrayOf("📞", "😧", "☎️")
+            return "${decorations[i]}  I'M IN TROUBLE.  AUTO-CALLING YOU NOW.  ${decorations[i]}"
+        }
     }
 }

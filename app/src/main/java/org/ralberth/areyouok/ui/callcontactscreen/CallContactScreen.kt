@@ -1,9 +1,6 @@
 package org.ralberth.areyouok.ui.callcontactscreen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +14,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +39,7 @@ fun CallContactScreen(
     navController: NavController,
     viewModel: RuokViewModel
 ) {
+    var alreadyCalled by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     // Break this into CallContactScreen and CallContactUI to make @Preview below simple
     val targetTime = Instant.now().plusSeconds(5)
@@ -53,8 +54,13 @@ fun CallContactScreen(
             )
 
             if (timeRemaining.isZero) {
-                viewModel.callContact()
-                navController.navigateUp()
+                if (! alreadyCalled) {
+                    alreadyCalled = true
+                    viewModel.callContact()
+                    navController.navigateUp()
+                    // Navigating away means next time we're on this screen, the alreadyCalled
+                    // remember above will be created fresh.
+                }
             }
         }
     }

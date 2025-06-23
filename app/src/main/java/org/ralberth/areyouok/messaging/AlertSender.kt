@@ -6,6 +6,7 @@ import android.telephony.SmsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCallingYouNow
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getChangedContact
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCheckinMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getDurationChangedMessage
@@ -98,5 +99,10 @@ class AlertSender @Inject constructor(
 
     fun unresponsive(phoneNumber: String, location: String) {
         send(phoneNumber, missedCheckinMessage(location))
+    }
+
+
+    fun callingYouNow(phoneNumber: String, sequence: Int) {
+        send(phoneNumber, getCallingYouNow(sequence))
     }
 }

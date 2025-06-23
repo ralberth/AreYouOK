@@ -13,12 +13,36 @@ import java.time.Instant
 
 
 /*
- * UI Composable with no visible things.  This manages a side-effect coroutine that
- * ticks down once every second until a destination time happens.
- * Each time the tick happens, it modifies timeRemaining and causes a recompose of
- * itself and the @Composable passed into Ticker.
+ * UI Composable with no visible things.  This manages a side-effect coroutine that ticks down once
+ * every *tickLengthMS* until a destination time happens.  Each time the tick happens, it modifies
+ * timeRemaining and causes a recompose of itself and the @Composable passed into Ticker.
+ *
  * See https://stackoverflow.com/questions/71191340/how-can-i-implement-a-timer-in-a-portable-way-in-jetpack-compose
  * for inspiration for this.
+ *
+ * **WARNING:** this will cause `content` to be called ***at least*** the number of times based on
+ * tickLengthMS, and probably a lot more.  Anytime this `Ticker` gets a recompose it will call
+ * `content` to recompose itself, even though the coroutine hasn't ticked down to the next value
+ * based on tickLengthMS.
+ *
+ * This means you can't rely on this calling `content` exactly once every ticketLengthMS milliseconds
+ * and you can't rely on it not calling `content` more than once for any particular value or even
+ * calling `content` more than once with a zero value.
+ *
+ * Because targetTime can be null, this will also call `content(null)`, possibly a lot of times
+ * based on other things that cause a recompose.  The caller of `Ticker` has to do all the right
+ * things to avoid logic errors based on this, unfortunately.
+ *
+ * Case in point:
+ * ```
+ *    Ticker(Instant.now()) {
+ *        TextEdit(...)
+ *    }
+ * ```
+ *
+ * Every time the TextEdit value changes, it might cause a recompose based on callbacks.  The
+ * Ticker ***has*** to recompose its children when it is recomposed or the whole thing won't work
+ * right.  So, the stuff "below" the Ticker is responsible for dealing with duplicates, nulls, etc.
  *
  * Key design points:
  *    1. LaunchedEffect() runs a coroutine anytime this becomes visible or disappears from the
@@ -28,7 +52,7 @@ import java.time.Instant
  *       causes a recompose.
  *    4. LifecycleResumeEffect is called anytime the Ticker becomes visible or invisible.
  *       We use this to change the coroutine from ticking down to not ticking down: there's
- *       no point in recomposing this every second when nothing is visible.
+ *       no point in recomposing this every tickLengthMS when nothing is visible.
  */
 @Composable
 fun Ticker(
@@ -42,7 +66,8 @@ fun Ticker(
         )
     }
 
-    content.invoke(timeRemaining)
+//    println("Ticker recompose: timeRemaining=${timeRemaining?.toMillis()} (ms)")
+    content.invoke(timeRemaining)    // called a LOT more than only when the coroutine below causes a recompose
 
     var isVisible by remember { mutableStateOf(true) }
     LifecycleResumeEffect(Unit) {
@@ -65,7 +90,7 @@ fun Ticker(
                     } else
                         break
                 timeRemaining = timeLeft
-//                println("TICKER: timeLeft = ${timeLeft.toMillis()}ms, isNegative=${timeLeft.isNegative}, timeRemaining = ${timeRemaining!!.toMillis()}ms")
+//                println("TICKER: timeLeft = ${timeLeft.toMillis()}ms, isNegative=${timeLeft.isNegative}, timeRemaining = ${timeRemaining!!.toMillis()}ms, haveEmittedZeroValue=$haveEmittedZeroValue")
                 delay(tickLengthMS)
             }
         }
