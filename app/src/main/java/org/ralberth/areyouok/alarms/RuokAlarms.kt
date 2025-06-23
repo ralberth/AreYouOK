@@ -18,10 +18,6 @@ class RuokAlarms @Inject constructor(
     @ApplicationContext private val context: Context,
     private val intentGenerator: RuokIntents
 ) {
-    init {
-        println("Create RuokAlarms")
-    }
-
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private var pendingIntents = emptyArray<PendingIntent>()
 

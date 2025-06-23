@@ -1,16 +1,23 @@
 package org.ralberth.areyouok.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
-import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
-import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
@@ -36,12 +41,13 @@ import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 fun LocationScreen(navController: NavController, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var editBoxLocation by remember { mutableStateOf(uiState.location) }
+
     LocationUI(
         navController,
         editBoxLocation,
-        uiState.countdownLength,
+        uiState.recentLocations,
         { editBoxLocation = it },
-        { viewModel.updateLocation(editBoxLocation); navController.navigateUp() }  // change this to call controller.  If we're running, text the contact.
+        { viewModel.updateLocation(editBoxLocation); navController.navigateUp() }
     )
 }
 
@@ -50,7 +56,7 @@ fun LocationScreen(navController: NavController, viewModel: RuokViewModel) {
 fun LocationUI(
     navController: NavController?,
     location: String,
-    countdownLength: Int,
+    recentLocations: List<String>,
     onUpdateLocation: (String) -> Unit,
     onDone: () -> Unit
 ) {
@@ -61,11 +67,31 @@ fun LocationUI(
         description = "Where you physically are right now.  Sent to your POC so they know where you are.",
         onNavigateUp = onDone
     ) {
-        TextField(
-            value = location,
-            onValueChange = onUpdateLocation,
-            label = { Text("Location") }
-        )
+        var expanded by remember { mutableStateOf(false) }
+        Box {
+            OutlinedTextField(
+                value = location,
+                onValueChange = onUpdateLocation,
+                singleLine = true,
+                label = { Text("Where are you?") },
+                leadingIcon = {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                    }
+                }
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                recentLocations.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = { onUpdateLocation(option); expanded = false }
+                    )
+                }
+            }
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth().padding(20.dp),
@@ -81,12 +107,12 @@ fun LocationUI(
             modifier = Modifier.padding(start = 18.dp, end = 24.dp)
         ) {
             Text("How messages sent to your contact will look:")
-            ChatItemBubble(
-                getTurnedOnMessage(
-                    countdownLength,
-                    location
-                )
-            )
+//            ChatItemBubble(
+//                getTurnedOnMessage(
+//                    countdownLength,
+//                    location
+//                )
+//            )
             ChatItemBubble(getLocationChangedMessage(location))
             ChatItemBubble(missedCheckinMessage(location))
         }
@@ -118,7 +144,7 @@ fun LocationUIPreview() {
             LocationUI(
                 null,
                 "Home by the sea",
-                40,
+                listOf("Home", "Office", "Shopping", "Gym"),
                 {},
                 {}
             )

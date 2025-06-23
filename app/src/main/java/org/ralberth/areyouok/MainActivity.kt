@@ -66,7 +66,7 @@ class MainActivity: ComponentActivity() {
                     // If the countdown is running, go straight to the countdown screen
                     // TODO: if the user hasn't met the setup requirements, go there instead of main if the countdown isn't running
                     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-                    val firstDestination = if (uiState.countdownStart != null) "countdown" else "main"
+                    val firstDestination = if (uiState.isCountingDown()) "countdown" else "main"
 
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = firstDestination) {

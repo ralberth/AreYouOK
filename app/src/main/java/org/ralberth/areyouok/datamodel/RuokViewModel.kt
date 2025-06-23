@@ -68,7 +68,7 @@ class RuokViewModel @Inject constructor(
                 it.copy(countdownLength = newCountdownLength)
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
-            if (_uiState.value.countdownStart != null)
+            if (_uiState.value.isCountingDown())
                 coordinator.durationChanged(newCountdownLength)
         }
     }
@@ -85,7 +85,7 @@ class RuokViewModel @Inject constructor(
                 )
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
-            if (_uiState.value.countdownStart != null)
+            if (_uiState.value.isCountingDown())
                 coordinator.updatePhone(
                     oldPhoneNumber, newPhoneName, // tell current person they're done
                     newPhoneNumber, _uiState.value.countdownLength, _uiState.value.location // tell new person
@@ -97,11 +97,16 @@ class RuokViewModel @Inject constructor(
     fun updateLocation(newLocation: String) {
         val oldLocation = _uiState.value.location
         if (oldLocation != newLocation) {
+            // Make newLocation be at the front of recentLocations, and trim to 10 elements
+            val newRecentLocations = listOf(newLocation) + _uiState.value.recentLocations.filterNot { it == newLocation }
             _uiState.update {
-                it.copy(location = newLocation)
+                it.copy(
+                    location = newLocation,
+                    recentLocations = newRecentLocations.take(6)
+                )
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
-            if (_uiState.value.countdownStart != null)
+            if (_uiState.value.isCountingDown())
                 coordinator.updateLocation(newLocation)
         }
     }

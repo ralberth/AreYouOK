@@ -13,6 +13,10 @@ import javax.inject.Singleton
 class RuokDatastore @Inject constructor(
     @ApplicationContext context: Context
 ) {
+    companion object {
+        val NEW_RECENT_LOCS = listOf("Home", "Office", "Gym")
+    }
+
     // TODO: Deprecated, but the current docs suggest using this.  Switch later.
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -24,29 +28,22 @@ class RuokDatastore @Inject constructor(
             "countdownLength=${s.countdownLength}",
             "phoneName=${s.phoneName}",
             "phoneNumber=${s.phoneNumber}",
-            "location=${s.location}"
+            "location=${s.location}",
+            "recentLocations=${s.recentLocations.joinToString("; ") }"
         )
         return ary.joinToString(", ")
     }
 
 
     fun hydrateMainScreenState(): RuokScreenState {
-        if (prefs.contains("delayMins"))
-            println("Hydrate viewmodel: previous state found in preferences")
-        else
-            println("Hydrate viewmodel: brand new! No previous preferences!")
-
-        // FIXME: not sure why we can't just prefs.getInt("minsLeft", null) below...
-        var minsLeft: Int? = prefs.getInt("minsLeft", -1)
-        if (minsLeft == -1) minsLeft = null
-
         val ret = RuokScreenState(
             countdownStart = prefs.getInstant("countdownStart"),
             countdownStop = prefs.getInstant("countdownStop"),
             countdownLength = prefs.getInt("countdownLength", 30),
             phoneName = prefs.getString("phoneName", "") ?: "",
             phoneNumber = prefs.getString("phoneNumber", "") ?: "",
-            location = prefs.getString("location", "") ?: ""
+            location = prefs.getString("location", "") ?: "",
+            recentLocations = prefs.getStringList("recentLocations", NEW_RECENT_LOCS)
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -55,7 +52,6 @@ class RuokDatastore @Inject constructor(
 
     fun saveMainScreenState(state: RuokScreenState) {
         println("Save state ${dump(state)}")
-
         with (prefs.edit()) {
             putInstant("countdownStart", state.countdownStart)
             putInstant("countdownStop", state.countdownStop)
@@ -63,6 +59,7 @@ class RuokDatastore @Inject constructor(
             putString("phoneName", state.phoneName)
             putString("phoneNumber", state.phoneNumber)
             putString("location", state.location)
+            putStringList("recentLocations", state.recentLocations)
             apply()
         }
     }
@@ -87,4 +84,17 @@ private fun SharedPreferences.getInstant(key: String): Instant? {
 
 private fun SharedPreferences.Editor.putInstant(key: String, inst: Instant?) {
     putString(key, inst?.toString())
+}
+
+private fun SharedPreferences.getStringList(key: String, default: List<String>): List<String> {
+    val str = this.getString(key, null)
+    if (str == null)
+        return default
+    val rawStrList = str.split("\n").filterNot({ it == null || it.isBlank() })
+    return if (rawStrList.isEmpty()) default else rawStrList
+}
+
+private fun SharedPreferences.Editor.putStringList(key: String, sl: List<String>) {
+    val nonEmptyList = sl.filterNot({ it == null || it.isBlank() })
+    putString(key, nonEmptyList.joinToString("\n"))
 }

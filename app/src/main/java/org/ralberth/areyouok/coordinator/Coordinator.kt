@@ -6,7 +6,6 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.SoundEffects

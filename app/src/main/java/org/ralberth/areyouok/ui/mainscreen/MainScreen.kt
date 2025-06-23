@@ -96,7 +96,7 @@ fun MainScreen(
             Spacer(Modifier.weight(1f))
             Switch(
                 enabled = appIsUsable && uiState.phoneNumber.isNotEmpty(),
-                checked = uiState.countdownStart != null,
+                checked = uiState.isCountingDown(),
                 onCheckedChange = { viewModel.updateEnabled(it) }
             )
         }
