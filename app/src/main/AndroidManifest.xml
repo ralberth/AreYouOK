@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+    Will need this once we go to app level 30 or 31.  These limit what other apps are installed
+    and what our app is allowed to see.  This explicitly tells the OS that we want to interact
+    with these other packages/intents/etc.
+    Without this, we may not be able to receive Intents that tell us if a sent TXT message
+    succeeded or the target phone received the TXT message.
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto"/>
+        </intent>
+    </queries>
+    -->
+
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -21,6 +35,7 @@
         android:required="true" />
     <uses-permission
         android:name="android.permission.CALL_PHONE" />
+
 
     <application
         android:allowBackup="true"
@@ -44,7 +59,16 @@
             </intent-filter>
         </activity>
         <receiver android:name=".alarms.RuokAlarmReceiver" />
-        <receiver android:name=".messaging.AlertErrorHandler" />
+
+        <!--
+            Unlike other receivers, this has to be exported so the telephony system can send it
+            intents.  When a TXT message is sent, we send a PendingIntent asking SMS to call us
+            back when certain things happen, like sending the text message and if the other phone
+            received the TXT message.
+         -->
+        <receiver
+            android:name=".messaging.AlertErrorHandler"
+            android:exported="true" />
     </application>
 
 </manifest>

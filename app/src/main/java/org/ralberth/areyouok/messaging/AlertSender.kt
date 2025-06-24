@@ -1,5 +1,6 @@
 package org.ralberth.areyouok.messaging
 
+import android.R.id.message
 import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
@@ -15,6 +16,7 @@ import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOff
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
@@ -28,12 +30,17 @@ class AlertSender @Inject constructor(
     private val permHelper: PermissionsHelper
 ) {
     val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        context.getSystemService<SmsManager>(SmsManager::class.java)
+        context.getSystemService(SmsManager::class.java)
     } else {
         SmsManager.getDefault()
     }
 
     val dtFormat: SimpleDateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
+
+
+    private fun createMessageId(): Long {
+        return Instant.now().toEpochMilli()
+    }
 
 
     private fun nextCheckinTime(countdownLength: Int): String {
@@ -45,15 +52,20 @@ class AlertSender @Inject constructor(
 
     private fun send(phoneNumber: String, msg: String) {
         val txtMsg = "⚕️ $msg"
-        print("Sending sms message '$txtMsg' to '$phoneNumber' ...")
+        print("Sending sms message '$txtMsg' to '$phoneNumber' ... ")
         permHelper.guard(
             android.Manifest.permission.SEND_SMS,
             success = {
-                smsManager.sendTextMessage(
+                val messageId = createMessageId()
+                val messageParts = smsManager.divideMessage(txtMsg)  // Unicode limit is 70 characters
+                println("Multi-part messages:")
+                for((index, value) in messageParts.withIndex())
+                    println("____$index \"$value\"")
+                smsManager.sendMultipartTextMessage(
                     phoneNumber,
                     null,
-                    txtMsg,
-                    intentGenerator.createTxtMessageSentPendingIntent(),
+                    messageParts,
+                    intentGenerator.createTxtMessageSentPendingIntents(messageId, messageParts),
                     null
                 )
                 println("done")

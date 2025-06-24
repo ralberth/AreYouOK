@@ -1,44 +1,23 @@
-Hilt
-====================
+# R U OK?
 
-https://developer.android.com/training/dependency-injection/hilt-android
+Notify someone if you are in trouble.
 
-Hilt is dependency injection.
-Built on top of Dagger (from Google).
-Android Studio supports Dagger, provides type-safety, other stuff.
+# Home Page
 
-Dagger is generic Java (Kotlin) library for DI, Hilt is Android-specific.
+![home](docs/home.png)
 
-Container: Hilt thing that holds a class to be injected.
+# Set Duration Countdown
 
-Application: class with @HiltAndroidApp that is the top-level holder of everything.
+![home](docs/duration.png)
 
-To obtain dependencies from a component, use the @Inject annotation to perform field injection:
+# Pick Your Location
 
-    @Inject lateinit var analytics: AnalyticsAdapter
+![home](docs/location.png)
 
+# System Notifications
 
+![home](docs/notification.png)
 
-Hilt automatically creates and destroys instances of generated component classes following
-the lifecycle of the corresponding Android classes.
-https://developer.android.com/training/dependency-injection/hilt-android
+# Text Messages
 
-For example:
-* SingletonComponent destroyed when Application destroyed
-* ActivityComponent destroyed when Activity#onDestroy()
-* ServiceComponent destroyed when Service#onDestroy()
-
-
-
-
-SCOPES
-
-https://developer.android.com/training/dependency-injection/hilt-android
-
-By default, all bindings in Hilt are unscoped. This means that each time your app requests
-the binding, Hilt creates a new instance of the needed type.
-
-However, Hilt also allows a binding to be scoped to a particular component. Hilt only creates
-a scoped binding once per instance of the component that the binding is scoped to, and all
-requests for that binding share the same instance.
-
+![home](docs/txt_messages.png)

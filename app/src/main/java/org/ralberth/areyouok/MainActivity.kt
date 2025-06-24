@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import org.ralberth.areyouok.RuokIntents.Companion.REQUEST_CODE_TXTMSG
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
@@ -81,22 +82,6 @@ class MainActivity: ComponentActivity() {
             }
         }
     }
-
-
-//    override fun onNewIntent(intent: Intent?) {
-//        super.onNewIntent(intent)
-//        if (intent != null) {
-//            when (intent.getStringExtra(EXTRA_KEY_MSGTYPE)) {
-//                EXTRA_VAL_MSGTYPE_TXTMSG -> handleTxtmsgIntent(intent)
-//            }
-//        }
-//    }
-//
-//
-//    private fun handleTxtmsgIntent(intent: Intent) {
-//        println("Result of txtmsg: ${intent.}")
-////        Toast stuff!
-//    }
 
 
     fun askForContactPhoneNumber() {

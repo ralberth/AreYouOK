@@ -39,6 +39,7 @@ class RuokViewModel @Inject constructor(
     fun updateEnabled(isEnabled: Boolean) {
         if (isEnabled) {
             println("ViewModel: UI countdown started")
+            coordinator.enabled(_uiState.value.countdownLength)
             val now = Clock.systemUTC().instant()
             _uiState.update {
                 it.copy(
@@ -46,7 +47,6 @@ class RuokViewModel @Inject constructor(
                     countdownStop = now.plus(_uiState.value.countdownLength.toLong(), ChronoUnit.MINUTES)
                 )
             }
-            coordinator.enabled(_uiState.value.countdownLength)
         } else {
             println("ViewModel: countdown stopped")
             coordinator.disabled()
