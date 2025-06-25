@@ -29,7 +29,8 @@ class RuokDatastore @Inject constructor(
             "phoneName=${s.phoneName}",
             "phoneNumber=${s.phoneNumber}",
             "location=${s.location}",
-            "recentLocations=${s.recentLocations.joinToString("; ") }"
+            "recentLocations=${s.recentLocations.joinToString("; ") }",
+            "volumePercent=${s.volumePercent ?: "(use phone volume)"}"
         )
         return ary.joinToString(", ")
     }
@@ -43,7 +44,8 @@ class RuokDatastore @Inject constructor(
             phoneName = prefs.getString("phoneName", "") ?: "",
             phoneNumber = prefs.getString("phoneNumber", "") ?: "",
             location = prefs.getString("location", "") ?: "",
-            recentLocations = prefs.getStringList("recentLocations", NEW_RECENT_LOCS)
+            recentLocations = prefs.getStringList("recentLocations", NEW_RECENT_LOCS),
+            volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -60,6 +62,10 @@ class RuokDatastore @Inject constructor(
             putString("phoneNumber", state.phoneNumber)
             putString("location", state.location)
             putStringList("recentLocations", state.recentLocations)
+            if (state.volumePercent != null)
+                putFloat("volumePercent", state.volumePercent)
+            else
+                remove("volumePercent")
             apply()
         }
     }
@@ -72,6 +78,14 @@ class RuokDatastore @Inject constructor(
 
     fun getLocation(): String {
         return prefs.getString("location", "") ?: ""
+    }
+
+
+    fun getVolumePercent(): Float? {
+        if (prefs.contains("volumePercent"))
+            return prefs.getFloat("volumePercent", 0f)
+        else
+            return null
     }
 }
 

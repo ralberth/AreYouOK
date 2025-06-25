@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.coordinator.Coordinator
 import org.ralberth.areyouok.notifications.RuokNotifier
@@ -22,7 +23,8 @@ class RuokViewModel @Inject constructor(
     private val coordinator: Coordinator,
     alarms: RuokAlarms,
     notifier: RuokNotifier,
-    private val ruokDatastore: RuokDatastore
+    private val ruokDatastore: RuokDatastore,
+    private val soundEffects: SoundEffects
 ): ViewModel() {
     init {
         println("Create new MainViewModel")
@@ -76,7 +78,6 @@ class RuokViewModel @Inject constructor(
 
     fun updatePhoneNumber(newPhoneName: String, newPhoneNumber: String) {
         val oldPhoneNumber = _uiState.value.phoneNumber
-        val oldPhoneName = _uiState.value.phoneName
         if (oldPhoneNumber != newPhoneNumber) {
             _uiState.update {
                 it.copy(
@@ -108,6 +109,20 @@ class RuokViewModel @Inject constructor(
             ruokDatastore.saveMainScreenState(_uiState.value)
             if (_uiState.value.isCountingDown())
                 coordinator.updateLocation(newLocation)
+        }
+    }
+
+
+    fun updateVolumePercent(newVolumePercent: Float?) {
+        val oldVolume = _uiState.value.volumePercent
+        if (oldVolume != newVolumePercent) {
+            _uiState.update {
+                it.copy(
+                    volumePercent = newVolumePercent
+                )
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+            soundEffects.newOverrideVolumePercent(newVolumePercent)
         }
     }
 

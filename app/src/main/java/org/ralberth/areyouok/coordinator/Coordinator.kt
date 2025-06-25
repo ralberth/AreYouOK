@@ -43,7 +43,7 @@ class Coordinator @Inject constructor(
 
     fun disabled() {
         println("Coordinator.disabled(): turn everything off, send TXT message")
-        soundEffects.stop()  // in case we're still playing the whoop whoop
+        soundEffects.stopAll()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
         alarms.cancelAllAlarms()
         notifier.cancelLastTimerNotification()
@@ -57,7 +57,7 @@ class Coordinator @Inject constructor(
             0 -> {
                 println("Coordinator.minutesLeft($minsLeft): send TXT message, sound alarm")
                 vibrator.vibrate(vibrationEffect)
-                soundEffects.timesUp()
+                soundEffects.timesUpLooping()
                 notifier.sendTimerNotification(
                     0,
                     "🚨 Times up!  Sent TXT message to family. 🚨",
@@ -117,7 +117,7 @@ class Coordinator @Inject constructor(
 
 
     private fun resetEverything(countdownLength: Int) {
-        soundEffects.stop()
+        soundEffects.stopAll()
         soundEffects.checkIn()
         alarms.cancelAllAlarms()
         alarms.setAlarms(countdownLength)

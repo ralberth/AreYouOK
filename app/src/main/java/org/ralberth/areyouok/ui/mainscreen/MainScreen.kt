@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
+import org.ralberth.areyouok.ui.utils.SettingsRow
 
 
 @Composable
@@ -40,6 +41,7 @@ fun MainScreen(
         route = "main",
         title = "Home",
         showNavigateUp = false,
+        showSettings = true,
         description = "Turn on and your phone will text your point of contact if you don't check-in every period."
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,7 +58,7 @@ fun MainScreen(
             HorizontalDivider()
         }
 
-        SummaryRow(
+        SettingsRow(
             leftIcon = Icons.Filled.Refresh,
             label = "Countdown Length",
             value = "${uiState.countdownLength} minutes",
@@ -70,7 +72,7 @@ fun MainScreen(
             uiState.phoneName.isEmpty() -> uiState.phoneNumber   // uiState.phoneNumber.length guaranteed > 0 at this point
             else -> "${uiState.phoneName}   ${uiState.phoneNumber}"
         }
-        SummaryRow(
+        SettingsRow(
             leftIcon = Icons.Filled.Face,
             label = "Contact",
             value = phoneValue,
@@ -79,7 +81,7 @@ fun MainScreen(
 
         HorizontalDivider()
 
-        SummaryRow(
+        SettingsRow(
             leftIcon = Icons.Filled.Home,
             label = "Location",
             value = if (uiState.location == "") "Pick a location" else uiState.location,
@@ -116,32 +118,5 @@ fun NeedPermissionBanner(type: String) {
             "Need $type permission",
             color = Color.Red
         )
-    }
-}
-
-
-@Composable
-fun SummaryRow(
-    leftIcon: ImageVector,
-    label: String,
-    value: String,
-    onEdit: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .padding(start = 18.dp, end = 18.dp)
-            .clickable(true, onClickLabel="click", onClick = onEdit),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            leftIcon,
-            "left",
-            modifier = Modifier.padding(end = 18.dp))
-        Column {
-            Text(label, fontWeight = FontWeight.Bold)
-            Text(value)
-        }
-        Spacer(Modifier.weight(1f))
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Change")
     }
 }

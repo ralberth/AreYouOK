@@ -29,6 +29,8 @@ import org.ralberth.areyouok.ui.HelpScreen
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
+import org.ralberth.areyouok.ui.settings.SettingsScreen
+import org.ralberth.areyouok.ui.settings.VolumeScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import javax.inject.Inject
 
@@ -43,6 +45,10 @@ class MainActivity: ComponentActivity() {
 
     @Inject
     lateinit var permHelper: PermissionsHelper
+
+    @Inject
+    lateinit var soundEffects: SoundEffects
+
 
     val viewModel: RuokViewModel by viewModels()
 
@@ -77,6 +83,8 @@ class MainActivity: ComponentActivity() {
                         composable("locationselect") { LocationScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }
                         composable("callcontact") { CallContactScreen(navController, viewModel) }
+                        composable("settings") { SettingsScreen(navController, viewModel) }
+                        composable("volumesetting") { VolumeScreen(navController, viewModel, soundEffects) }
                     }
                 }
             }
