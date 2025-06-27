@@ -1,11 +1,10 @@
 package org.ralberth.areyouok.messaging
 
-import android.R.id.message
 import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.PermissionsHelper
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCallingYouNow
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getChangedContact

@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.core.net.toUri
+import org.ralberth.areyouok.SoundEffects.Companion.SOUND_EFFECT_STREAM
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,25 +16,27 @@ class SoundEffects @Inject constructor(
     private val application: Application,
     ruokDatastore: RuokDatastore
 ) {
+    companion object {
+        const val SOUND_EFFECT_STREAM = AudioManager.STREAM_ALARM
+    }
 
     val audioManager = application.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    fun newPlayer(id: Int, isAlert: Boolean = false, continuous: Boolean = false): SoundEffectPlayer {
+    fun newPlayer(id: Int, continuous: Boolean = false): SoundEffectPlayer {
         return SoundEffectPlayer(
             context = application,
             audioManager = audioManager,
             rawResourceId = id,
-            isAlertStream = isAlert,
             playContinuously = continuous
         )
     }
 
     private val toggle          = newPlayer(R.raw.toggle_sound)
     private val checkIn         = newPlayer(R.raw.checkin_sound)
-    private val yellowWarning   = newPlayer(R.raw.yellow_warning_sound, true)
-    private val redWarning      = newPlayer(R.raw.red_warning_sound,    true)
-    private val timesUpOneShot  = newPlayer(R.raw.times_up_sound,       true)
-    private val timesUpLooping  = newPlayer(R.raw.times_up_sound,       true, true)
+    private val yellowWarning   = newPlayer(R.raw.yellow_warning_sound)
+    private val redWarning      = newPlayer(R.raw.red_warning_sound)
+    private val timesUpOneShot  = newPlayer(R.raw.times_up_sound)
+    private val timesUpLooping  = newPlayer(R.raw.times_up_sound, true)
 
     var overrideVolumePercent: Float? = ruokDatastore.getVolumePercent()
 
@@ -61,19 +64,17 @@ class SoundEffectPlayer(
     context: Context,
     private val audioManager: AudioManager,
     rawResourceId: Int,
-    private val isAlertStream: Boolean,
     playContinuously: Boolean
 ) {
-    val streamType = if (isAlertStream) AudioManager.STREAM_ALARM else AudioManager.STREAM_NOTIFICATION
     val packageName = context.getPackageName()
     val uri = "android.resource://${packageName}/${rawResourceId}".toUri()
     val player = MediaPlayer().apply {
         setDataSource(context, uri)
-        setAudioStreamType(streamType)
+        setAudioStreamType(SOUND_EFFECT_STREAM)
         setOnCompletionListener {
             if (normalVolume != null) {
                 audioManager.setStreamVolume(
-                    streamType,
+                    SOUND_EFFECT_STREAM,
                     normalVolume!!,
                     0
                 )
@@ -89,10 +90,10 @@ class SoundEffectPlayer(
 
     fun play(overrideVolume: Float? = null) {
         if (overrideVolume != null) {
-            normalVolume = audioManager.getStreamVolume(streamType)
-            val maxVolume = audioManager.getStreamMaxVolume(streamType)
-            val newVolume = (maxVolume.toFloat() * overrideVolume).toInt()
-            audioManager.setStreamVolume(streamType, newVolume, 0)
+            normalVolume = audioManager.getStreamVolume(SOUND_EFFECT_STREAM)
+            val maxVolume = audioManager.getStreamMaxVolume(SOUND_EFFECT_STREAM)
+            val newVolume = (maxVolume.toFloat() * overrideVolume).toInt() + 5
+            audioManager.setStreamVolume(SOUND_EFFECT_STREAM, newVolume, 0)
             println("About to play sound, normal volume $normalVolume set to $newVolume")
         } else
             normalVolume = null   // triggers callback above not to touch the stream volume

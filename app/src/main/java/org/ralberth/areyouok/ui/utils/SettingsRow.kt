@@ -22,12 +22,13 @@ fun SettingsRow(
     label: String,
     value: String,
     onEdit: () -> Unit = { },
-    leftIcon: ImageVector? = null
+    leftIcon: ImageVector? = null,
+    canEdit: Boolean = true
 ) {
     Row(
         modifier = Modifier
             .padding(start = 18.dp, end = 18.dp)
-            .clickable(true, onClickLabel="click", onClick = onEdit),
+            .clickable(canEdit, onClickLabel="click", onClick = onEdit),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (leftIcon != null)
@@ -40,6 +41,7 @@ fun SettingsRow(
             Text(value)
         }
         Spacer(Modifier.weight(1f))
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Change")
+        if (canEdit)
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Change")
     }
 }

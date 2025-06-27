@@ -1,6 +1,5 @@
 package org.ralberth.areyouok.ui.settings
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -111,24 +108,24 @@ fun VolumeUI(
                     steps = 11,
                     valueRange = 0f..1f
                 )
+            }
 
-                Text(
-                    text = "Try it out",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 25.dp, bottom = 10.dp)
-                )
+            Text(
+                text = "Try it out",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 25.dp, bottom = 10.dp)
+            )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(Modifier.weight(1f))
-                    TryItOutButton("reminder", onPlayReminder)
-                    Spacer(Modifier.weight(1f))
-                    TryItOutButton("imminent", onPlayImminent)
-                    Spacer(Modifier.weight(1f))
-                    TryItOutButton("emergency", onPlayEmergency)
-                    Spacer(Modifier.weight(1f))
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Spacer(Modifier.weight(1f))
+                TryItOutButton("reminder", onPlayReminder)
+                Spacer(Modifier.weight(1f))
+                TryItOutButton("imminent", onPlayImminent)
+                Spacer(Modifier.weight(1f))
+                TryItOutButton("emergency", onPlayEmergency)
+                Spacer(Modifier.weight(1f))
             }
         }
     }

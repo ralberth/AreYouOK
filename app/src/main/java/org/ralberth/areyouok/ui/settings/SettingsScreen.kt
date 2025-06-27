@@ -61,7 +61,7 @@ fun SettingsUI(
         HorizontalDivider()
 
         SettingsRow(
-            label = "Always Visible",
+            label = "Foreground on Alerts",
             value = "Off: display can sleep, lock, and turn off",
             onEdit = { }
         )

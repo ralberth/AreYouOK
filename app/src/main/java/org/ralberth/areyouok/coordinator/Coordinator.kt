@@ -8,12 +8,14 @@ import android.os.Vibrator
 import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.ralberth.areyouok.MainActivity
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
+import org.ralberth.areyouok.RuokIntents
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +27,9 @@ class Coordinator @Inject constructor(
     private val alarms: RuokAlarms,
     private val notifier: RuokNotifier,
     private val alertSender: AlertSender,
-    private val prefs: RuokDatastore
+    private val prefs: RuokDatastore,
+    private val intents: RuokIntents,
+    private val permissionsHelper: PermissionsHelper
 ) {
     // TODO: skip this here and add vibration pattern to the AlertChannel only
     private val vibrator = context.getSystemService(Vibrator::class.java)
@@ -94,6 +98,24 @@ class Coordinator @Inject constructor(
                     "🪧 Three minutes left 🪧",
 //                    Color.argb(200, 255, 255, 0)
                 )
+
+//                can't do this because we're trying to start/access an Activity/Task from outside
+//                Got this:
+//                    java.lang.RuntimeException: Unable to start receiver org.ralberth.areyouok.alarms.RuokAlarmReceiver:
+//                        android.util.AndroidRuntimeException: Calling startActivity() from outside of an Activity  context requires the FLAG_ACTIVITY_NEW_TASK flag. Is this really what you want?
+//                this isn't what I want.  How can I do this?
+//
+//                context.startActivity(intents.createBringTaskToForegroundIntent())
+//                val pm = context.packageManager
+//                val packageName = context.packageName
+//                println("packageName = $packageName")
+//                val launchIntent = pm.getLaunchIntentForPackage(packageName)
+                val launchIntent = Intent(context, MainActivity::class.java)
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                launchIntent!!.putExtra("some_data", "value")
+                context.startActivity(launchIntent)
+                println("Bring whole app to foreground")
+//                ran without error, but didn't bring the app to the foreground.  Wrong packageName?
             }
             else -> {
                 throw IllegalArgumentException("Coordinator.minsLeft($minsLeft) called with bad value")

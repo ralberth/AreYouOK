@@ -2,7 +2,6 @@ package org.ralberth.areyouok
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -21,12 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import org.ralberth.areyouok.RuokIntents.Companion.REQUEST_CODE_TXTMSG
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
-import org.ralberth.areyouok.ui.HelpScreen
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
+import org.ralberth.areyouok.ui.permissions.PermissionsScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
 import org.ralberth.areyouok.ui.settings.SettingsScreen
@@ -49,6 +48,9 @@ class MainActivity: ComponentActivity() {
     @Inject
     lateinit var soundEffects: SoundEffects
 
+    @Inject
+    lateinit var permissionsHelper: PermissionsHelper
+
 
     val viewModel: RuokViewModel by viewModels()
 
@@ -56,14 +58,7 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permHelper.registerComponentActivity(this)
-        permHelper.askForPermission(
-            PackageManager.FEATURE_TELEPHONY,
-            android.Manifest.permission.SEND_SMS
-        )
-        permHelper.askForPermission(
-            PackageManager.FEATURE_TELEPHONY,
-            android.Manifest.permission.CALL_PHONE
-        )
+
         setContent {
             AreYouOkTheme {
                 Surface(
@@ -77,6 +72,7 @@ class MainActivity: ComponentActivity() {
 
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = firstDestination) {
+                        composable("permissions") { PermissionsScreen(navController, permissionsHelper) }
                         composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
 //                        composable("help") { HelpScreen(navController) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
@@ -89,6 +85,12 @@ class MainActivity: ComponentActivity() {
                 }
             }
         }
+    }
+
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        println("onNewIntent called on MainActivity")
     }
 
 

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
@@ -109,13 +110,13 @@ fun RuokScaffold(
         bottomBar = {
             BottomAppBar {
                 Spacer(Modifier.weight(1f))
-//                BottomNavButton(
-//                    navController = navController,
-//                    myRoute = route,
-//                    navRoute = "help",
-//                    icon = Icons.Filled.Info
-//                )
-//                Spacer(Modifier.weight(2f))
+                BottomNavButton(
+                    navController = navController,
+                    myRoute = route,
+                    navRoute = "permissions",
+                    icon = Icons.Filled.Lock
+                )
+                Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
