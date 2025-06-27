@@ -11,7 +11,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-val MS_PER_MIN: Long = 60 * 1000
+const val MS_PER_MIN: Long = 60 * 1000
+
 
 @Singleton
 class RuokAlarms @Inject constructor(

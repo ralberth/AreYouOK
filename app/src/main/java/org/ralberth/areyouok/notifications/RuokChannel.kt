@@ -17,7 +17,7 @@ import org.ralberth.areyouok.R.mipmap.ic_launcher_round
 class RuokChannel(
     private val context: Context,
     private val channelId: String,
-    val channelName: String,
+    channelName: String,
     isHighImportance: Boolean = true,
     bypassDoNotDisturb: Boolean = true,
     soundResourceId: Int = R.raw.silent

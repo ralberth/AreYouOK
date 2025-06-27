@@ -8,13 +8,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.ralberth.areyouok.minutesBeforeEnd
 import org.ralberth.areyouok.progressPercent
+import org.ralberth.areyouok.ui.mainscreen.CountdownUI
+import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.theme.ProgressBarDanger
 import org.ralberth.areyouok.ui.theme.ProgressBarOK
 import org.ralberth.areyouok.ui.theme.ProgressBarWarning
@@ -22,6 +28,8 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import javax.xml.datatype.DatatypeConstants.MINUTES
+import kotlin.time.DurationUnit
 
 
 var formatter = DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.systemDefault())
@@ -61,13 +69,13 @@ fun CountdownDisplay(start: Instant?, end: Instant?, timeRemaining: Duration?) {
     Row(modifier = Modifier.padding(18.dp)) {
         Column {
             Row {
-                Text("start ", color = Color.DarkGray)
+                Text("start ", color = Color.Gray)
                 Text(instant2humanReadableTime(start))
                 Spacer(Modifier.weight(1f))
-                Text("end ", color = Color.DarkGray)
+                Text("end ", color = Color.Gray)
                 Text(instant2humanReadableTime(end))
                 Spacer(Modifier.weight(1f))
-                Text("left ", color = Color.DarkGray)
+                Text("left ", color = Color.Gray)
                 Text(duration2humanreadable(timeRemaining))
             }
 
@@ -87,6 +95,21 @@ fun CountdownDisplay(start: Instant?, end: Instant?, timeRemaining: Duration?) {
                 gapSize = (-15).dp,
                 drawStopIndicator = {},
                 modifier = Modifier.fillMaxWidth().height(8.dp)
+            )
+        }
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+fun CountdownDisplayPreview() {
+    AreYouOkTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            CountdownDisplay(
+                Instant.parse("2025-05-10 9:00:00"),
+                Instant.parse("2025-05-10 9:10:00"),
+                Duration.ofMinutes(10)
             )
         }
     }

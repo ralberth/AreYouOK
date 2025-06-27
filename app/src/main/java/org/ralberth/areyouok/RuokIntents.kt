@@ -1,11 +1,12 @@
 package org.ralberth.areyouok
 
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
-import androidx.core.content.ContextCompat.startActivity
+import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.alarms.RuokAlarmReceiver
 import org.ralberth.areyouok.messaging.AlertErrorHandler
@@ -90,26 +91,9 @@ class RuokIntents @Inject constructor(
     }
 
 
-    /*
-     * Intents, Tasks, and Activities can be confusing.  RTFM.  For this, we already have
-     * "android:launchMode="singleTop" in our manifest, so there's no need to repeat this here
-     * with a Flag added to the Intent.  Our app already declared that if MainActivity is already
-     * at the top of the Task's stack, then just deliver this Intent to the existing activity
-     * instance via its newIntent().  That's what we want.  However, people screw up code all the
-     * time and this makes it clear what happens.
-     *
-     * Also, this is likely called from RuokAlarmReceiver, which isn't part (inside) an Activity
-     * itself.  It's a receiver that gets intents from Alarms we set.  Since it isn't part of
-     * an Activity, it can't just use makeMainActivity() and call startActivity().  Instead this
-     * creates a *broadcast* intent that is flung out to the OS, which tells our Task to come to
-     * the foreground, or creates it fresh if it doesn't already exist.
-     */
     fun createBringTaskToForegroundIntent(): Intent {
-        return Intent.makeMainActivity(
-            ComponentName(context, MainActivity::class.java)
-        ).apply {
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP) // deliver to current MainActivity via newIntent()
-            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT) // come to foreground
+        return Intent(context, MainActivity::class.java).apply {
+            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 
@@ -126,5 +110,13 @@ class RuokIntents @Inject constructor(
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
+    }
+
+
+    fun createMakePhoneCallIntent(phoneNumber: String): Intent {
+        return Intent(Intent.ACTION_CALL, "tel:${phoneNumber}".toUri()).apply {
+            putExtra(EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
+            setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our own Activity
+        }
     }
 }

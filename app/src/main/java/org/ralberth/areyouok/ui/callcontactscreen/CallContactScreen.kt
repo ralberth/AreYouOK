@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -76,9 +77,25 @@ fun CallContactUI(
     onCancel: () -> Unit
 ) {
     RuokScaffold(navController, "callcontact", "Call Contact") {
-        Text("Calling", modifier = Modifier.padding(top=30.dp))
-        Text(name)
-        Text(number)
+        Text(
+            text = "Calling",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(top = 30.dp)
+        )
+
+        if (name.isNotBlank()) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Text(number)
+        } else {
+            Text(
+                text = number,
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
+
         Text("in", modifier = Modifier.padding(14.dp))
 
         val timeRemainingFrac = timeRemaining.toMillis().toFloat() / 1000f
@@ -90,12 +107,12 @@ fun CallContactUI(
         ) {
             CircularProgressIndicator(
                 progress = { percentRemaining },
-                modifier = Modifier.size(80.dp)
+                strokeWidth = 10.dp,
+                modifier = Modifier.size(120.dp)
             )
             Text(
                 text = wholeSecondsRemaining.toString(),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge
             )
         }
 

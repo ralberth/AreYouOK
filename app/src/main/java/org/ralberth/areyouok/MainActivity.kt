@@ -20,13 +20,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
-import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
+import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
+import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.permissions.PermissionsScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
+import org.ralberth.areyouok.ui.settings.ForegroundScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
 import org.ralberth.areyouok.ui.settings.SettingsScreen
 import org.ralberth.areyouok.ui.settings.VolumeScreen
@@ -47,9 +48,6 @@ class MainActivity: ComponentActivity() {
 
     @Inject
     lateinit var soundEffects: SoundEffects
-
-    @Inject
-    lateinit var permissionsHelper: PermissionsHelper
 
 
     val viewModel: RuokViewModel by viewModels()
@@ -72,7 +70,7 @@ class MainActivity: ComponentActivity() {
 
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = firstDestination) {
-                        composable("permissions") { PermissionsScreen(navController, permissionsHelper) }
+                        composable("permissions") { PermissionsScreen(navController, permHelper) }
                         composable("main") { MainScreen(navController, viewModel, { askForContactPhoneNumber() }) }
 //                        composable("help") { HelpScreen(navController) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
@@ -81,16 +79,11 @@ class MainActivity: ComponentActivity() {
                         composable("callcontact") { CallContactScreen(navController, viewModel) }
                         composable("settings") { SettingsScreen(navController, viewModel) }
                         composable("volumesetting") { VolumeScreen(navController, viewModel, soundEffects) }
+                        composable("foregroundsetting") { ForegroundScreen(navController, viewModel) }
                     }
                 }
             }
         }
-    }
-
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        println("onNewIntent called on MainActivity")
     }
 
 
@@ -104,7 +97,7 @@ class MainActivity: ComponentActivity() {
     @Deprecated("Deprecated in Java")
     @SuppressLint("Recycle", "MissingSuperCall")
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        val uri: Uri? = intent?.getData()
+        val uri: Uri? = intent?.data
         if (uri != null) {
             val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
 

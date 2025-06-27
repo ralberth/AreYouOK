@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature android:name="android.hardware.telephony" />
+
     <!--
     Will need this once we go to app level 30 or 31.  These limit what other apps are installed
     and what our app is allowed to see.  This explicitly tells the OS that we want to interact
@@ -16,17 +18,28 @@
     </queries>
     -->
 
-    <!-- Required: app won't install on devices that refuse it(?) -->
-    <uses-feature android:name="android.hardware.telephony" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- Required, no need to ask for permission, get them "for free" by declaring them here. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- so we can bring the app to the foreground when not running or backgrounded -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- User has to grant these explicitly.  Found in PermissionsScreen. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"
+        android:requiredFeature="false" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission
+        android:name="android.permission.CALL_PHONE"
+        android:requiredFeature="false" />
+
+    <!--
+        So we can bring the app to the foreground when not running or backgrounded.
+        See https://developer.android.com/guide/components/activities/background-starts for details
+        about this.  You can't ask the user for this permission, but you can tell them they don't
+        have it enabled and direct them where in the app's settings (from the OS) to turn it on.
+    -->
+    <uses-permission
+        android:name="android.permission.SYSTEM_ALERT_WINDOW"
+        android:requiredFeature="false" />
 
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"

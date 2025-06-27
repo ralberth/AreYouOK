@@ -41,22 +41,9 @@ fun MainScreen(
         route = "main",
         title = "Home",
         showNavigateUp = false,
-        showSettings = true,
         description = "Turn on and your phone will text your point of contact if you don't check-in every period."
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-        val appIsUsable = viewModel.hasAlarmPermission && viewModel.hasNotifyPermission
-
-        if (!viewModel.hasAlarmPermission) {
-            NeedPermissionBanner("alarms (set timers)")
-            HorizontalDivider()
-        }
-
-        if (!viewModel.hasNotifyPermission) {
-            NeedPermissionBanner("notifications")
-            HorizontalDivider()
-        }
 
         SettingsRow(
             leftIcon = Icons.Filled.Refresh,
@@ -97,26 +84,10 @@ fun MainScreen(
             Text("Enable")
             Spacer(Modifier.weight(1f))
             Switch(
-                enabled = appIsUsable && uiState.phoneNumber.isNotEmpty(),
+                enabled = uiState.phoneNumber.isNotEmpty(),
                 checked = uiState.isCountingDown(),
                 onCheckedChange = { viewModel.updateEnabled(it) }
             )
         }
-    }
-}
-
-
-@Composable
-fun NeedPermissionBanner(type: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(18.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            "Need $type permission",
-            color = Color.Red
-        )
     }
 }

@@ -1,10 +1,8 @@
 package org.ralberth.areyouok.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,16 +13,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,21 +28,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.ralberth.areyouok.ui.settings.DurationSelectUI
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
@@ -75,11 +62,9 @@ fun RuokScaffold(
     title: String? = null,
     description: String? = null,
     showNavigateUp: Boolean = true,
-    showSettings: Boolean = false,
     onNavigateUp: () -> Unit = {},
     content: @Composable() () -> Unit = {}
 ) {
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -98,25 +83,18 @@ fun RuokScaffold(
                             )
                         }
                 },
-                actions = {
-                    if (showSettings)
-                        IconButton(onClick = { navController?.navigate("settings") }) {
-                            Icon(Icons.Outlined.Settings, "Settings")
-                        }
-                }
+//                actions = {
+//                    if (showSettings)
+//                        IconButton(onClick = { navController?.navigate("settings") }) {
+//                            Icon(Icons.Outlined.Settings, "Settings")
+//                        }
+//                }
             )
         },
 
         bottomBar = {
             BottomAppBar {
                 Spacer(Modifier.weight(1f))
-                BottomNavButton(
-                    navController = navController,
-                    myRoute = route,
-                    navRoute = "permissions",
-                    icon = Icons.Filled.Lock
-                )
-                Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
@@ -130,13 +108,20 @@ fun RuokScaffold(
                     navRoute = "countdown",
                     icon = Icons.Filled.Notifications
                 )
-//                Spacer(Modifier.weight(2f))
-//                BottomNavButton(
-//                    navController = navController,
-//                    myRoute = route,
-//                    navRoute = "settings",
-//                    icon = Icons.Filled.Settings
-//                )
+                Spacer(Modifier.weight(2f))
+                BottomNavButton(
+                    navController = navController,
+                    myRoute = route,
+                    navRoute = "settings",
+                    icon = Icons.Filled.Settings
+                )
+                Spacer(Modifier.weight(2f))
+                BottomNavButton(
+                    navController = navController,
+                    myRoute = route,
+                    navRoute = "permissions",
+                    icon = Icons.Filled.Lock
+                )
                 Spacer(Modifier.weight(1f))
             }
         }
@@ -154,10 +139,10 @@ fun RuokScaffold(
                 if (title != null)
                     Text(
                         title,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .background(Color.LightGray)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                             .fillMaxWidth()
                             .padding(5.dp)
 
@@ -165,8 +150,9 @@ fun RuokScaffold(
 
                 if (description != null) {
                     Text(
-                        modifier = Modifier.fillMaxWidth().padding(18.dp),
-                        text = description
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth().padding(18.dp)
                     )
                     HorizontalDivider()
                 }

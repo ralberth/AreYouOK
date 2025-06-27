@@ -8,14 +8,13 @@ import android.os.Vibrator
 import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.MainActivity
-import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.RuokIntents
 import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,12 +63,13 @@ class Coordinator @Inject constructor(
                 soundEffects.timesUpLooping()
                 notifier.sendTimerNotification(
                     0,
-                    "🚨 Times up!  Sent TXT message to family. 🚨",
-//                    Color.argb(200, 255, 0, 0)
+                    "🚨 Times up!  Sent TXT message to family. 🚨"
                 )
                 alertSender.unresponsive(
                     prefs.getPhoneNumber(),
                     prefs.getLocation())
+                if (permissionsHelper.has(android.Manifest.permission.SYSTEM_ALERT_WINDOW) && prefs.foregroundOnAlerts())
+                    context.startActivity(intents.createBringTaskToForegroundIntent())
             }
             1 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
@@ -77,17 +77,17 @@ class Coordinator @Inject constructor(
                 soundEffects.redWarning()
                 notifier.sendTimerNotification(
                     1,
-                    "😮 ONE MINUTE LEFT 😮",
-//                    Color.argb(200, 255, 0, 0)
+                    "😮 ONE MINUTE LEFT 😮"
                 )
+                if (permissionsHelper.has(android.Manifest.permission.SYSTEM_ALERT_WINDOW) && prefs.foregroundOnAlerts())
+                    context.startActivity(intents.createBringTaskToForegroundIntent())
             }
             2 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
                 soundEffects.yellowWarning()
                 notifier.sendTimerNotification(
                     2,
-                    "😥 Two minutes left 😥",
-//                    Color.argb(200, 255, 255, 0)
+                    "😥 Two minutes left 😥"
                 )
             }
             3 -> {
@@ -95,27 +95,8 @@ class Coordinator @Inject constructor(
                 soundEffects.yellowWarning()
                 notifier.sendTimerNotification(
                     3,
-                    "🪧 Three minutes left 🪧",
-//                    Color.argb(200, 255, 255, 0)
+                    "🤔 Three minutes left 🤔"
                 )
-
-//                can't do this because we're trying to start/access an Activity/Task from outside
-//                Got this:
-//                    java.lang.RuntimeException: Unable to start receiver org.ralberth.areyouok.alarms.RuokAlarmReceiver:
-//                        android.util.AndroidRuntimeException: Calling startActivity() from outside of an Activity  context requires the FLAG_ACTIVITY_NEW_TASK flag. Is this really what you want?
-//                this isn't what I want.  How can I do this?
-//
-//                context.startActivity(intents.createBringTaskToForegroundIntent())
-//                val pm = context.packageManager
-//                val packageName = context.packageName
-//                println("packageName = $packageName")
-//                val launchIntent = pm.getLaunchIntentForPackage(packageName)
-                val launchIntent = Intent(context, MainActivity::class.java)
-                launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                launchIntent!!.putExtra("some_data", "value")
-                context.startActivity(launchIntent)
-                println("Bring whole app to foreground")
-//                ran without error, but didn't bring the app to the foreground.  Wrong packageName?
             }
             else -> {
                 throw IllegalArgumentException("Coordinator.minsLeft($minsLeft) called with bad value")
@@ -162,13 +143,6 @@ class Coordinator @Inject constructor(
     fun callContact(phoneNumber: String) {
         for(i in 0..2)
             alertSender.callingYouNow(prefs.getPhoneNumber(), i)
-
-        val intent = Intent(
-            Intent.ACTION_CALL,
-            "tel:${phoneNumber}".toUri()
-        )
-        intent.putExtra(EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our own Activity
-        context.startActivity(intent)
+        context.startActivity(intents.createMakePhoneCallIntent(phoneNumber))
     }
 }

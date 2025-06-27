@@ -1,8 +1,5 @@
 package org.ralberth.areyouok.datamodel
 
-import android.content.Intent
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RuokViewModel @Inject constructor(
     private val coordinator: Coordinator,
-    alarms: RuokAlarms,
-    notifier: RuokNotifier,
     private val ruokDatastore: RuokDatastore,
     private val soundEffects: SoundEffects
 ): ViewModel() {
@@ -32,10 +27,6 @@ class RuokViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ruokDatastore.hydrateMainScreenState())
     val uiState: StateFlow<RuokScreenState> = _uiState.asStateFlow()
-
-    // FIXME: these need new values when the user switches back to this app from another
-    var hasAlarmPermission: Boolean = alarms.canSetAlarms()
-    var hasNotifyPermission: Boolean = notifier.canSendNotifications()
 
 
     fun updateEnabled(isEnabled: Boolean) {
@@ -126,6 +117,19 @@ class RuokViewModel @Inject constructor(
         }
     }
 
+
+    fun updateForegroundOnAlerts(newValue: Boolean) {
+        val oldValue = _uiState.value.foregroundOnAlerts
+        if (oldValue != newValue) {
+            println("Updated foregroundOnAlerts to $newValue")
+            _uiState.update {
+                it.copy(
+                    foregroundOnAlerts = newValue
+                )
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+        }
+    }
 
     fun checkin() {
         println("ViewModel.checkin(${uiState.value.countdownLength})")

@@ -29,35 +29,37 @@ class PermissionsHelper @Inject constructor(
     }
 
 
-    fun askForPermission(feature: String? = null, permission: String) {
-        val mapKey = if (feature != null) "$feature|$permission" else permission
-        println("ASK for permission $mapKey")
-
-        // STEP 1: does the phone have the feature?
-        if (feature != null) {
-            if (!context.packageManager.hasSystemFeature(feature)) {
-                println("Device doesn't have $feature")
-                return
-            }
-        }
-
-        // STEP 2: Do we already have the permissions we need?
-        val hasPerm: Int = ContextCompat.checkSelfPermission(context, permission)
-        if (hasPerm == PERMISSION_GRANTED) {
-            println("Already have permission $permission")
-            return
-        }
-
-        // STEP 3: Ask the user to grant us permissions, then get the permissions to act
-        val launcher =
-            activity!!.registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) {
-                isGranted: Boolean ->
-                    println("ASKED for perm $mapKey, result $isGranted")
-            }
-        launcher.launch(permission)   // This runs the callback to launcher above
-    }
+    // Done differently in PermissionsScreen.
+    // TODO: maybe bring the logic and details back here from PErmissionsScreen?
+//    fun askForPermission(feature: String? = null, permission: String) {
+//        val mapKey = if (feature != null) "$feature|$permission" else permission
+//        println("ASK for permission $mapKey")
+//
+//        // STEP 1: does the phone have the feature?
+//        if (feature != null) {
+//            if (!context.packageManager.hasSystemFeature(feature)) {
+//                println("Device doesn't have $feature")
+//                return
+//            }
+//        }
+//
+//        // STEP 2: Do we already have the permissions we need?
+//        val hasPerm: Int = ContextCompat.checkSelfPermission(context, permission)
+//        if (hasPerm == PERMISSION_GRANTED) {
+//            println("Already have permission $permission")
+//            return
+//        }
+//
+//        // STEP 3: Ask the user to grant us permissions, then get the permissions to act
+//        val launcher =
+//            activity!!.registerForActivityResult(
+//                ActivityResultContracts.RequestPermission()
+//            ) {
+//                isGranted: Boolean ->
+//                    println("ASKED for perm $mapKey, result $isGranted")
+//            }
+//        launcher.launch(permission)   // This runs the callback to launcher above
+//    }
 
 
     fun guard(

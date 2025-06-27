@@ -4,6 +4,14 @@ import java.time.Duration
 import java.time.Instant
 
 
+fun minutesBeforeEnd(d: Duration): Int {
+    // Stay in integer domain for simplicity: we want ceil() but the "/"
+    // operator is "floor" semantics.
+    if (d.isNegative)
+        return 0
+    return ((d.seconds + 59L) / 60L).toInt()
+}
+
 fun minutesBeforeEnd(end: Instant?, now: Instant = Instant.now()): Int? {
     if (end == null)
         return null
@@ -11,10 +19,7 @@ fun minutesBeforeEnd(end: Instant?, now: Instant = Instant.now()): Int? {
     val d: Duration = Duration.between(now, end)
     if (d.isNegative)
         return 0
-
-    // Stay in integer domain for simplicity: we want ceil() but the "/"
-    // operator is "floor" semantics.
-    return ((d.seconds + 59L) / 60L).toInt()
+    return minutesBeforeEnd(d)
 }
 
 

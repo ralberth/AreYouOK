@@ -30,7 +30,8 @@ class RuokDatastore @Inject constructor(
             "phoneNumber=${s.phoneNumber}",
             "location=${s.location}",
             "recentLocations=${s.recentLocations.joinToString("; ") }",
-            "volumePercent=${s.volumePercent ?: "(use phone volume)"}"
+            "volumePercent=${s.volumePercent ?: "(use phone volume)"}",
+            "foregroundOnAlerts=${s.foregroundOnAlerts}"
         )
         return ary.joinToString(", ")
     }
@@ -45,7 +46,8 @@ class RuokDatastore @Inject constructor(
             phoneNumber = prefs.getString("phoneNumber", "") ?: "",
             location = prefs.getString("location", "") ?: "",
             recentLocations = prefs.getStringList("recentLocations", NEW_RECENT_LOCS),
-            volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null
+            volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null,
+            foregroundOnAlerts = prefs.getBoolean("foregroundOnAlerts", true)
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -66,6 +68,7 @@ class RuokDatastore @Inject constructor(
                 putFloat("volumePercent", state.volumePercent)
             else
                 remove("volumePercent")
+            putBoolean("foregroundOnAlerts", state.foregroundOnAlerts)
             apply()
         }
     }
@@ -82,10 +85,14 @@ class RuokDatastore @Inject constructor(
 
 
     fun getVolumePercent(): Float? {
-        if (prefs.contains("volumePercent"))
-            return prefs.getFloat("volumePercent", 0f)
+        return if (prefs.contains("volumePercent"))
+            prefs.getFloat("volumePercent", 0f)
         else
-            return null
+            null
+    }
+
+    fun foregroundOnAlerts(): Boolean {
+        return prefs.getBoolean("foregroundOnAlerts", true)
     }
 }
 
@@ -105,7 +112,7 @@ private fun SharedPreferences.getStringList(key: String, default: List<String>):
     if (str == null)
         return default
     val rawStrList = str.split("\n").filterNot({ it == null || it.isBlank() })
-    return if (rawStrList.isEmpty()) default else rawStrList
+    return rawStrList.ifEmpty { default }
 }
 
 private fun SharedPreferences.Editor.putStringList(key: String, sl: List<String>) {

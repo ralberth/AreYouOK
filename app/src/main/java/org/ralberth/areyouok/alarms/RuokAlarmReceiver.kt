@@ -1,12 +1,12 @@
 package org.ralberth.areyouok.alarms
 
-import android.appwidget.AppWidgetProvider
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MINS_LEFT
+import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_MINSLEFT
 import org.ralberth.areyouok.coordinator.Coordinator
 import javax.inject.Inject
@@ -15,8 +15,7 @@ import javax.inject.Inject
 /*
  * Alarm Receiver: class created by Android (see AndroidManifest.xml) instead of participating
  * with Hilt or Dagger.  Android requires a no-arg constructor, so we handle injection after
- * creation with a lateinit.  AppWidgetProvider is a subclass of BroadcastReceiver, so Android
- * will recognize it and call appropriate parent class methods.
+ * creation with a lateinit.
  *
  * This is a tiny adapter class that can be created and called by the android runtime and just
  * sends everything to the Coordinator.  The Coordinator is in charge of everything that the
@@ -26,11 +25,7 @@ import javax.inject.Inject
  * receives. This object is valid only for the duration of the call to onReceive(Context, Intent).
  */
 @AndroidEntryPoint
-class RuokAlarmReceiver: AppWidgetProvider() {
-    init {
-        println("Create RuokAlarmReceiver entrypoint")
-    }
-
+class RuokAlarmReceiver: BroadcastReceiver() {
     @Inject
     @ApplicationContext
     lateinit var context: Context
@@ -40,12 +35,11 @@ class RuokAlarmReceiver: AppWidgetProvider() {
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)
         if (intent != null) {
             val alarmType: String? = intent.getStringExtra(EXTRA_KEY_MSGTYPE)
             when (alarmType) {
                 EXTRA_VAL_MSGTYPE_MINSLEFT -> onReceiveMinsLeft(intent)
-//                EXTRA_VAL_MSGTYPE_CHECKIN -> onReceiveCheckin()
+//                EXTRA_VAL_MSGTYPE_CHECKIN -> onReceiveCheckin()   uncomment when Notification has a Check-in button
                 null -> throw IllegalArgumentException("missing alarm type on broadcast message")
                 else -> throw IllegalArgumentException("Got invalid alarm type")
             }

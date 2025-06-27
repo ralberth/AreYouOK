@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -48,7 +48,7 @@ fun VolumeScreen(
     VolumeUI(
         navController,
         uiState.volumePercent,
-        { println(it); viewModel.updateVolumePercent(it) },
+        { viewModel.updateVolumePercent(it) },
         onPlayReminder = { soundEffects.yellowWarning() },
         onPlayImminent = { soundEffects.redWarning() },
         onPlayEmergency = { soundEffects.timesUpOneShot() },
@@ -82,7 +82,7 @@ fun VolumeUI(
             )
             RadioRow(
                 isSelected = volumePercent != null,
-                label = "Override system volume for all alerts",
+                label = "Override system volume",
                 { onVolumePercentChange(0.5f) }
             )
 
@@ -98,21 +98,21 @@ fun VolumeUI(
 
                 Slider(
                     enabled = volumePercent != null,
-                    value = if (volumePercent != null) volumePercent else 0f,
+                    value = volumePercent ?: 0f,
                     onValueChange = { onVolumePercentChange(it) },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.secondary,
                         inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
                     ),
-                    steps = 11,
+                    steps = 9,
                     valueRange = 0f..1f
                 )
             }
 
             Text(
                 text = "Try it out",
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 25.dp, bottom = 10.dp)
             )
 

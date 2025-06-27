@@ -106,13 +106,11 @@ fun LocationUI(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier.padding(start = 18.dp, end = 24.dp)
         ) {
+            Text(
+                text = "Examples",
+                style = MaterialTheme.typography.headlineMedium
+            )
             Text("How messages sent to your contact will look:")
-//            ChatItemBubble(
-//                getTurnedOnMessage(
-//                    countdownLength,
-//                    location
-//                )
-//            )
             ChatItemBubble(getLocationChangedMessage(location))
             ChatItemBubble(missedCheckinMessage(location))
         }

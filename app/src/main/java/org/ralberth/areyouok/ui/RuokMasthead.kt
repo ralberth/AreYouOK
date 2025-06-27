@@ -1,11 +1,9 @@
 package org.ralberth.areyouok.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -54,6 +52,7 @@ val KStyle = SpanStyle(
     fontSize = 45.sp,
     fontFamily = FontFamily.Cursive,
     fontWeight = FontWeight.Bold,
+    baselineShift = BaselineShift(0.4f),
     shadow = Shadow(color = Color.DarkGray, offset = Offset(7f, 7f), blurRadius = 7f)
 )
 
@@ -62,6 +61,8 @@ val QStyle = SpanStyle(
     fontSize = 50.sp,
     fontFamily = FontFamily.SansSerif,
     fontWeight = FontWeight.Normal,
+    fontStyle = FontStyle.Italic,
+    baselineShift = BaselineShift(-0.2f),
     shadow = Shadow(color = Color.DarkGray, offset = Offset(7f, 7f), blurRadius = 7f)
 )
 

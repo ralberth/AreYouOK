@@ -1,21 +1,13 @@
 package org.ralberth.areyouok.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -27,12 +19,16 @@ import org.ralberth.areyouok.ui.utils.SettingsRow
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
+    // We don't update the uiState here.  Other destinations handle this.  We do need to display
+    // the right value, so keep a remember here to avoid going back to the viewmodel every time.
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var volumeEdit by remember { mutableStateOf(uiState.volumePercent) }
+    var foregroundEdit by remember { mutableStateOf(uiState.foregroundOnAlerts) }
 
     SettingsUI(
         navController,
-        volumeEdit
+        volumeEdit,
+        foregroundEdit
     )
 }
 
@@ -40,7 +36,8 @@ fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
 @Composable
 fun SettingsUI(
     navController: NavController?,
-    volume: Float?
+    volume: Float?,
+    foregroundOnAlerts: Boolean
 ) {
     RuokScaffold(
         navController = navController,
@@ -50,7 +47,12 @@ fun SettingsUI(
         val volumeDisplay = if (volume == null)
             "Use system volume"
         else
-            "Override system volume to ${(volume * 100).toInt()}%"
+            "Override volume to ${(volume * 100).toInt()}% of max"
+
+        val foregroundDisplay = if (foregroundOnAlerts)
+            "Foreground at 1min and 0min left"
+        else
+            "Only use notification banners"
 
         SettingsRow(
             label = "Alert Volume Level",
@@ -62,16 +64,8 @@ fun SettingsUI(
 
         SettingsRow(
             label = "Foreground on Alerts",
-            value = "Off: display can sleep, lock, and turn off",
-            onEdit = { }
-        )
-
-        HorizontalDivider()
-
-        SettingsRow(
-            label = "Something Complicated",
-            value = "Disabled",
-            onEdit = { }
+            value = foregroundDisplay,
+            onEdit = { navController?.navigate("foregroundsetting") }
         )
     }
 }
@@ -84,7 +78,8 @@ fun SettingsUIPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             SettingsUI(
                 null,
-                4.5f
+                4.5f,
+                false
             )
         }
     }

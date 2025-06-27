@@ -3,6 +3,8 @@ package org.ralberth.areyouok.ui.mainscreen
 import java.time.Instant
 import org.junit.Assert.*
 import org.junit.Test
+import org.ralberth.areyouok.ui.coutdownscreen.duration2humanreadable
+import org.ralberth.areyouok.ui.coutdownscreen.instant2humanReadableTime
 import java.time.Duration
 import java.time.ZoneOffset
 
@@ -20,12 +22,12 @@ class CountdownDisplayTest {
 
     @Test
     fun instant2humanReadableTime_am() {
-        testInstant2humanReadableTime("2025-01-01T09:12:34Z", "09:12 AM")
+        testInstant2humanReadableTime("2025-01-01T09:12:34Z", "09:12")
     }
 
     @Test
     fun instant2humanReadbleTime_pm() {
-        testInstant2humanReadableTime("2025-01-01T17:12:34Z", "05:12 PM")
+        testInstant2humanReadableTime("2025-01-01T17:12:34Z", "05:12")
     }
 
     // ----------------------------------------------------------------------------
@@ -52,29 +54,26 @@ class CountdownDisplayTest {
 
     @Test
     fun duration2humanreadable_1m8s() {
-        testDuration2humanreadable("PT1m8s","1m 8s")
+        testDuration2humanreadable("PT1m8s","1m8s")
     }
 
     @Test
     fun duration2humanreadable_43m59s() {
-        testDuration2humanreadable("PT43m59s","43m 59s")
+        testDuration2humanreadable("PT43m59s","43m59s")
     }
 
     @Test
     fun duration2humanreadable_56m0s() {
-        testDuration2humanreadable("PT56m", "56m 0s")
+        testDuration2humanreadable("PT56m", "56m0s")
     }
 
     @Test
     fun duration2humanreadable_1h0m0s() {
-        testDuration2humanreadable("PT1h", "1h 0m 0s")
+        testDuration2humanreadable("PT1h", "1h0m0s")
     }
 
     @Test
     fun duration2humanreadable_9h0m1s() {
-        testDuration2humanreadable("PT9h1s", "9h 0m 1s")
+        testDuration2humanreadable("PT9h1s", "9h0m1s")
     }
-
-    // ----------------------------------------------------------------------------
-
 }

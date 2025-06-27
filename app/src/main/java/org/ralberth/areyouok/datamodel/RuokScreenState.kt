@@ -11,7 +11,8 @@ data class RuokScreenState(
     val phoneNumber: String,            // Phone number in whatever format we get from the phone
     val location: String,               // Description of where the user physically is
     val recentLocations: List<String>,  // sorted so earlier was selected more recently
-    val volumePercent: Float?           // Percentage (0..1) of max volume alerts and notifications should play at
+    val volumePercent: Float?,          // Percentage (0..1) of max volume alerts and notifications should play at
+    val foregroundOnAlerts: Boolean     // If the app should become visible when alerts are sent
 ) {
     fun isCountingDown(): Boolean {
         return countdownStart != null

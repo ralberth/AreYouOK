@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.minutesBeforeEnd
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
@@ -32,6 +33,7 @@ import org.ralberth.areyouok.ui.utils.Ticker
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 
 @Composable
@@ -107,7 +109,7 @@ fun CountdownUI(
 
 
                 if (timeRemaining != null) {
-                    val minsLeft: Long = timeRemaining.toMinutes()
+                    val minsLeft = minutesBeforeEnd(timeRemaining)
 
                     TableBuilder()
                         .columnWeights(1, 1, 5)
