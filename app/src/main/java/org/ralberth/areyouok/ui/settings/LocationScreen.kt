@@ -46,7 +46,7 @@ fun LocationScreen(navController: NavController, viewModel: RuokViewModel) {
         navController,
         editBoxLocation,
         uiState.recentLocations,
-        { editBoxLocation = it },
+        { editBoxLocation = it.trim() },
         { viewModel.updateLocation(editBoxLocation); navController.navigateUp() }
     )
 }

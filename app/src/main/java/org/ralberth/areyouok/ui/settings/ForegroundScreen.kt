@@ -1,5 +1,6 @@
 package org.ralberth.areyouok.ui.settings
 
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -25,15 +26,18 @@ import androidx.navigation.NavController
 import org.ralberth.areyouok.R
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import org.ralberth.areyouok.ui.utils.ErrorStripe
 
 
 @Composable
-fun ForegroundScreen(navController: NavController, viewModel: RuokViewModel) {
+fun ForegroundScreen(navController: NavController, permHelper: PermissionsHelper, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ForegroundUI(
         navController,
+        Settings.canDrawOverlays(navController.context),
         uiState.foregroundOnAlerts,
         viewModel::updateForegroundOnAlerts
     )
@@ -43,6 +47,7 @@ fun ForegroundScreen(navController: NavController, viewModel: RuokViewModel) {
 @Composable
 fun ForegroundUI(
     navController: NavController?,
+    hasForegroundPermission: Boolean,
     foregroundValue: Boolean,
     onNewForegroundValue: (Boolean) -> Unit
 ) {
@@ -80,10 +85,15 @@ fun ForegroundUI(
                 Text("Also bring the app to the foreground")
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
+                    enabled = hasForegroundPermission,
                     checked = foregroundValue,
                     onCheckedChange = onNewForegroundValue
                 )
             }
+            ErrorStripe(
+                shouldDisplay = !hasForegroundPermission,
+                message = "Can't enable this until you enable Foreground permission."
+            )
         }
     }
 }
@@ -125,6 +135,7 @@ fun ForegroundUIPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ForegroundUI(
                 null,
+                false,
                 true,
                 {}
             )

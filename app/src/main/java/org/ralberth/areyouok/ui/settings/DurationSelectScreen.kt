@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import kotlin.math.roundToInt
 import kotlin.text.*
 
 
@@ -74,7 +75,7 @@ fun DurationSelectUI(
 
                 Slider(
                     value = countdownLength.toFloat(),
-                    onValueChange = { onLengthChange(it.toInt()) },
+                    onValueChange = { onLengthChange(it.roundToInt()) },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.secondary,

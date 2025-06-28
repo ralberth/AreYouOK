@@ -24,12 +24,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- User has to grant these explicitly.  Found in PermissionsScreen. -->
-    <uses-permission android:name="android.permission.READ_CONTACTS"
-        android:requiredFeature="false" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission
-        android:name="android.permission.CALL_PHONE"
-        android:requiredFeature="false" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <!--
         So we can bring the app to the foreground when not running or backgrounded.
@@ -38,8 +35,7 @@
         have it enabled and direct them where in the app's settings (from the OS) to turn it on.
     -->
     <uses-permission
-        android:name="android.permission.SYSTEM_ALERT_WINDOW"
-        android:requiredFeature="false" />
+        android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"

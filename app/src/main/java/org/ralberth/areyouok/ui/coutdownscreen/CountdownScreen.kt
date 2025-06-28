@@ -29,6 +29,7 @@ import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
 import org.ralberth.areyouok.ui.settings.TableBuilder
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import org.ralberth.areyouok.ui.utils.ErrorStripe
 import org.ralberth.areyouok.ui.utils.Ticker
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -46,6 +47,7 @@ fun CountdownScreen(
         navController,
         uiState.countdownStart,
         uiState.countdownStop,
+        uiState.phoneNumber.isNotBlank(),
         viewModel::checkin,
         { navController.navigate("callcontact") }
     )
@@ -57,6 +59,7 @@ fun CountdownUI(
     navController: NavController?,
     countdownStart: Instant?,
     countdownStop: Instant?,
+    callButtonEnabled: Boolean,
     onCheckin: () -> Unit,
     onCallContact: () -> Unit
 ) {
@@ -93,6 +96,7 @@ fun CountdownUI(
                 }
 
                 FilledTonalButton(
+                    enabled = callButtonEnabled,
                     onClick = onCallContact,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.height(60.dp)
@@ -106,6 +110,11 @@ fun CountdownUI(
                         fontSize = 20.sp
                     )
                 }
+
+                ErrorStripe(
+                    shouldDisplay = !callButtonEnabled,
+                    message = "Call Contact button is disabled: no contact selected on the main screen."
+                )
 
 
                 if (timeRemaining != null) {
@@ -154,6 +163,7 @@ fun CountdownUIPreview() {
                 null,
                 Instant.now(),
                 Instant.now().plusSeconds(20 * 60),
+                true,
                 {},
                 {}
             )

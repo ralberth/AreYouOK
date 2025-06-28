@@ -68,8 +68,10 @@ class Coordinator @Inject constructor(
                 alertSender.unresponsive(
                     prefs.getPhoneNumber(),
                     prefs.getLocation())
-                if (permissionsHelper.has(android.Manifest.permission.SYSTEM_ALERT_WINDOW) && prefs.foregroundOnAlerts())
+                if (prefs.foregroundOnAlerts()) {
+                    println("Bring app to foreground")
                     context.startActivity(intents.createBringTaskToForegroundIntent())
+                }
             }
             1 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")
@@ -79,8 +81,10 @@ class Coordinator @Inject constructor(
                     1,
                     "😮 ONE MINUTE LEFT 😮"
                 )
-                if (permissionsHelper.has(android.Manifest.permission.SYSTEM_ALERT_WINDOW) && prefs.foregroundOnAlerts())
+                if (prefs.foregroundOnAlerts()) {
+                    println("Bring app to foreground")
                     context.startActivity(intents.createBringTaskToForegroundIntent())
+                }
             }
             2 -> {
                 println("Coordinator.minutesLeft($minsLeft): play sound, new notification")

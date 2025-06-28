@@ -1,32 +1,30 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
+import org.ralberth.areyouok.ui.utils.ErrorStripe
 import org.ralberth.areyouok.ui.utils.SettingsRow
 
 
@@ -34,6 +32,7 @@ import org.ralberth.areyouok.ui.utils.SettingsRow
 fun MainScreen(
     navController: NavController,
     viewModel: RuokViewModel,
+    perms: PermissionsHelper,
     askForContactPhoneNumber: () -> Unit
 ) {
     RuokScaffold(
@@ -44,6 +43,17 @@ fun MainScreen(
         description = "Turn on and your phone will text your point of contact if you don't check-in every period."
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        val hasEnoughPermsToRun =
+            perms.has(android.Manifest.permission.SEND_SMS)  // &&
+//            perms.has(android.Manifest.permission.POST_NOTIFICATIONS) &&  // will need this in T
+//            perms.has(android.Manifest.permission.SCHEDULE_EXACT_ALARM)   // will need this in S
+
+        val toggleEnabled =
+            uiState.countdownStart != null ||   // if already running, can definitely turn it off!
+                (
+                        uiState.phoneNumber.isNotBlank() &&
+                        hasEnoughPermsToRun
+                )
 
         SettingsRow(
             leftIcon = Icons.Filled.Refresh,
@@ -84,10 +94,18 @@ fun MainScreen(
             Text("Enable")
             Spacer(Modifier.weight(1f))
             Switch(
-                enabled = uiState.phoneNumber.isNotEmpty(),
+                enabled = toggleEnabled,
                 checked = uiState.isCountingDown(),
                 onCheckedChange = { viewModel.updateEnabled(it) }
             )
         }
+        ErrorStripe(
+            shouldDisplay = !hasEnoughPermsToRun,
+            message = "Need to enable permissions before starting"
+        )
+        ErrorStripe(
+            shouldDisplay = uiState.phoneNumber.isBlank(),
+            "Pick a contact or enter a phone number before starting"
+        )
     }
 }

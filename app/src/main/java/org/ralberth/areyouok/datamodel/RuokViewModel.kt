@@ -89,13 +89,22 @@ class RuokViewModel @Inject constructor(
     fun updateLocation(newLocation: String) {
         val oldLocation = _uiState.value.location
         if (oldLocation != newLocation) {
-            // Make newLocation be at the front of recentLocations, and trim to 10 elements
-            val newRecentLocations = listOf(newLocation) + _uiState.value.recentLocations.filterNot { it == newLocation }
-            _uiState.update {
-                it.copy(
-                    location = newLocation,
-                    recentLocations = newRecentLocations.take(6)
-                )
+            if (newLocation.isNotBlank()) {
+                // Make newLocation be at the front of recentLocations, and trim to 10 elements
+                val newRecentLocations =
+                    listOf(newLocation) + _uiState.value.recentLocations.filterNot { it == newLocation }
+                _uiState.update {
+                    it.copy(
+                        location = newLocation,
+                        recentLocations = newRecentLocations.take(6)
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        location = newLocation
+                    )
+                }
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
             if (_uiState.value.isCountingDown())
