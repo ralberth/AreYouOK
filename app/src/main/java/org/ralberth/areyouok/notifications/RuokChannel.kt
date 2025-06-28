@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.net.Uri
@@ -15,6 +14,7 @@ import org.ralberth.areyouok.R.mipmap.ic_launcher_round
 
 
 class RuokChannel(
+    private val notificationMgr: NotificationManager,
     private val context: Context,
     private val channelId: String,
     channelName: String,
@@ -23,7 +23,6 @@ class RuokChannel(
     soundResourceId: Int = R.raw.silent
 ) {
     private val bitmap = BitmapFactory.decodeResource(context.resources, ic_launcher_round)
-    val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
     private val importance: Int = if (isHighImportance)
         NotificationManager.IMPORTANCE_HIGH
@@ -34,6 +33,7 @@ class RuokChannel(
         NotificationCompat.PRIORITY_HIGH
     else
         NotificationCompat.PRIORITY_DEFAULT
+
 
     private fun buildSoundUri(i: Int): Uri {
         return Uri.Builder()
@@ -48,6 +48,7 @@ class RuokChannel(
         .setUsage(AudioAttributes.USAGE_ALARM)
         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
         .build()
+
 
     private val channel = NotificationChannel(channelId, channelName, importance).apply {
         this.setBypassDnd(bypassDoNotDisturb)
@@ -78,10 +79,5 @@ class RuokChannel(
         println("RuokNotifier.sendNotification(\"$channelId\", \"$message\")")
 
         notificationMgr.notify(messageId, builder.build())
-    }
-
-
-    fun clearAllNotifications() {
-        notificationMgr.cancelAll()
     }
 }

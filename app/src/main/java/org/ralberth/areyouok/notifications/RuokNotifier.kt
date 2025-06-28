@@ -1,6 +1,8 @@
 package org.ralberth.areyouok.notifications
 
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.R
@@ -45,13 +47,17 @@ class RuokNotifier @Inject constructor(
         const val TIME_REMAINING_MESSAGE_ID = 900
     }
 
+    val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
     private val timerAlertChannel = RuokChannel(
+        notificationMgr,
         context,
         "rude",
         "Time's almost up alerts"
     )
 
     private val timerNotifyChannel = RuokChannel(
+        notificationMgr,
         context,
         "polite",
         "Time's almost up notifications",
@@ -60,6 +66,7 @@ class RuokNotifier @Inject constructor(
     )
 
     private val errorChannel = RuokChannel(
+        notificationMgr,
         context,
         "errors",
         "Error messages",
@@ -88,8 +95,8 @@ class RuokNotifier @Inject constructor(
         )
     }
 
-    fun cancelAllCountdownNotifications() {
-        timerNotifyChannel.clearAllNotifications()
-        timerAlertChannel.clearAllNotifications()
+
+    fun cancelAll() {
+        notificationMgr.cancelAll()
     }
 }

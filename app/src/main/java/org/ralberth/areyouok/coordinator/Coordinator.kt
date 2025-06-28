@@ -38,7 +38,7 @@ class Coordinator @Inject constructor(
         println("Coordinator.enabled($countdownLength): set alarms, send TXT message")
         soundEffects.toggle()
         alarms.setAlarms(countdownLength)
-        notifier.cancelAllCountdownNotifications()  // just in case
+        notifier.cancelAll()  // just in case
         alertSender.enabled(prefs.getPhoneNumber(), countdownLength, prefs.getLocation())
     }
 
@@ -48,7 +48,7 @@ class Coordinator @Inject constructor(
         soundEffects.stopAll()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
         alarms.cancelAllAlarms()
-        notifier.cancelAllCountdownNotifications()
+        notifier.cancelAll()
         alertSender.disabled(prefs.getPhoneNumber())
     }
 
@@ -127,7 +127,7 @@ class Coordinator @Inject constructor(
         soundEffects.checkIn()
         alarms.cancelAllAlarms()
         alarms.setAlarms(countdownLength)
-        notifier.cancelAllCountdownNotifications()
+        notifier.cancelAll()
     }
 
 

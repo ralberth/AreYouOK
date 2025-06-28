@@ -109,11 +109,13 @@ class MainActivity: ComponentActivity() {
      * If we get anything else, print an error.
      */
     override fun onNewIntent(i: Intent) {
-        println("onNewIntent()")
-        super.onNewIntent(i)
         val msgType = i.getStringExtra(EXTRA_KEY_MSGTYPE)
-        if (msgType == EXTRA_VAL_MSGTYPE_RUOKUI)
+        println("onNewIntent(action=${i.action}, data=${i.dataString}, type=${i.type}, extras.EXTRA_KEY_MSGTYPE=$msgType)")
+        super.onNewIntent(i)
+        if (msgType == EXTRA_VAL_MSGTYPE_RUOKUI) {
+            println("onNewIntent: navigate to countdown destination")
             navController.navigate("countdown")
+        }
     }
 
 
