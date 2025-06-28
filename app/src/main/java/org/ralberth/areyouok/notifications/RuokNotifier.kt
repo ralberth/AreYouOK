@@ -5,6 +5,7 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.R
 import org.ralberth.areyouok.RuokIntents
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,15 +30,21 @@ import javax.inject.Singleton
  * of them visible to the user at a time.  For example, if there's a notification
  * up about there being 2 minutes left, that can go away when we display another
  * notification that there is 1 minute left.  Seeing two notifications with different
- * "minutes left" is confusing.  Because of this, we keep track of certain Intents so
- * we can clear them later.  All error notifications from "#2" above are not affected
- * by this logic.
+ * "minutes left" is confusing.  Because of this, we use a feature of NotificationManager:
+ * If you re-use a notificationID when posting a notification, it will replace any existing
+ * notification with that same ID.  IDs are unique per *application*, so we use the same
+ * ID for all T-3, T-2, T-1, and T-0 notifications, and generate unique IDs for the
+ * error channel.
  */
 @Singleton
 class RuokNotifier @Inject constructor(
     @ApplicationContext private val context: Context,
     private val intentGenerator: RuokIntents
 ) {
+    companion object {
+        const val TIME_REMAINING_MESSAGE_ID = 900
+    }
+
     private val timerAlertChannel = RuokChannel(
         context,
         "rude",
@@ -60,32 +67,11 @@ class RuokNotifier @Inject constructor(
     )
 
 
-    private var nextNotificationId = 1   // every notification gets a unique ID, this is a "one-up"
-    private var lastTimerNotificationId: Int? = null   // last msg ID to RUDE or POLITE
-
-    private fun getNextNotificationId(): Int {
-        val next = nextNotificationId
-        nextNotificationId += 1
-        return next
-    }
-
-
-    fun canSendNotifications(): Boolean {
-        return errorChannel.notificationMgr.areNotificationsEnabled()
-    }
-
-
-
     fun sendTimerNotification(minsLeft: Int, message: String) {
         val intent = intentGenerator.createRuokUiPendingIntent()
-
-        cancelLastTimerNotification()
-        val id = getNextNotificationId()
-        lastTimerNotificationId = id
-
         val channel = if (minsLeft >= 2) timerNotifyChannel else timerAlertChannel
         channel.sendNotification(
-            id,
+            TIME_REMAINING_MESSAGE_ID,   // reusing the same ID means we replace any existing with same ID
             "Timer Notification",
             message,
             intent
@@ -94,17 +80,16 @@ class RuokNotifier @Inject constructor(
 
 
     fun sendErrorNotification(message: String) {
+        val messageId = (1751117224 - Instant.now().epochSecond).toInt()
         errorChannel.sendNotification(
-            getNextNotificationId(),
+            messageId,
             "Error",
             message
         )
     }
 
-    fun cancelLastTimerNotification() {
-        if (lastTimerNotificationId != null) {
-            errorChannel.notificationMgr.cancel(lastTimerNotificationId!!)
-            lastTimerNotificationId = null
-        }
+    fun cancelAllCountdownNotifications() {
+        timerNotifyChannel.clearAllNotifications()
+        timerAlertChannel.clearAllNotifications()
     }
 }

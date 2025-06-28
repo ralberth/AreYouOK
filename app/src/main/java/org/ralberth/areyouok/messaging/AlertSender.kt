@@ -58,8 +58,6 @@ class AlertSender @Inject constructor(
                 val messageId = createMessageId()
                 val messageParts = smsManager.divideMessage(txtMsg)  // Unicode limit is 70 characters
                 println("Multi-part messages:")
-//                for((index, value) in messageParts.withIndex())
-//                    println("____$index \"$value\"")
                 smsManager.sendMultipartTextMessage(
                     phoneNumber,
                     null,

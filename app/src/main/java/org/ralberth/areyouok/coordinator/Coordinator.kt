@@ -27,8 +27,7 @@ class Coordinator @Inject constructor(
     private val notifier: RuokNotifier,
     private val alertSender: AlertSender,
     private val prefs: RuokDatastore,
-    private val intents: RuokIntents,
-    private val permissionsHelper: PermissionsHelper
+    private val intents: RuokIntents
 ) {
     // TODO: skip this here and add vibration pattern to the AlertChannel only
     private val vibrator = context.getSystemService(Vibrator::class.java)
@@ -39,7 +38,7 @@ class Coordinator @Inject constructor(
         println("Coordinator.enabled($countdownLength): set alarms, send TXT message")
         soundEffects.toggle()
         alarms.setAlarms(countdownLength)
-        notifier.cancelLastTimerNotification()  // just in case
+        notifier.cancelAllCountdownNotifications()  // just in case
         alertSender.enabled(prefs.getPhoneNumber(), countdownLength, prefs.getLocation())
     }
 
@@ -49,7 +48,7 @@ class Coordinator @Inject constructor(
         soundEffects.stopAll()  // in case we're still playing the whoop whoop
         soundEffects.toggle()
         alarms.cancelAllAlarms()
-        notifier.cancelLastTimerNotification()
+        notifier.cancelAllCountdownNotifications()
         alertSender.disabled(prefs.getPhoneNumber())
     }
 
@@ -128,7 +127,7 @@ class Coordinator @Inject constructor(
         soundEffects.checkIn()
         alarms.cancelAllAlarms()
         alarms.setAlarms(countdownLength)
-        notifier.cancelLastTimerNotification()
+        notifier.cancelAllCountdownNotifications()
     }
 
 

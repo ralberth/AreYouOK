@@ -79,4 +79,9 @@ class RuokChannel(
 
         notificationMgr.notify(messageId, builder.build())
     }
+
+
+    fun clearAllNotifications() {
+        notificationMgr.cancelAll()
+    }
 }
