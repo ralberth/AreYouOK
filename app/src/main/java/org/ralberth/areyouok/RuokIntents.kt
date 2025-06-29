@@ -68,27 +68,42 @@ class RuokIntents @Inject constructor(
         )
     }
 
+
+    fun createTxtMessageSentPendingIntent(messageId: Long, message: String, msgNumber: Int? = null, msgCount: Int? = null): PendingIntent {
+        val uriFragment = if (msgNumber != null) "$messageId:$msgNumber:$msgCount" else messageId.toString()
+        val intent = Intent(
+            ACTION_SMS_SENT,
+            Uri.fromParts("app", "org.ralberth.areyouok", uriFragment),
+            context,
+            AlertErrorHandler::class.java
+        ).apply {
+            putExtra(EXTRA_KEY_MSGTYPE, EXTRA_VAL_MSGTYPE_TXTMSG)
+            putExtra("messagePartText", message)
+            if (msgNumber != null)
+                putExtra("messagePartIndex", msgNumber)
+            if (msgCount != null)
+                putExtra("messagePartCount", msgCount)
+        }
+
+        return PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE_TXTMSG,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+
     // See https://stackoverflow.com/questions/24673595/how-to-get-sms-sent-confirmation-for-each-contact-person-in-android/24845193#24845193
     // for a full example and description of how this has to work.
     fun createTxtMessageSentPendingIntents(messageId: Long, textParts: ArrayList<String>): ArrayList<PendingIntent> {
         var pendingIntents: ArrayList<PendingIntent> = arrayListOf()
         for ((index, value) in textParts.withIndex()) {
-            val uriFragment = "$messageId:$index:${textParts.size}"
-            val intent = Intent(
-                ACTION_SMS_SENT,
-                Uri.fromParts("app", "org.ralberth.areyouok", uriFragment),
-                context,
-                AlertErrorHandler::class.java
-            )
-            intent.putExtra("messagePartText", value)
-            intent.putExtra("messagePartIndex", index)
-            intent.putExtra("messagePartCount", textParts.size)
-
-            pendingIntents += PendingIntent.getBroadcast(
-                context,
-                REQUEST_CODE_TXTMSG,
-                intent,
-                PendingIntent.FLAG_ONE_SHOT
+            pendingIntents += createTxtMessageSentPendingIntent(
+                messageId,
+                value,
+                index,
+                textParts.size
             )
         }
 

@@ -49,6 +49,8 @@ class AlertSender @Inject constructor(
     }
 
 
+    // Not sure, but probably can combine sendTextMessage and sendMultipartTextMessage into a
+    // single call, even when smsManager.divideMessage() only returns one message part.
     private fun send(phoneNumber: String, msg: String) {
         val txtMsg = "⚕️ $msg"
         print("Sending sms message '$txtMsg' to '$phoneNumber' ... ")
@@ -57,14 +59,23 @@ class AlertSender @Inject constructor(
             success = {
                 val messageId = createMessageId()
                 val messageParts = smsManager.divideMessage(txtMsg)  // Unicode limit is 70 characters
-                println("Multi-part messages:")
-                smsManager.sendMultipartTextMessage(
-                    phoneNumber,
-                    null,
-                    messageParts,
-                    intentGenerator.createTxtMessageSentPendingIntents(messageId, messageParts),
-                    null
-                )
+                if (messageParts.size == 1) {
+                    smsManager.sendTextMessage(
+                        phoneNumber,
+                        null,
+                        txtMsg,
+                        intentGenerator.createTxtMessageSentPendingIntent(messageId, txtMsg),
+                        null
+                    )
+                } else {
+                    smsManager.sendMultipartTextMessage(
+                        phoneNumber,
+                        null,
+                        messageParts,
+                        intentGenerator.createTxtMessageSentPendingIntents(messageId, messageParts),
+                        null
+                    )
+                }
                 println("done")
             },
             fallback = { println("permission denied") }
