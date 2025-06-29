@@ -35,6 +35,11 @@ class RuokIntents @Inject constructor(
     }
 
 
+    fun getRequestCodeForMinsLeft(minsLeft: Int): Int {
+        return REQUEST_CODE_BASE_MINSLEFT + minsLeft
+    }
+
+
     fun createMinsLeftPendingIntent(minsLeft: Int): PendingIntent {
         val intent: Intent = Intent(context, RuokAlarmReceiver::class.java).apply {
             putExtra(EXTRA_KEY_MSGTYPE, EXTRA_VAL_MSGTYPE_MINSLEFT)
@@ -43,7 +48,7 @@ class RuokIntents @Inject constructor(
 
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE_BASE_MINSLEFT + minsLeft,   // each alarm needs a unique requestCode
+            getRequestCodeForMinsLeft(minsLeft),   // each alarm needs a unique requestCode
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )

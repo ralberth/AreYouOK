@@ -1,5 +1,6 @@
 package org.ralberth.areyouok.datamodel
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager

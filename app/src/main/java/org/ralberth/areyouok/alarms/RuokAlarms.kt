@@ -2,7 +2,6 @@ package org.ralberth.areyouok.alarms
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,14 +19,11 @@ class RuokAlarms @Inject constructor(
     private val intentGenerator: RuokIntents
 ) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    private var pendingIntents = emptyArray<PendingIntent>()
 
 
     @SuppressLint("ScheduleExactAlarm")
     private fun setAlarm(timeMS: Long, minsLeft: Int) {
         val pi = intentGenerator.createMinsLeftPendingIntent(minsLeft)
-        pendingIntents += pi
-
         if (canSetAlarms()) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeMS, pi)
         } else {
@@ -58,8 +54,10 @@ class RuokAlarms @Inject constructor(
 
 
     fun cancelAllAlarms() {
-        for (pi in pendingIntents)
-            alarmManager.cancel(pi)
-        pendingIntents = emptyArray<PendingIntent>()
+        // There's never more than T-3, T-2, T-1, and T-0 Alarms at any one time.
+        // Just cancel all of them every time.
+        for (minsLeft in intArrayOf(3, 2, 1, 0)) {
+            alarmManager.cancel(intentGenerator.createMinsLeftPendingIntent(minsLeft))
+        }
     }
 }

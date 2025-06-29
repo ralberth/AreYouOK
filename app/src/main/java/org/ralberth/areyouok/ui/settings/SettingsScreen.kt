@@ -1,20 +1,15 @@
 package org.ralberth.areyouok.ui.settings
 
-import android.provider.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
-import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.utils.SettingsRow
 

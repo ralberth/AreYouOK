@@ -30,9 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -82,13 +80,7 @@ fun RuokScaffold(
                                 contentDescription = "Return to last screen"
                             )
                         }
-                },
-//                actions = {
-//                    if (showSettings)
-//                        IconButton(onClick = { navController?.navigate("settings") }) {
-//                            Icon(Icons.Outlined.Settings, "Settings")
-//                        }
-//                }
+                }
             )
         },
 
