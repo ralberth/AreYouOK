@@ -66,7 +66,7 @@ fun duration2humanreadable(d: Duration?): String {
 
 @Composable
 fun CountdownDisplay(start: Instant?, end: Instant?, timeRemaining: Duration?) {
-    Row(modifier = Modifier.padding(18.dp)) {
+    Row(modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)) {
         Column {
             Row {
                 Text("start ", color = Color.Gray)
@@ -94,7 +94,7 @@ fun CountdownDisplay(start: Instant?, end: Instant?, timeRemaining: Duration?) {
                 color = barColor,
                 gapSize = (-15).dp,
                 drawStopIndicator = {},
-                modifier = Modifier.fillMaxWidth().height(8.dp)
+                modifier = Modifier.fillMaxWidth().height(14.dp)
             )
         }
     }

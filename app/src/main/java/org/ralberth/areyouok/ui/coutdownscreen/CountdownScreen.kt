@@ -1,6 +1,12 @@
 package org.ralberth.areyouok.ui.mainscreen
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
@@ -9,13 +15,17 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -79,36 +89,42 @@ fun CountdownUI(
                     timeRemaining
                 )
 
-                Button(
-                    enabled = countdownStart != null,
-                    onClick = onCheckin,
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(60.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
-                        Icons.Filled.Refresh,
-                        "Check-in"
-                    )
-                    Text(
-                        " Check-in",
-                        fontSize = 20.sp
-                    )
-                }
-
-                FilledTonalButton(
-                    enabled = callButtonEnabled,
-                    onClick = onCallContact,
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.height(60.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Call,
-                        "Check-in"
-                    )
-                    Text(
-                        " Call Contact",
-                        fontSize = 20.sp
-                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        FilledIconButton(
+                            enabled = countdownStart != null,
+                            onClick = onCheckin,
+                            modifier = Modifier.size(90.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Refresh,
+                                contentDescription = "Check-in"
+                            )
+                        }
+                        Text("Check-in")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        FilledTonalIconButton(
+                            enabled = callButtonEnabled,
+                            onClick = onCallContact,
+                            modifier = Modifier.size(90.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Call,
+                                contentDescription = "Call"
+                            )
+                        }
+                        Text("Call Contact")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
 
                 ErrorStripe(

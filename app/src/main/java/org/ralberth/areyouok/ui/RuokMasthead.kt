@@ -70,12 +70,13 @@ val QStyle = SpanStyle(
 @Composable
 fun RuokMasthead() {
     Text(
-        buildAnnotatedString {
+        text = buildAnnotatedString {
             withStyle(style = RStyle) { append("R") }
             withStyle(style = UStyle) { append("U") }
             withStyle(style = OStyle) { append("O") }
             withStyle(style = KStyle) { append("K") }
             withStyle(style = QStyle) { append("?") }
+            append(" ")   // crappy, but this leaves space for the shadow on the "?" above
         }
     )
 }
