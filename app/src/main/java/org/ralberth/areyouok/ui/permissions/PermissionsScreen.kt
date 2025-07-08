@@ -43,7 +43,7 @@ fun PermissionsScreen(
         PermissionsRow(
             label = "make phone calls",
             description = "Optional.  When enabled, you can click a button and the app will call" +
-                    "your contact on speakerphone if you're in trouble.",
+                    " your contact on speakerphone if you're in trouble.",
             permission = android.Manifest.permission.CALL_PHONE,
             hasPermission = hasPhone,
             onAskedForPermission = { hasPhone = it }
@@ -54,7 +54,7 @@ fun PermissionsScreen(
         PermissionsRow(
             label = "read contacts",
             description = "Optional.  When enabled, you can pick your contact from your phone's " +
-                    "list of contacts.  If not enabled, you'll have to type in phone numbers" +
+                    "list of contacts.  If not enabled, you'll have to type in phone numbers " +
                     "manually.",
             permission = android.Manifest.permission.READ_CONTACTS,
             hasPermission = hasContacts,

@@ -68,8 +68,9 @@ class RuokViewModel @Inject constructor(
 
 
     fun updatePhoneNumber(newPhoneName: String, newPhoneNumber: String) {
+        val oldPhoneName = _uiState.value.phoneName
         val oldPhoneNumber = _uiState.value.phoneNumber
-        if (oldPhoneNumber != newPhoneNumber) {
+        if (oldPhoneName != newPhoneName || oldPhoneNumber != newPhoneNumber) {
             _uiState.update {
                 it.copy(
                     phoneName = newPhoneName,
@@ -77,7 +78,7 @@ class RuokViewModel @Inject constructor(
                 )
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
-            if (_uiState.value.isCountingDown())
+            if (_uiState.value.isCountingDown() && oldPhoneNumber != newPhoneNumber)
                 coordinator.updatePhone(
                     oldPhoneNumber, newPhoneName, // tell current person they're done
                     newPhoneNumber, _uiState.value.countdownLength, _uiState.value.location // tell new person

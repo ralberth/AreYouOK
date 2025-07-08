@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 
@@ -44,7 +45,11 @@ fun SettingsRow(
                 )
             Column {
                 Text(label, fontWeight = FontWeight.Bold)
-                Text(value)
+                Text(
+                    text = value,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
             if (canEdit) {
                 Spacer(Modifier.weight(1f))

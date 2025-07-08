@@ -31,6 +31,7 @@ import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
 import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.permissions.PermissionsScreen
+import org.ralberth.areyouok.ui.settings.ContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.ForegroundScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
@@ -83,6 +84,7 @@ class MainActivity: ComponentActivity() {
                         composable("main") { MainScreen(navController, viewModel, permHelper, { askForContactPhoneNumber() }) }
 //                        composable("help") { HelpScreen(navController) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
+                        composable("contact") { ContactScreen(navController, viewModel) }
                         composable("locationselect") { LocationScreen(navController, viewModel) }
                         composable("countdown") { CountdownScreen(navController, viewModel) }
                         composable("callcontact") { CallContactScreen(navController, viewModel) }
@@ -134,9 +136,13 @@ class MainActivity: ComponentActivity() {
 
 
     fun askForContactPhoneNumber() {
-        val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-        intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
-        ActivityCompat.startActivityForResult(this, intent, CONTACTS_REQUEST_CODE, null);
+        if (permHelper.has(android.Manifest.permission.READ_CONTACTS)) {
+            val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+            intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+            ActivityCompat.startActivityForResult(this, intent, CONTACTS_REQUEST_CODE, null);
+        } else {
+            navController.navigate("contact")
+        }
     }
 
 
