@@ -2,6 +2,7 @@ package org.ralberth.areyouok.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -39,13 +45,29 @@ import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 
 @Composable
-fun BottomNavButton(navController: NavController?, myRoute: String, navRoute: String, icon: ImageVector) {
-    IconButton(
-        onClick = { if (myRoute != navRoute) navController?.navigate(navRoute) }
+fun BottomNavButton(
+    navController: NavController?,
+    myRoute: String,
+    navRoute: String,
+    icon: ImageVector,
+    selectedIcon: ImageVector
+) {
+    val isSelected = myRoute == navRoute
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(
+            enabled = !isSelected,
+            onClick = { navController?.navigate(navRoute) }
+        )
     ) {
         Icon(
-            imageVector = icon,
+            imageVector = if (isSelected) selectedIcon else icon,
             contentDescription = navRoute
+        )
+        Text(
+            text = navRoute,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )
     }
 }
@@ -85,34 +107,38 @@ fun RuokScaffold(
         },
 
         bottomBar = {
-            BottomAppBar {
+            BottomAppBar() {
                 Spacer(Modifier.weight(1f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
                     navRoute = "main",
-                    icon = Icons.Filled.Home
+                    icon = Icons.Outlined.Home,
+                    selectedIcon = Icons.Filled.Home
                 )
                 Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
                     navRoute = "countdown",
-                    icon = Icons.Filled.Notifications
+                    icon = Icons.Outlined.Notifications,
+                    selectedIcon = Icons.Filled.Notifications
                 )
                 Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
                     navRoute = "settings",
-                    icon = Icons.Filled.Settings
+                    icon = Icons.Outlined.Settings,
+                    selectedIcon = Icons.Filled.Settings
                 )
                 Spacer(Modifier.weight(2f))
                 BottomNavButton(
                     navController = navController,
                     myRoute = route,
                     navRoute = "permissions",
-                    icon = Icons.Filled.Lock
+                    icon = Icons.Outlined.Lock,
+                    selectedIcon = Icons.Filled.Lock
                 )
                 Spacer(Modifier.weight(1f))
             }
@@ -162,7 +188,7 @@ fun RuokScaffoldPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             RuokScaffold(
                 null,
-                "a",
+                "main",
                 "ScaffoldPreview",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas metus sem, " +
                         "lacinia sit amet suscipit eget, malesuada quis lacus. Vestibulum pellentesque, " +
