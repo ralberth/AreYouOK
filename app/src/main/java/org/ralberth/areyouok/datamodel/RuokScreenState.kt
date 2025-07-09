@@ -12,7 +12,9 @@ data class RuokScreenState(
     val location: String,               // Description of where the user physically is
     val recentLocations: List<String>,  // sorted so earlier was selected more recently
     val volumePercent: Float?,          // Percentage (0..1) of max volume alerts and notifications should play at
-    val foregroundOnAlerts: Boolean     // If the app should become visible when alerts are sent
+    val foregroundOnAlerts: Boolean,    // If the app should become visible when alerts are sent
+    val alarmOnNoMovement: Boolean,     // If app should pay attention to the accelerometer
+    val movementThreshold: Float        // If app should pay attention to the accelerometer
 ) {
     fun isCountingDown(): Boolean {
         return countdownStart != null

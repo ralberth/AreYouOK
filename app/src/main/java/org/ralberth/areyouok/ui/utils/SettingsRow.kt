@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,40 +22,44 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun SettingsRow(
-    label: String,
-    value: String,
-    onEdit: () -> Unit = { },
+fun BasicSettingsRow(
     leftIcon: ImageVector? = null,
-    canEdit: Boolean = true,
-    description: String? = null
+    label: String,
+    value: String?,
+    rowIsClickable: Boolean = true,
+    onClickRow: () -> Unit = { },
+    description: String? = null,
+    content: @Composable () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 18.dp)
     ) {
         Row(
             modifier = Modifier
-                .clickable(canEdit, onClickLabel = "click", onClick = onEdit),
+                .clickable(rowIsClickable, onClickLabel = "click", onClick = onClickRow),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (leftIcon != null)
+            if (leftIcon != null) {
                 Icon(
                     leftIcon,
                     "left",
                     modifier = Modifier.padding(end = 18.dp)
                 )
+            }
+
             Column {
                 Text(label, fontWeight = FontWeight.Bold)
-                Text(
-                    text = value,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
+                if (value != null) {
+                    Text(
+                        text = value,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                }
             }
-            if (canEdit) {
-                Spacer(Modifier.weight(1f))
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Change")
-            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            content()
         }
         if (description != null)
             Text(
@@ -63,5 +68,56 @@ fun SettingsRow(
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 10.dp)
             )
+    }
+}
+
+
+
+@Composable
+fun NavSettingsRow(
+    leftIcon: ImageVector? = null,
+    label: String,
+    value: String? = null,
+    rowIsClickable: Boolean = true,
+    onClickRow: () -> Unit = { },
+    description: String? = null
+) {
+    BasicSettingsRow(
+        leftIcon = leftIcon,
+        label = label,
+        value = value,
+        rowIsClickable = rowIsClickable,
+        onClickRow = onClickRow,
+        description = description
+    ) {
+        if (rowIsClickable)
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Change")
+    }
+}
+
+
+@Composable
+fun ToggleSettingsRow(
+    leftIcon: ImageVector? = null,
+    label: String,
+    value: String? = null,
+    toggleEnabled: Boolean = true,
+    isSwitchedOn: Boolean,
+    onToggle: (Boolean) -> Unit,
+    description: String? = null
+) {
+    BasicSettingsRow(
+        leftIcon = leftIcon,
+        label = label,
+        value = value,
+        rowIsClickable = false,
+        onClickRow = {},
+        description = description
+    ) {
+        Switch(
+            enabled = toggleEnabled,
+            checked = isSwitchedOn,
+            onCheckedChange = onToggle
+        )
     }
 }

@@ -1,27 +1,21 @@
 package org.ralberth.areyouok.ui.mainscreen
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.utils.ErrorStripe
-import org.ralberth.areyouok.ui.utils.SettingsRow
+import org.ralberth.areyouok.ui.utils.NavSettingsRow
+import org.ralberth.areyouok.ui.utils.ToggleSettingsRow
 
 
 @Composable
@@ -51,11 +45,11 @@ fun MainScreen(
                         hasEnoughPermsToRun
                 )
 
-        SettingsRow(
+        NavSettingsRow(
             leftIcon = Icons.Filled.Refresh,
             label = "Countdown Length",
             value = "${uiState.countdownLength} minutes",
-            onEdit = { navController.navigate("durationselect") }
+            onClickRow = { navController.navigate("durationselect") }
         )
 
         HorizontalDivider()
@@ -65,36 +59,45 @@ fun MainScreen(
             uiState.phoneName.isEmpty() -> uiState.phoneNumber   // uiState.phoneNumber.length guaranteed > 0 at this point
             else -> "${uiState.phoneName}   ${uiState.phoneNumber}"
         }
-        SettingsRow(
+        NavSettingsRow(
             leftIcon = Icons.Filled.Face,
             label = "Contact",
             value = phoneValue,
-            onEdit = { askForContactPhoneNumber() }
+            onClickRow = { askForContactPhoneNumber() }
         )
 
         HorizontalDivider()
 
-        SettingsRow(
+        NavSettingsRow(
             leftIcon = Icons.Filled.Home,
             label = "Location",
             value = if (uiState.location == "") "Pick a location" else uiState.location,
-            onEdit = { navController.navigate("locationselect") }
+            onClickRow = { navController.navigate("locationselect") }
         )
 
         HorizontalDivider()
 
-        Row(
-            modifier = Modifier.padding(start = 18.dp, end = 18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Enable")
-            Spacer(Modifier.weight(1f))
-            Switch(
-                enabled = toggleEnabled,
-                checked = uiState.isCountingDown(),
-                onCheckedChange = { viewModel.updateEnabled(it) }
-            )
-        }
+        val movementValue = if (uiState.alarmOnNoMovement)
+            "Alarm if phone doesn't move enough"
+        else
+            "Ignore phone movement"
+        ToggleSettingsRow(
+            leftIcon = Icons.Filled.AccountCircle,
+            label = "Movement",
+            value = movementValue,
+            isSwitchedOn = uiState.alarmOnNoMovement,
+            onToggle = { viewModel.updateAlarmOnNoMovement(it) }
+        )
+
+        HorizontalDivider()
+
+        ToggleSettingsRow(
+            label = "Enable",
+            toggleEnabled = toggleEnabled,
+            isSwitchedOn = uiState.isCountingDown(),
+            onToggle = { viewModel.updateEnabled(it) }
+        )
+
         ErrorStripe(
             shouldDisplay = !hasEnoughPermsToRun,
             message = "Need to enable permissions before starting"

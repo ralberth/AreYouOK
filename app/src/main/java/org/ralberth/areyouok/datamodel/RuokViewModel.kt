@@ -141,6 +141,20 @@ class RuokViewModel @Inject constructor(
         }
     }
 
+
+    fun updateAlarmOnNoMovement(newAlarmOnNoMovement: Boolean) {
+        val oldValue = _uiState.value.alarmOnNoMovement
+        if (oldValue != newAlarmOnNoMovement) {
+            _uiState.update {
+                it.copy(
+                    alarmOnNoMovement = newAlarmOnNoMovement
+                )
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+        }
+    }
+
+
     fun checkin() {
         println("ViewModel.checkin(${uiState.value.countdownLength})")
         coordinator.checkin(uiState.value.countdownLength)

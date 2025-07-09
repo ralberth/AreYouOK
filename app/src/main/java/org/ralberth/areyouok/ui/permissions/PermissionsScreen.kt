@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import org.ralberth.areyouok.ui.RuokScaffold
-import org.ralberth.areyouok.ui.utils.SettingsRow
+import org.ralberth.areyouok.ui.utils.NavSettingsRow
 
 
 @Composable
@@ -68,7 +68,7 @@ fun PermissionsScreen(
         // participate in remember.  So, check every time so we're always accurate.
 
         val canForeground = hasOverlayPermission()
-        SettingsRow(
+        NavSettingsRow(
             label = "Permission to bring app to foreground",
             description = "Optional.  When enabled, the app will come to the foreground in front " +
                     "of any other app when the countdown is near the end or ended.  This is so " +
@@ -79,8 +79,8 @@ fun PermissionsScreen(
                 "😊 Can bring app to foreground"
             else
                 "😡 Cannot bring app to foreground",
-            canEdit = true,   // can always click to bring up the app info window
-            onEdit = askForOverlayPermission
+            rowIsClickable = true,   // can always click to bring up the app info window
+            onClickRow = askForOverlayPermission
         )
     }
 }
@@ -104,11 +104,11 @@ fun PermissionsRow(
     }
 
     val emoji = if (hasPermission) "😊" else "😡"
-    SettingsRow(
+    NavSettingsRow(
         label = "Permission to $label",
         value = if (hasPermission) "$emoji Can $label" else "$emoji Cannot $label",
         description = description,
-        canEdit = !hasPermission,
-        onEdit = { launcher.launch(permission) }  // { permissionsHelper.askForPermission(permission = permission) }
+        rowIsClickable = !hasPermission,
+        onClickRow = { launcher.launch(permission) }  // { permissionsHelper.askForPermission(permission = permission) }
     )
 }

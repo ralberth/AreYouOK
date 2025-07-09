@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
-import org.ralberth.areyouok.ui.utils.SettingsRow
+import org.ralberth.areyouok.ui.utils.NavSettingsRow
 
 
 @Composable
@@ -47,18 +47,26 @@ fun SettingsUI(
         else
             "Only use notification banners"
 
-        SettingsRow(
+        NavSettingsRow(
             label = "Alert Volume Level",
             value = volumeDisplay,
-            onEdit = { navController?.navigate("volumesetting") }
+            onClickRow = { navController?.navigate("volumesetting") }
         )
 
         HorizontalDivider()
 
-        SettingsRow(
+        NavSettingsRow(
             label = "Foreground on Alerts",
             value = foregroundDisplay,
-            onEdit = { navController?.navigate("foregroundsetting") }
+            onClickRow = { navController?.navigate("foregroundsetting") }
+        )
+
+        HorizontalDivider()
+
+        NavSettingsRow(
+            label = "Rotation configuration",
+            value = "something...",
+            onClickRow = { navController?.navigate("movement") }
         )
     }
 }

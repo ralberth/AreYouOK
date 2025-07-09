@@ -32,7 +32,9 @@ class RuokDatastore @Inject constructor(
             "location=${s.location}",
             "recentLocations=${s.recentLocations.joinToString("; ") }",
             "volumePercent=${s.volumePercent ?: "(use phone volume)"}",
-            "foregroundOnAlerts=${s.foregroundOnAlerts}"
+            "foregroundOnAlerts=${s.foregroundOnAlerts}",
+            "alarmOnNoMovement=${s.alarmOnNoMovement}",
+            "movementThreshold=${s.movementThreshold}"
         )
         return ary.joinToString(", ")
     }
@@ -48,7 +50,9 @@ class RuokDatastore @Inject constructor(
             location = prefs.getString("location", "") ?: "",
             recentLocations = prefs.getStringList("recentLocations", NEW_RECENT_LOCS),
             volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null,
-            foregroundOnAlerts = prefs.getBoolean("foregroundOnAlerts", true)
+            foregroundOnAlerts = prefs.getBoolean("foregroundOnAlerts", true),
+            alarmOnNoMovement = prefs.getBoolean("alarmOnNoMovement", false),
+            movementThreshold = prefs.getFloat("movementThreshold", 0.5f)
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -70,6 +74,8 @@ class RuokDatastore @Inject constructor(
             else
                 remove("volumePercent")
             putBoolean("foregroundOnAlerts", state.foregroundOnAlerts)
+            putBoolean("alarmOnNoMovement", state.alarmOnNoMovement)
+            putFloat("movementThreshold", state.movementThreshold)
             apply()
         }
     }

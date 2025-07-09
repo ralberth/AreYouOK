@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_RUOKUI
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.movement.MovementSource
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
@@ -35,6 +36,7 @@ import org.ralberth.areyouok.ui.settings.ContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.ForegroundScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
+import org.ralberth.areyouok.ui.settings.MovementScreen
 import org.ralberth.areyouok.ui.settings.SettingsScreen
 import org.ralberth.areyouok.ui.settings.VolumeScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
@@ -57,6 +59,9 @@ class MainActivity: ComponentActivity() {
 
     @Inject
     lateinit var soundEffects: SoundEffects
+
+    @Inject
+    lateinit var movementSource: MovementSource
 
 
     val viewModel: RuokViewModel by viewModels()
@@ -91,6 +96,7 @@ class MainActivity: ComponentActivity() {
                         composable("settings") { SettingsScreen(navController, viewModel) }
                         composable("volumesetting") { VolumeScreen(navController, viewModel, soundEffects) }
                         composable("foregroundsetting") { ForegroundScreen(navController, permHelper, viewModel) }
+                        composable("movement") { MovementScreen(navController, movementSource, viewModel) }
                     }
                 }
             }
