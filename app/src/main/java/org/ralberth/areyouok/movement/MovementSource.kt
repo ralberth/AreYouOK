@@ -6,24 +6,28 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.text.DecimalFormat
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.sqrt
 
+
+val df = DecimalFormat("###0.0")
 
 @Singleton
 class MovementSource @Inject constructor(
     @ApplicationContext context: Context
 ) : SensorEventListener {
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)  // TYPE_GYROSCOPE)
 //    val callbacks: ArrayList<(Float, Float, Float) -> Unit> = arrayListOf()
 //    var isListeningForUpdates: Boolean = false
-    var lastObservation = RotationPosition()
+    var nextObservation: Float = 0f
 
 
     fun start() {
         println("MovementSource.start()")
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
     }
 
 
@@ -33,9 +37,11 @@ class MovementSource @Inject constructor(
     }
 
 
-    fun position(): RotationPosition {
-        println("MovementSource.get(): ${lastObservation.dump()}")
-        return lastObservation
+    fun position(): Float {
+        println("MovementSource.get(): ${df.format(nextObservation)}")
+        val ret = nextObservation
+        nextObservation = 0f
+        return ret
     }
 
 //    fun listenForUpdates(callback: (Float, Float, Float) -> Unit) {
@@ -60,8 +66,15 @@ class MovementSource @Inject constructor(
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            lastObservation = RotationPosition.from(event.values)
-            println("MovementSource.onSensorChanged(): ${lastObservation.dump()}")
+            val (x, y, z) = event.values
+            val magnitude = sqrt(x*x + y*y + z*z)
+            if (magnitude > nextObservation)
+                nextObservation = magnitude
+//            println(
+//                "MovementSource.onSensorChanged(): x=${df.format(x)}, y=${df.format(y)}, " +
+//                "z=${df.format(z)}, mag=${df.format(magnitude)}, " +
+//                "nextObservation=${df.format(nextObservation)}"
+//            )
 //            callbacks.forEach { it(x, y, z) }
         }
     }

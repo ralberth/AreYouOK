@@ -142,6 +142,20 @@ class RuokViewModel @Inject constructor(
     }
 
 
+    fun updateMovementThreshold(newThreshold: Float) {
+        val oldValue = _uiState.value.movementThreshold
+        if (oldValue != newThreshold) {
+            println("Updated movementThreshold to $newThreshold")
+            _uiState.update {
+                it.copy(
+                    movementThreshold = newThreshold
+                )
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+        }
+    }
+
+
     fun updateAlarmOnNoMovement(newAlarmOnNoMovement: Boolean) {
         val oldValue = _uiState.value.alarmOnNoMovement
         if (oldValue != newAlarmOnNoMovement) {

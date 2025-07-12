@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun MovementUiUpdater(
     source: MovementSource,
-    content: @Composable (RotationPosition) -> Unit
+    content: @Composable (Float) -> Unit
 ) {
     var position by remember() { mutableStateOf(source.position()) }
     content.invoke(position)

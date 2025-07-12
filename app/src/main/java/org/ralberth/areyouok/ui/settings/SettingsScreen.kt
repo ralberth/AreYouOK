@@ -64,8 +64,8 @@ fun SettingsUI(
         HorizontalDivider()
 
         NavSettingsRow(
-            label = "Rotation configuration",
-            value = "something...",
+            label = "Phone Movement",
+            value = "Calibrate when phone isn't moving",
             onClickRow = { navController?.navigate("movement") }
         )
     }
