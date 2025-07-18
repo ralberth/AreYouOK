@@ -21,3 +21,8 @@ Notify someone if you are in trouble.
 # Text Messages
 
 ![home](docs/txt_messages.png)
+
+
+# Sounds and Voice
+
+Voices come from https://ttsmp3.com using "British English / Amy".

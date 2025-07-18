@@ -62,7 +62,7 @@ class MovementSource @Inject constructor(
 
     companion object {
         const val SLICE_MS = 250L
-        const val CUTOFF = 2L  // seconds
+        const val CUTOFF = 6L  // seconds
         val df = DecimalFormat("0.0")
     }
 
@@ -157,6 +157,6 @@ class MovementSource @Inject constructor(
 
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        println("MovementSource.onAccuracyChanged()")
+//        println("MovementSource.onAccuracyChanged()")
     }
 }

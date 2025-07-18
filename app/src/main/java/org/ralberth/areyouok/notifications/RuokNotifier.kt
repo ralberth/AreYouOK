@@ -3,7 +3,6 @@ package org.ralberth.areyouok.notifications
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
-import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.R
 import org.ralberth.areyouok.RuokIntents

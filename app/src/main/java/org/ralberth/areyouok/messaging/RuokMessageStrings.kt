@@ -41,5 +41,9 @@ class RuokMessageStrings {
             val decorations = arrayOf("📞", "😧", "☎️")
             return "${decorations[i]}  I'M IN TROUBLE.  AUTO-CALLING YOU NOW.  ${decorations[i]}"
         }
+
+        fun getNoMovement(secondsOfNoMovement: Int): String {
+            return "😴 hasn't moved in $secondsOfNoMovement seconds"
+        }
     }
 }

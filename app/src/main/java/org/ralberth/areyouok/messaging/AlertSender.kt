@@ -11,6 +11,7 @@ import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getChangedCo
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getCheckinMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getDurationChangedMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
+import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getNoMovement
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOffMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getTurnedOnMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
@@ -124,5 +125,9 @@ class AlertSender @Inject constructor(
 
     fun callingYouNow(phoneNumber: String, sequence: Int) {
         send(phoneNumber, getCallingYouNow(sequence))
+    }
+
+    fun haventMoved(phoneNumber: String, secondsWithNoMovement: Int) {
+        send(phoneNumber, getNoMovement(secondsWithNoMovement))
     }
 }

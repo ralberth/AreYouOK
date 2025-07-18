@@ -153,4 +153,35 @@ class Coordinator @Inject constructor(
             alertSender.callingYouNow(prefs.getPhoneNumber(), i)
         context.startActivity(intents.createMakePhoneCallIntent(phoneNumber))
     }
+
+
+    private var lastPeriodsWithNoMovement = 0
+
+    fun periodsWithNoMovement(periodsWithNoMovement: Int) {
+        val phone = prefs.getPhoneNumber()
+        val seconds = periodsWithNoMovement * 5
+
+        // This can be done with less code, but this is easier to follow
+        when (periodsWithNoMovement) {
+            0 -> if (lastPeriodsWithNoMovement > 0)
+                soundEffects.movement()
+            1 -> { }
+            2 -> soundEffects.noMovement()
+            3 -> {
+                soundEffects.noMovement()
+                alertSender.haventMoved(phone, seconds)
+            }
+            4 -> {
+                soundEffects.mvmtCall5Sec()
+                alertSender.haventMoved(phone, seconds)
+            }
+            5 -> {
+                alertSender.haventMoved(phone, seconds)
+                callContact(phone)
+            }
+            else -> {}    // TODO: maybe something else?
+        }
+
+        lastPeriodsWithNoMovement = periodsWithNoMovement
+    }
 }

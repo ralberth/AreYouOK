@@ -105,6 +105,10 @@ class RuokDatastore @Inject constructor(
     fun isAlarmOnNoMovement(): Boolean {
         return prefs.getBoolean("alarmOnNoMovement", false)
     }
+
+    fun getNoMovementThreshold(): Float {
+        return prefs.getFloat("movementThreshold", 0f)
+    }
 }
 
 

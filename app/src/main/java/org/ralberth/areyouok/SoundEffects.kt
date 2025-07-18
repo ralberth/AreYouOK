@@ -38,6 +38,10 @@ class SoundEffects @Inject constructor(
     private val timesUpOneShot  = newPlayer(R.raw.times_up_sound)
     private val timesUpLooping  = newPlayer(R.raw.times_up_sound, true)
 
+    private val noMovement      = newPlayer(R.raw.no_movement_sound)
+    private val mvmtCall5Sec    = newPlayer(R.raw.movement_call_contact_5_sec_sound)
+    private val movement        = newPlayer(R.raw.movement_detected_sound)
+
     var overrideVolumePercent: Float? = ruokDatastore.getVolumePercent()
 
     fun newOverrideVolumePercent(newVolumePercent: Float?) {
@@ -51,6 +55,10 @@ class SoundEffects @Inject constructor(
     fun redWarning()     { redWarning.play(overrideVolumePercent) }
     fun timesUpOneShot() { timesUpOneShot.play(overrideVolumePercent) }
     fun timesUpLooping() { timesUpLooping.play(overrideVolumePercent) }
+
+    fun noMovement()     { noMovement.play(overrideVolumePercent) }
+    fun mvmtCall5Sec()   { mvmtCall5Sec.play() }
+    fun movement()       { movement.play() }
 
     fun stopAll() {
         // Only sounds that are more than an instant long
