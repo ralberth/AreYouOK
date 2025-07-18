@@ -6,14 +6,12 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.text.DecimalFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAmount
 import java.util.LinkedList
-import java.util.stream.Collectors
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.round
 import kotlin.math.sqrt
 
 
@@ -63,7 +61,6 @@ class MovementSource @Inject constructor(
     companion object {
         const val SLICE_MS = 250L
         const val CUTOFF = 6L  // seconds
-        val df = DecimalFormat("0.0")
     }
 
 
@@ -72,15 +69,15 @@ class MovementSource @Inject constructor(
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
 
-    private var lastObserved = Instant.now()         // just a seed value
-    private val history: MutableList<Float> = LinkedList()  // last 5 seconds of observations
-    private var worker: Thread? = null               // listens for sensor updates, maintains state
+    private var lastObserved = Instant.now()              // just a seed value
+    private val history: MutableList<Int> = LinkedList()  // last 5 seconds of observations
+    private var worker: Thread? = null                    // listens for sensor updates, maintains state
 
-    private var observationHWM: Float = 0f           // highest value within this 250ms block of time
-    private var observationMonitor = Any()           // separate monitor, HWM updated frequently
+    private var observationHWM: Int = 0                   // highest value within this 250ms block of time
+    private var observationMonitor = Any()                // separate monitor, HWM updated frequently
 
 
-    fun getHistory(): List<Float> {
+    fun getHistory(): List<Int> {
         if (sensor == null)
             return ArrayList()     // Edge case where we don't have a sensor
 
@@ -93,12 +90,8 @@ class MovementSource @Inject constructor(
                 worker!!.start()   // synchronized above protects us from having worker change after line above
                 return ArrayList()
             } else {
-                val listStr = history.stream()
-                    .map { df.format(it) }
-                    .collect(Collectors.toList())
-                    .joinToString()
-                println("MovementSource.getHistory() => $listStr")
-                return ArrayList<Float>(history)  // make a copy of the CS-protected actual array
+                println("MovementSource.getHistory() => ${history.joinToString()}")
+                return ArrayList<Int>(history)  // make a copy of the CS-protected actual array
             }
         }
     }
@@ -111,10 +104,10 @@ class MovementSource @Inject constructor(
         while (shouldKeepRunning) {
             Thread.sleep(SLICE_MS)
 
-            var lastObs = 0f
+            var lastObs = 0
             synchronized(observationMonitor) {
                 lastObs = observationHWM
-                observationHWM = 0f
+                observationHWM = 0
             }
 
             synchronized(monitor) {
@@ -138,7 +131,6 @@ class MovementSource @Inject constructor(
      */
     private fun lastObservedWithinCutoff(): Boolean {
         val now = Instant.now()
-        val r: TemporalAmount
         val threshold = lastObserved.plus(CUTOFF, ChronoUnit.SECONDS)
         return now.isBefore(threshold)
     }
@@ -148,9 +140,10 @@ class MovementSource @Inject constructor(
         if (event != null) {
             val (x, y, z) = event.values
             val magnitude = sqrt(x*x + y*y + z*z)
+            val magnitudeInt = round(magnitude * 10f).toInt()
             synchronized(observationMonitor) {
                 if (magnitude > observationHWM)
-                    observationHWM = magnitude
+                    observationHWM = magnitudeInt
             }
         }
     }

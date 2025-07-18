@@ -10,7 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 @Composable
 fun DurationSelectScreen(navController: NavController, viewModel: RuokViewModel) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var nextDuration by remember { mutableStateOf(uiState.countdownLength) }
+    var nextDuration by remember { mutableIntStateOf(uiState.countdownLength) }
 
     DurationSelectUI(
         navController,

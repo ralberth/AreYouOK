@@ -32,9 +32,9 @@ import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 @Composable
 internal fun BarChart(
     maxHeight: Dp = 200.dp,
-    maxValue: Float,
-    cutoff: Float,
-    values: List<Float>,
+    maxValue: Int,
+    cutoff: Int,
+    values: List<Int>,
     modifier: Modifier = Modifier
 ) {
     val borderColor = MaterialTheme.colorScheme.primary
@@ -44,7 +44,7 @@ internal fun BarChart(
             Modifier
                 .height(maxHeight)
                 .drawBehind {
-                    val cutoffHeight = size.height - (cutoff / maxValue * size.height)
+                    val cutoffHeight = size.height - (cutoff.toFloat() / maxValue.toFloat() * size.height)
                     drawRect(
                         color = borderColor,
                         style = Stroke(width = 1f)
@@ -75,12 +75,12 @@ internal fun BarChart(
 
 @Composable
 private fun RowScope.Bar(
-    value: Float,
+    value: Int,
     color: Color,
     maxHeight: Dp,
-    maxValue: Float
+    maxValue: Int
 ) {
-    val itemHeight = remember(value) { value / maxValue * maxHeight.value }
+    val itemHeight = remember(value) { value.toFloat() / maxValue.toFloat() * maxHeight.value }
 
     Column(modifier = Modifier.weight(1f)) {
         Spacer(
@@ -100,9 +100,9 @@ fun PreviewBarChart() {
     AreYouOkTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             BarChart(
-                values = (0..10).map { (it * 2).toFloat() },  // (1..20).random().toFloat() },
-                maxValue = 20f,
-                cutoff = 13f
+                values = (0..10).map { it * 2 },
+                maxValue = 20,
+                cutoff = 13
             )
         }
     }

@@ -21,7 +21,8 @@ fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
     SettingsUI(
         navController,
         uiState.volumePercent,
-        uiState.foregroundOnAlerts
+        uiState.foregroundOnAlerts,
+        uiState.movementThreshold
     )
 }
 
@@ -30,7 +31,8 @@ fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
 fun SettingsUI(
     navController: NavController?,
     volume: Float?,
-    foregroundOnAlerts: Boolean
+    foregroundOnAlerts: Boolean,
+    movementThreshold: Int
 ) {
     RuokScaffold(
         navController = navController,
@@ -65,7 +67,7 @@ fun SettingsUI(
 
         NavSettingsRow(
             label = "Phone Movement",
-            value = "Calibrate when phone isn't moving",
+            value = "Phone isn't moving below $movementThreshold",
             onClickRow = { navController?.navigate("movement") }
         )
     }
@@ -80,7 +82,8 @@ fun SettingsUIPreview() {
             SettingsUI(
                 null,
                 4.5f,
-                false
+                false,
+                18
             )
         }
     }

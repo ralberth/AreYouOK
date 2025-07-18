@@ -14,7 +14,7 @@ import org.ralberth.areyouok.movement.MovementSource
 @Composable
 fun MovementUiUpdater(
     source: MovementSource,
-    content: @Composable (List<Float>) -> Unit
+    content: @Composable (List<Int>) -> Unit
 ) {
     var history by remember() { mutableStateOf(source.getHistory()) }
     content.invoke(history)

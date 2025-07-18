@@ -142,7 +142,7 @@ class RuokViewModel @Inject constructor(
     }
 
 
-    fun updateMovementThreshold(newThreshold: Float) {
+    fun updateMovementThreshold(newThreshold: Int) {
         val oldValue = _uiState.value.movementThreshold
         if (oldValue != newThreshold) {
             println("Updated movementThreshold to $newThreshold")

@@ -52,7 +52,7 @@ class RuokDatastore @Inject constructor(
             volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null,
             foregroundOnAlerts = prefs.getBoolean("foregroundOnAlerts", true),
             alarmOnNoMovement = prefs.getBoolean("alarmOnNoMovement", false),
-            movementThreshold = prefs.getFloat("movementThreshold", 0.5f)
+            movementThreshold = prefs.getInt("movementThreshold", 4)
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -75,7 +75,7 @@ class RuokDatastore @Inject constructor(
                 remove("volumePercent")
             putBoolean("foregroundOnAlerts", state.foregroundOnAlerts)
             putBoolean("alarmOnNoMovement", state.alarmOnNoMovement)
-            putFloat("movementThreshold", state.movementThreshold)
+            putInt("movementThreshold", state.movementThreshold)
             apply()
         }
     }
@@ -106,8 +106,8 @@ class RuokDatastore @Inject constructor(
         return prefs.getBoolean("alarmOnNoMovement", false)
     }
 
-    fun getNoMovementThreshold(): Float {
-        return prefs.getFloat("movementThreshold", 0f)
+    fun getNoMovementThreshold(): Int {
+        return prefs.getInt("movementThreshold", 0)
     }
 }
 

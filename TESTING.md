@@ -312,3 +312,19 @@ Restart the countdown, click the "O" soft button to return to the home page.  Wa
 Repeat, but instead of home screen, bring up another app and make sure RUOK foregrounds at T-1 and T-0 alerts.
 
 Repeat, but click the square soft button and kill RUOK.  Confirm app becomes visible (launches) at T-1 and T-0 (kill it again between T-1 and T-0).
+
+
+
+# Movements
+
+
+## Movement Permissions
+
+*(none at this API target level)*
+
+
+## Movement Settings Screen
+
+
+## Movement Function and Alerts
+

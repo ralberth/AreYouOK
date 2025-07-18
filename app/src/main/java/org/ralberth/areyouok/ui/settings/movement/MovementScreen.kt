@@ -8,7 +8,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,7 @@ import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.utils.BarChart
 import org.ralberth.areyouok.ui.utils.CenteredButton
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -29,7 +32,7 @@ fun MovementScreen(
     viewModel: RuokViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var cutoff = remember { uiState.movementThreshold }
+    var cutoff by remember { mutableIntStateOf(uiState.movementThreshold) }
 
     MovementUiUpdater(movementSource) {
         history ->
@@ -47,9 +50,9 @@ fun MovementScreen(
 @Composable
 fun MovementUI(
     navController: NavController?,
-    history: List<Float>,
-    cutoff: Float,
-    onCutoffChange: (Float) -> Unit,
+    history: List<Int>,
+    cutoff: Int,
+    onCutoffChange: (Int) -> Unit,
     onDone: () -> Unit
 ) {
     RuokScaffold(
@@ -68,15 +71,20 @@ fun MovementUI(
             )
             BarChart(
                 maxHeight = 120.dp,
-                maxValue = 50f,
+                maxValue = 50,
                 cutoff = cutoff,
                 values = history,
                 modifier = Modifier.padding(vertical = 20.dp)
             )
             Slider(
-                value = cutoff,
-                onValueChange = onCutoffChange,
-                valueRange = 5f..40f
+                value = cutoff.toFloat(),
+                onValueChange = { onCutoffChange(it.roundToInt()) },
+                valueRange = 5f..20f,
+                steps = 16
+            )
+            Text(
+                text = cutoff.toString(),
+                style = MaterialTheme.typography.headlineLarge
             )
             CenteredButton(
                 onClick = onDone,
@@ -94,8 +102,8 @@ fun MovementUIPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             MovementUI(
                 null,
-                listOf(24f, 36f, 50f, 18f, 27f, 17f, 30f, 20f, 40f, 36f, 25f, 28f, 47f, 10f, 9f),
-                20f,
+                listOf(24, 36, 50, 18, 27, 17, 30, 20, 40, 36, 25, 28, 47, 10, 9),
+                10,
                 { },
                 { }
             )

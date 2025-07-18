@@ -19,7 +19,7 @@ data class RuokScreenState(
     val foregroundOnAlerts: Boolean,    // If the app should become visible when alerts are sent
 
     val alarmOnNoMovement: Boolean,     // If app should pay attention to the accelerometer
-    val movementThreshold: Float        // threshold over which we consider the cell phone in motion
+    val movementThreshold: Int          // threshold over which we consider the cell phone in motion
 ) {
     fun isCountingDown(): Boolean {
         return countdownStart != null
