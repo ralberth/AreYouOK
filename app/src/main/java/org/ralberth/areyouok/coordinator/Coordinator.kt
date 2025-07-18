@@ -13,6 +13,7 @@ import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
+import org.ralberth.areyouok.movement.MovementService
 import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import javax.inject.Inject
@@ -40,6 +41,8 @@ class Coordinator @Inject constructor(
         alarms.setAlarms(countdownLength)
         notifier.cancelAll()  // just in case
         alertSender.enabled(prefs.getPhoneNumber(), countdownLength, prefs.getLocation())
+        if (prefs.isAlarmOnNoMovement())
+            context.startForegroundService(intents.createStartMovementServiceIntent())
     }
 
 
@@ -50,6 +53,8 @@ class Coordinator @Inject constructor(
         alarms.cancelAllAlarms()
         notifier.cancelAll()
         alertSender.disabled(prefs.getPhoneNumber())
+        if (prefs.isAlarmOnNoMovement())
+            context.stopService(intents.createStopMovementServiceIntent())
     }
 
 

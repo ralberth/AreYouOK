@@ -2,6 +2,7 @@ package org.ralberth.areyouok.ui.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -15,19 +16,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 
 // https://medium.com/better-programming/custon-charts-in-android-using-jetpack-compose-87b395c1d515
+// TODO: there's a cool gauge display at this website too
+
 
 @Composable
 internal fun BarChart(
     maxHeight: Dp = 200.dp,
     maxValue: Float,
+    cutoff: Float,
     values: List<Float>,
     modifier: Modifier = Modifier
 ) {
@@ -36,12 +42,18 @@ internal fun BarChart(
     Row(
         modifier = modifier.then(
             Modifier
-                .fillMaxWidth()
                 .height(maxHeight)
                 .drawBehind {
+                    val cutoffHeight = size.height - (cutoff / maxValue * size.height)
                     drawRect(
                         color = borderColor,
                         style = Stroke(width = 1f)
+                    )
+                    drawLine(
+                        color = Color.Red,
+                        start = Offset(x = 0f, y = cutoffHeight),
+                        end = Offset(x = size.width, y = cutoffHeight),
+                        strokeWidth = 3f
                     )
                 }
         ),
@@ -49,9 +61,10 @@ internal fun BarChart(
         verticalAlignment = Alignment.Bottom
     ) {
         values.forEach { item ->
+            val color = if (item > cutoff) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.primary
             Bar(
                 value = item,
-                color = MaterialTheme.colorScheme.primary,
+                color = color,
                 maxHeight = maxHeight,
                 maxValue = maxValue
             )
@@ -67,16 +80,17 @@ private fun RowScope.Bar(
     maxHeight: Dp,
     maxValue: Float
 ) {
-    val valuePctOfMax = remember(value) { value / maxValue }
-    val itemHeight = remember(value) { valuePctOfMax * maxHeight.value }
+    val itemHeight = remember(value) { value / maxValue * maxHeight.value }
 
-    Spacer(
-        modifier = Modifier
-            .padding(horizontal = 3.dp)
-            .height(itemHeight.dp)
-            .weight(1f)
-            .background(color)
-    )
+    Column(modifier = Modifier.weight(1f)) {
+        Spacer(
+            modifier = Modifier
+                .padding(horizontal = 3.dp)
+                .height(itemHeight.dp)
+                .background(color)
+                .fillMaxWidth()
+        )
+    }
 }
 
 
@@ -86,8 +100,9 @@ fun PreviewBarChart() {
     AreYouOkTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             BarChart(
-                values = (0..10).map { (1..20).random().toFloat() },
-                maxValue = 20f
+                values = (0..10).map { (it * 2).toFloat() },  // (1..20).random().toFloat() },
+                maxValue = 20f,
+                cutoff = 13f
             )
         }
     }

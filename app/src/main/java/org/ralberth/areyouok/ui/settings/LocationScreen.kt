@@ -1,15 +1,11 @@
 package org.ralberth.areyouok.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -30,11 +26,12 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.getLocationChangedMessage
 import org.ralberth.areyouok.messaging.RuokMessageStrings.Companion.missedCheckinMessage
+import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import org.ralberth.areyouok.ui.utils.CenteredButton
 
 
 @Composable
@@ -93,14 +90,10 @@ fun LocationUI(
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(onClick = onDone) {
-                Text("OK")
-            }
-        }
+        CenteredButton(
+            onClick = onDone,
+            modifier = Modifier.padding(top = 20.dp)
+        )
 
         Column(
             horizontalAlignment = Alignment.Start,

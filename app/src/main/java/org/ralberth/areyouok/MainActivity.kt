@@ -36,7 +36,7 @@ import org.ralberth.areyouok.ui.settings.ContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.ForegroundScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
-import org.ralberth.areyouok.ui.settings.MovementScreen
+import org.ralberth.areyouok.ui.settings.movement.MovementScreen
 import org.ralberth.areyouok.ui.settings.SettingsScreen
 import org.ralberth.areyouok.ui.settings.VolumeScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme

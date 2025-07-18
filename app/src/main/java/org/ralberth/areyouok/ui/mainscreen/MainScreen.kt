@@ -78,7 +78,7 @@ fun MainScreen(
         HorizontalDivider()
 
         val movementValue = if (uiState.alarmOnNoMovement)
-            "Alarm if phone doesn't move enough"
+            "Alarm if phone stays still"
         else
             "Ignore phone movement"
         ToggleSettingsRow(

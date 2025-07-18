@@ -14,12 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.ralberth.areyouok.minutesBeforeEnd
 import org.ralberth.areyouok.progressPercent
-import org.ralberth.areyouok.ui.mainscreen.CountdownUI
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.theme.ProgressBarDanger
 import org.ralberth.areyouok.ui.theme.ProgressBarOK
@@ -28,8 +26,6 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import javax.xml.datatype.DatatypeConstants.MINUTES
-import kotlin.time.DurationUnit
 
 
 var formatter = DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.systemDefault())

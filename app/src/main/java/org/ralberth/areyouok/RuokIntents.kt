@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.alarms.RuokAlarmReceiver
 import org.ralberth.areyouok.messaging.AlertErrorHandler
+import org.ralberth.areyouok.movement.MovementService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +32,8 @@ class RuokIntents @Inject constructor(
         const val REQUEST_CODE_BASE_MINSLEFT = 100
 
         const val ACTION_SMS_SENT = "org.ralberth.areyouok.action.SMS_SENT"
-
+        const val ACTION_START_SERVICE = "org.ralberth.areyouok.action.START_SERVICE"
+        const val ACTION_STOP_SERVICE = "org.ralberth.areyouok.action.STOP_SERVICE"
     }
 
 
@@ -137,6 +139,20 @@ class RuokIntents @Inject constructor(
         return Intent(Intent.ACTION_CALL, "tel:${phoneNumber}".toUri()).apply {
             putExtra(EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
             setFlags(FLAG_ACTIVITY_NEW_TASK) // because we're outside of our own Activity
+        }
+    }
+
+
+    fun createStartMovementServiceIntent(): Intent {
+        return Intent(context, MovementService::class.java).apply {
+            setAction(ACTION_START_SERVICE)
+        }
+    }
+
+
+    fun createStopMovementServiceIntent(): Intent {
+        return Intent(context, MovementService::class.java).apply {
+            setAction(ACTION_STOP_SERVICE)
         }
     }
 }

@@ -45,6 +45,9 @@ class RuokNotifier @Inject constructor(
 ) {
     companion object {
         const val TIME_REMAINING_MESSAGE_ID = 900
+        const val ALERT_CHANNEL_NAME = "rude"
+        const val NOTIFY_CHANNEL_NAME = "polite"
+        const val ERROR_CHANNEL_NAME = "errors"
     }
 
     val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -52,14 +55,14 @@ class RuokNotifier @Inject constructor(
     private val timerAlertChannel = RuokChannel(
         notificationMgr,
         context,
-        "rude",
+        ALERT_CHANNEL_NAME,
         "Time's almost up alerts"
     )
 
     private val timerNotifyChannel = RuokChannel(
         notificationMgr,
         context,
-        "polite",
+        NOTIFY_CHANNEL_NAME,
         "Time's almost up notifications",
         isHighImportance = false,
         bypassDoNotDisturb = false
@@ -69,7 +72,7 @@ class RuokNotifier @Inject constructor(
         notificationMgr,
         context,
         "errors",
-        "Error messages",
+        ERROR_CHANNEL_NAME,
         soundResourceId = R.raw.error_sound
     )
 

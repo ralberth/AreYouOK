@@ -101,6 +101,10 @@ class RuokDatastore @Inject constructor(
     fun foregroundOnAlerts(): Boolean {
         return prefs.getBoolean("foregroundOnAlerts", true)
     }
+
+    fun isAlarmOnNoMovement(): Boolean {
+        return prefs.getBoolean("alarmOnNoMovement", false)
+    }
 }
 
 
