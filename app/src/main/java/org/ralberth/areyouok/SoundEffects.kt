@@ -1,4 +1,4 @@
-package org.ralberth.areyouok
+package org.ralberth.areyouok.soundeffects
 
 import android.app.Application
 import android.content.Context
