@@ -20,6 +20,7 @@ fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
 
     SettingsUI(
         navController,
+        uiState.soundStyle,
         uiState.volumePercent,
         uiState.foregroundOnAlerts,
         uiState.movementThreshold
@@ -30,6 +31,7 @@ fun SettingsScreen(navController: NavController, viewModel: RuokViewModel) {
 @Composable
 fun SettingsUI(
     navController: NavController?,
+    soundStyle: String,
     volume: Float?,
     foregroundOnAlerts: Boolean,
     movementThreshold: Int
@@ -48,6 +50,14 @@ fun SettingsUI(
             "Foreground at 1min and 0min left"
         else
             "Only use notification banners"
+
+        NavSettingsRow(
+            label = "Sound and Alert Style",
+            value = soundStyle,
+            onClickRow = { navController?.navigate("soundstyle") }
+        )
+
+        HorizontalDivider()
 
         NavSettingsRow(
             label = "Alert Volume Level",
@@ -81,6 +91,7 @@ fun SettingsUIPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             SettingsUI(
                 null,
+                "Voyager",
                 4.5f,
                 false,
                 18

@@ -27,6 +27,7 @@ import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_KEY_MSGTYPE
 import org.ralberth.areyouok.RuokIntents.Companion.EXTRA_VAL_MSGTYPE_RUOKUI
 import org.ralberth.areyouok.datamodel.RuokViewModel
 import org.ralberth.areyouok.movement.MovementSource
+import org.ralberth.areyouok.soundeffects.SoundEffects
 import org.ralberth.areyouok.ui.callcontactscreen.CallContactScreen
 import org.ralberth.areyouok.ui.mainscreen.CountdownScreen
 import org.ralberth.areyouok.ui.mainscreen.MainScreen
@@ -36,9 +37,10 @@ import org.ralberth.areyouok.ui.settings.ContactScreen
 import org.ralberth.areyouok.ui.settings.DurationSelectScreen
 import org.ralberth.areyouok.ui.settings.ForegroundScreen
 import org.ralberth.areyouok.ui.settings.LocationScreen
-import org.ralberth.areyouok.ui.settings.movement.MovementScreen
 import org.ralberth.areyouok.ui.settings.SettingsScreen
-import org.ralberth.areyouok.ui.settings.VolumeScreen
+import org.ralberth.areyouok.ui.settings.movement.MovementScreen
+import org.ralberth.areyouok.ui.settings.sound.SoundStyleScreen
+import org.ralberth.areyouok.ui.settings.sound.VolumeScreen
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import javax.inject.Inject
 
@@ -88,6 +90,7 @@ class MainActivity: ComponentActivity() {
                         composable("permissions") { PermissionsScreen(navController, permHelper, { hasOverlayPermission() }, { askForOverlayPermission() }) }
                         composable("main") { MainScreen(navController, viewModel, permHelper, { askForContactPhoneNumber() }) }
 //                        composable("help") { HelpScreen(navController) }
+                        composable("soundstyle") { SoundStyleScreen(navController, viewModel, soundEffects) }
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
                         composable("contact") { ContactScreen(navController, viewModel) }
                         composable("locationselect") { LocationScreen(navController, viewModel) }
@@ -112,8 +115,6 @@ class MainActivity: ComponentActivity() {
      * banner notification.  If this is the intent we're getting, the app is coming to the
      * foreground on its own.  We just need to change the destination so the countdown screen is
      * visible.
-     *
-     * If we get anything else, print an error.
      */
     override fun onNewIntent(i: Intent) {
         val msgType = i.getStringExtra(EXTRA_KEY_MSGTYPE)

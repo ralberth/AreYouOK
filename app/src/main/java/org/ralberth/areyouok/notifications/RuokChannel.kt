@@ -3,7 +3,6 @@ package org.ralberth.areyouok.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ContentResolver
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
@@ -20,7 +19,7 @@ class RuokChannel(
     channelName: String,
     isHighImportance: Boolean = true,
     bypassDoNotDisturb: Boolean = true,
-    soundResourceId: Int = R.raw.silent
+    soundUri: Uri
 ) {
     private val bitmap = BitmapFactory.decodeResource(context.resources, ic_launcher_round)
 
@@ -35,15 +34,6 @@ class RuokChannel(
         NotificationCompat.PRIORITY_DEFAULT
 
 
-    private fun buildSoundUri(i: Int): Uri {
-        return Uri.Builder()
-            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-            .authority(context.resources.getResourcePackageName(i))
-            .appendPath(context.resources.getResourceTypeName(i))
-            .appendPath(context.resources.getResourceEntryName(i))
-            .build()
-    }
-
     private val audioAttrs = AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_ALARM)
         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -52,7 +42,7 @@ class RuokChannel(
 
     private val channel = NotificationChannel(channelId, channelName, importance).apply {
         this.setBypassDnd(bypassDoNotDisturb)
-        this.setSound(buildSoundUri(soundResourceId), audioAttrs)
+        this.setSound(soundUri, audioAttrs)
     }
 
     init {

@@ -1,6 +1,5 @@
 package org.ralberth.areyouok.datamodel
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
@@ -34,7 +33,8 @@ class RuokDatastore @Inject constructor(
             "volumePercent=${s.volumePercent ?: "(use phone volume)"}",
             "foregroundOnAlerts=${s.foregroundOnAlerts}",
             "alarmOnNoMovement=${s.alarmOnNoMovement}",
-            "movementThreshold=${s.movementThreshold}"
+            "movementThreshold=${s.movementThreshold}",
+            "soundStyle=${s.soundStyle}"
         )
         return ary.joinToString(", ")
     }
@@ -52,7 +52,8 @@ class RuokDatastore @Inject constructor(
             volumePercent = if (prefs.contains("volumePercent")) prefs.getFloat("volumePercent", 5f) else null,
             foregroundOnAlerts = prefs.getBoolean("foregroundOnAlerts", true),
             alarmOnNoMovement = prefs.getBoolean("alarmOnNoMovement", false),
-            movementThreshold = prefs.getInt("movementThreshold", 4)
+            movementThreshold = prefs.getInt("movementThreshold", 4),
+            soundStyle = prefs.getString("soundStyle", "Default") ?: "Default"
         )
         println("Hydrated ${dump(ret)}")
         return ret
@@ -76,6 +77,8 @@ class RuokDatastore @Inject constructor(
             putBoolean("foregroundOnAlerts", state.foregroundOnAlerts)
             putBoolean("alarmOnNoMovement", state.alarmOnNoMovement)
             putInt("movementThreshold", state.movementThreshold)
+            putString("soundStyle", state.soundStyle)
+
             apply()
         }
     }
@@ -108,6 +111,10 @@ class RuokDatastore @Inject constructor(
 
     fun getNoMovementThreshold(): Int {
         return prefs.getInt("movementThreshold", 0)
+    }
+
+    fun getSoundStyle(): String {
+        return prefs.getString("soundStyle", "Default") ?: "Default"
     }
 }
 

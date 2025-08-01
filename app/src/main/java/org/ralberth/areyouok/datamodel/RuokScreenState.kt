@@ -14,6 +14,7 @@ data class RuokScreenState(
     val location: String,               // Description of where the user physically is
     val recentLocations: List<String>,  // sorted so earlier was selected more recently
 
+    val soundStyle: String,             // Which set of sounds and alerts to play
     val volumePercent: Float?,          // Percentage (0..1) of max volume alerts and notifications should play at
 
     val foregroundOnAlerts: Boolean,    // If the app should become visible when alerts are sent

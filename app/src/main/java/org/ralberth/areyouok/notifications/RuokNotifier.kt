@@ -3,8 +3,8 @@ package org.ralberth.areyouok.notifications
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.ralberth.areyouok.R
 import org.ralberth.areyouok.RuokIntents
 import java.time.Instant
 import javax.inject.Inject
@@ -47,6 +47,8 @@ class RuokNotifier @Inject constructor(
         const val ALERT_CHANNEL_NAME = "rude"
         const val NOTIFY_CHANNEL_NAME = "polite"
         const val ERROR_CHANNEL_NAME = "errors"
+
+        val SILENT_URI = "file:///android_asset/sounds/silent.mp3".toUri()
     }
 
     val notificationMgr = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -55,7 +57,8 @@ class RuokNotifier @Inject constructor(
         notificationMgr,
         context,
         ALERT_CHANNEL_NAME,
-        "Time's almost up alerts"
+        "Time's almost up alerts",
+        soundUri = SILENT_URI
     )
 
     private val timerNotifyChannel = RuokChannel(
@@ -64,7 +67,8 @@ class RuokNotifier @Inject constructor(
         NOTIFY_CHANNEL_NAME,
         "Time's almost up notifications",
         isHighImportance = false,
-        bypassDoNotDisturb = false
+        bypassDoNotDisturb = false,
+        soundUri = SILENT_URI
     )
 
     private val errorChannel = RuokChannel(
@@ -72,7 +76,7 @@ class RuokNotifier @Inject constructor(
         context,
         "errors",
         ERROR_CHANNEL_NAME,
-        soundResourceId = R.raw.error_sound
+        soundUri = "file:///android_asset/sounds/error.mp3".toUri()
     )
 
 

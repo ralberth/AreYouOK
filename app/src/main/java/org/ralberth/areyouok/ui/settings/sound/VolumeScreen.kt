@@ -1,40 +1,29 @@
-package org.ralberth.areyouok.ui.settings
+package org.ralberth.areyouok.ui.settings.sound
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.datamodel.RuokViewModel
+import org.ralberth.areyouok.soundeffects.SoundEffects
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
+import org.ralberth.areyouok.ui.utils.CenteredButton
+import org.ralberth.areyouok.ui.utils.RadioButtonRow
 
 
 @Composable
@@ -52,6 +41,7 @@ fun VolumeScreen(
         onPlayReminder = { soundEffects.yellowWarning() },
         onPlayImminent = { soundEffects.redWarning() },
         onPlayEmergency = { soundEffects.timesUpOneShot() },
+        onDone = { navController.navigateUp() }
     )
 }
 
@@ -63,7 +53,11 @@ fun VolumeUI(
     onVolumePercentChange: (Float?) -> Unit = {},
     onPlayReminder: () -> Unit = {},
     onPlayImminent: () -> Unit = {},
-    onPlayEmergency: () -> Unit = {}
+    onPlayEmergency: () -> Unit = {},
+    onPlayNoMovement: () -> Unit = {},
+    onPlayCallIn5Sec: () -> Unit = {},
+    onPlayMovement: () -> Unit = {},
+    onDone: () -> Unit = {}
 ) {
     RuokScaffold(
         navController = navController,
@@ -71,19 +65,19 @@ fun VolumeUI(
         title = "Alert Volume Level",
         description = "By default, all alert sounds are played at the phone's volume level.  You " +
                 "can override this below so alerts from R U OK are always loud.  BE CAREFUL: this " +
-                "applies when the phone is locked and on Do Not Disturb!"
+                "might apply when the phone is locked or on Do Not Disturb!"
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-            RadioRow(
+            RadioButtonRow(
                 isSelected = volumePercent == null,
                 label = "Use system volume level",
-                { onVolumePercentChange(null) },
+                onSelect =  { onVolumePercentChange(null) },
                 modifier = Modifier.padding(top = 20.dp)
             )
-            RadioRow(
+            RadioButtonRow(
                 isSelected = volumePercent != null,
                 label = "Override system volume",
-                { onVolumePercentChange(0.5f) }
+                onSelect = { onVolumePercentChange(0.5f) }
             )
 
             Column(
@@ -110,75 +104,16 @@ fun VolumeUI(
                 )
             }
 
-            Text(
-                text = "Try it out",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 25.dp, bottom = 10.dp)
+            TryItOut(onPlayReminder, onPlayImminent, onPlayEmergency,
+                onPlayNoMovement, onPlayCallIn5Sec, onPlayMovement)
+
+
+            CenteredButton(
+                label = "OK",
+                onClick = onDone,
+                modifier = Modifier.padding(top = 36.dp)
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(Modifier.weight(1f))
-                TryItOutButton("reminder", onPlayReminder)
-                Spacer(Modifier.weight(1f))
-                TryItOutButton("imminent", onPlayImminent)
-                Spacer(Modifier.weight(1f))
-                TryItOutButton("emergency", onPlayEmergency)
-                Spacer(Modifier.weight(1f))
-            }
         }
-    }
-}
-
-
-@Composable
-fun RadioRow(
-    isSelected: Boolean,
-    label: String,
-    onSelect: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp)
-            .selectable(
-                selected = isSelected,
-                onClick = onSelect,
-                role = Role.RadioButton
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = null   // null recommended for accessibility with screen readers
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 16.dp)
-        )
-    }
-}
-
-
-@Composable
-fun TryItOutButton(
-    label: String,
-    onTryItOut: () -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        FilledTonalButton(
-            onClick = onTryItOut,
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.size(70.dp)
-        ) {
-            Icon(Icons.Filled.Notifications, "alert")
-        }
-        Text(label)
     }
 }
 

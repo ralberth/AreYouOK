@@ -6,10 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import org.ralberth.areyouok.SoundEffects
-import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.coordinator.Coordinator
-import org.ralberth.areyouok.notifications.RuokNotifier
+import org.ralberth.areyouok.soundeffects.SoundEffects
 import java.time.Clock
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -165,6 +163,20 @@ class RuokViewModel @Inject constructor(
                 )
             }
             ruokDatastore.saveMainScreenState(_uiState.value)
+        }
+    }
+
+
+    fun updateSoundStyle(newStyle: String) {
+        val oldStyle = _uiState.value.soundStyle
+        if (oldStyle != newStyle) {
+            _uiState.update {
+                it.copy(
+                    soundStyle = newStyle
+                )
+            }
+            ruokDatastore.saveMainScreenState(_uiState.value)
+            soundEffects.setSoundStyle(newStyle)
         }
     }
 

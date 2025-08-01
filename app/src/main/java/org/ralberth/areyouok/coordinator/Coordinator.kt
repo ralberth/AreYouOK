@@ -1,21 +1,15 @@
 package org.ralberth.areyouok.coordinator
 
 import android.content.Context
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.telecom.TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE
-import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.ralberth.areyouok.RuokIntents
-import org.ralberth.areyouok.SoundEffects
 import org.ralberth.areyouok.alarms.RuokAlarms
 import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
-import org.ralberth.areyouok.movement.MovementService
 import org.ralberth.areyouok.notifications.RuokNotifier
-import org.ralberth.areyouok.ui.permissions.PermissionsHelper
+import org.ralberth.areyouok.soundeffects.SoundEffects
 import javax.inject.Inject
 import javax.inject.Singleton
 
