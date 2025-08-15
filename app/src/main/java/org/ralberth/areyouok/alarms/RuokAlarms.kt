@@ -32,7 +32,7 @@ class RuokAlarms @Inject constructor(
     }
 
 
-    fun canSetAlarms(): Boolean {
+    private fun canSetAlarms(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             alarmManager.canScheduleExactAlarms()
         else

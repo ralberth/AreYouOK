@@ -1,13 +1,20 @@
 package org.ralberth.areyouok.ui.mainscreen
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.ralberth.areyouok.datamodel.RuokViewModel
@@ -91,11 +98,11 @@ fun MainScreen(
 
         HorizontalDivider()
 
-        ToggleSettingsRow(
-            label = "Enable",
-            toggleEnabled = toggleEnabled,
-            isSwitchedOn = uiState.isCountingDown(),
-            onToggle = { viewModel.updateEnabled(it) }
+        StartStopButton(
+            enabled = toggleEnabled,
+            showStop = uiState.isCountingDown(),
+            onClick = { viewModel.updateEnabled(it) },
+            modifier = Modifier.padding(top = 12.dp)
         )
 
         ErrorStripe(

@@ -47,7 +47,7 @@ class RuokAlarmReceiver: BroadcastReceiver() {
     }
 
 
-    fun onReceiveMinsLeft(intent: Intent) {
+    private fun onReceiveMinsLeft(intent: Intent) {
         val minsLeft = intent.getIntExtra(EXTRA_KEY_MINS_LEFT, -1)
         if (minsLeft >= 0) {
             println("Received broadcast message: $minsLeft minutes left")

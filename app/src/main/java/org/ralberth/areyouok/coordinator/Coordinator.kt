@@ -61,7 +61,7 @@ class Coordinator @Inject constructor(
                 soundEffects.timesUpLooping()
                 notifier.sendTimerNotification(
                     0,
-                    "🚨 Times up!  Sent TXT message to family. 🚨"
+                    "🚨 Times up!  Sent TXT message to contact. 🚨"
                 )
                 alertSender.unresponsive(
                     prefs.getPhoneNumber(),

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -109,21 +110,19 @@ fun TwoImageRow(
             .fillMaxWidth()
             .padding(top = 14.dp, bottom = 40.dp, start = 30.dp, end = 30.dp)
     ) {
-        Spacer(Modifier.weight(1f))
         Image(
             painter = painterResource(id = image1),
             contentDescription = "notification banner example",
             contentScale = ContentScale.Fit,
             modifier = Modifier.border(1.dp, Color.Black)
         )
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.width(10.dp))
         Image(
             painter = painterResource(id = image2),
             contentDescription = "notification banner example",
             contentScale = ContentScale.Fit,
             modifier = Modifier.border(1.dp, Color.Black)
         )
-        Spacer(Modifier.weight(1f))
     }
 }
 

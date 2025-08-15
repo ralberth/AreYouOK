@@ -30,7 +30,7 @@ class PermissionsHelper @Inject constructor(
 
 
     // Done differently in PermissionsScreen.
-    // TODO: maybe bring the logic and details back here from PErmissionsScreen?
+    // TODO: maybe bring the logic and details back here from PermissionsScreen?
 //    fun askForPermission(feature: String? = null, permission: String) {
 //        val mapKey = if (feature != null) "$feature|$permission" else permission
 //        println("ASK for permission $mapKey")

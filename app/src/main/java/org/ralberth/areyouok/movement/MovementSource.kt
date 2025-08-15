@@ -64,7 +64,7 @@ class MovementSource @Inject constructor(
     }
 
 
-    private val monitor = Any()      // MONITOR object that makes everything thread-safe
+    private val monitor = Any()      // THREADING MONITOR that makes everything thread-safe
 
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)

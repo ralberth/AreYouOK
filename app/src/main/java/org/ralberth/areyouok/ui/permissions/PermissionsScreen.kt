@@ -73,8 +73,7 @@ fun PermissionsScreen(
             description = "Optional.  When enabled, the app will come to the foreground in front " +
                     "of any other app when the countdown is near the end or ended.  This is so " +
                     "you can reset it or click a button to call your contact if you are in " +
-                    "trouble.  You can't turn this on here.  Go to the app's permissions outside " +
-                    "the app and turn this on there.",
+                    "trouble.  This opens the Android permissions page for the app.",
             value = if (canForeground)
                 "😊 Can bring app to foreground"
             else

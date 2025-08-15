@@ -68,7 +68,7 @@ fun SoundStyleUI(
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
             Text(
-                text = "Try it out",
+                text = "Available Sound Packs",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 25.dp, bottom = 10.dp)
             )
