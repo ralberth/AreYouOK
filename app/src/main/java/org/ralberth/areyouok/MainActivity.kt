@@ -94,7 +94,7 @@ class MainActivity: ComponentActivity() {
                         composable("durationselect") { DurationSelectScreen(navController, viewModel) }
                         composable("contact") { ContactScreen(navController, viewModel) }
                         composable("locationselect") { LocationScreen(navController, viewModel) }
-                        composable("countdown") { CountdownScreen(navController, viewModel) }
+                        composable("countdown") { CountdownScreen(navController, viewModel, permHelper) }
                         composable("callcontact") { CallContactScreen(navController, viewModel) }
                         composable("settings") { SettingsScreen(navController, viewModel) }
                         composable("volumesetting") { VolumeScreen(navController, viewModel, soundEffects) }

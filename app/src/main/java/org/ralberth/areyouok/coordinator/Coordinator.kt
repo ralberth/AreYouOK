@@ -10,6 +10,7 @@ import org.ralberth.areyouok.datamodel.RuokDatastore
 import org.ralberth.areyouok.messaging.AlertSender
 import org.ralberth.areyouok.notifications.RuokNotifier
 import org.ralberth.areyouok.soundeffects.SoundEffects
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +23,8 @@ class Coordinator @Inject constructor(
     private val notifier: RuokNotifier,
     private val alertSender: AlertSender,
     private val prefs: RuokDatastore,
-    private val intents: RuokIntents
+    private val intents: RuokIntents,
+    private val perms: PermissionsHelper
 ) {
     // TODO: skip this here and add vibration pattern to the AlertChannel only
     private val vibrator = context.getSystemService(Vibrator::class.java)
@@ -143,9 +145,11 @@ class Coordinator @Inject constructor(
 
 
     fun callContact(phoneNumber: String) {
-        for(i in 0..2)
-            alertSender.callingYouNow(prefs.getPhoneNumber(), i)
-        context.startActivity(intents.createMakePhoneCallIntent(phoneNumber))
+        if (perms.has(android.Manifest.permission.CALL_PHONE)) {
+            for (i in 0..2)
+                alertSender.callingYouNow(prefs.getPhoneNumber(), i)
+            context.startActivity(intents.createMakePhoneCallIntent(phoneNumber))
+        }
     }
 
 

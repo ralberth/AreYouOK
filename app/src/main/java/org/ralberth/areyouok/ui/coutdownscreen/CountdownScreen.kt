@@ -30,9 +30,9 @@ import org.ralberth.areyouok.minutesBeforeEnd
 import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.coutdownscreen.CountdownDisplay
 import org.ralberth.areyouok.ui.coutdownscreen.StatusDisplayText
+import org.ralberth.areyouok.ui.permissions.PermissionsHelper
 import org.ralberth.areyouok.ui.settings.TableBuilder
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
-import org.ralberth.areyouok.ui.utils.ErrorStripe
 import org.ralberth.areyouok.ui.utils.Ticker
 import java.time.Instant
 
@@ -40,14 +40,15 @@ import java.time.Instant
 @Composable
 fun CountdownScreen(
     navController: NavController,
-    viewModel: RuokViewModel
+    viewModel: RuokViewModel,
+    perms: PermissionsHelper
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     CountdownUI(
         navController,
         uiState.countdownStart,
         uiState.countdownStop,
-        uiState.phoneNumber.isNotBlank(),
+        uiState.phoneNumber.isNotBlank() and perms.has(android.Manifest.permission.CALL_PHONE),
         viewModel::checkin,
         { navController.navigate("callcontact") }
     )
@@ -116,12 +117,6 @@ fun CountdownUI(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                 }
-
-                ErrorStripe(
-                    shouldDisplay = !callButtonEnabled,
-                    message = "Call Contact button is disabled: no contact selected on the main screen."
-                )
-
 
                 if (timeRemaining != null) {
                     val minsLeft = minutesBeforeEnd(timeRemaining)

@@ -24,6 +24,7 @@ import org.ralberth.areyouok.ui.RuokScaffold
 import org.ralberth.areyouok.ui.theme.AreYouOkTheme
 import org.ralberth.areyouok.ui.utils.CenteredButton
 import org.ralberth.areyouok.ui.utils.RadioButtonRow
+import kotlin.math.round
 
 
 @Composable
@@ -93,7 +94,7 @@ fun VolumeUI(
                 Slider(
                     enabled = volumePercent != null,
                     value = volumePercent ?: 0f,
-                    onValueChange = { onVolumePercentChange(it) },
+                    onValueChange = { onVolumePercentChange(round(it * 10f) / 10f) },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.secondary,
@@ -106,13 +107,6 @@ fun VolumeUI(
 
             TryItOut(onPlayReminder, onPlayImminent, onPlayEmergency,
                 onPlayNoMovement, onPlayCallIn5Sec, onPlayMovement)
-
-
-            CenteredButton(
-                label = "OK",
-                onClick = onDone,
-                modifier = Modifier.padding(top = 36.dp)
-            )
         }
     }
 }
