@@ -5,12 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -52,14 +47,6 @@ fun MainScreen(
                         hasEnoughPermsToRun
                 )
 
-        NavSettingsRow(
-            leftIcon = Icons.Filled.Refresh,
-            label = "Countdown Length",
-            value = "${uiState.countdownLength} minutes",
-            onClickRow = { navController.navigate("durationselect") }
-        )
-
-        HorizontalDivider()
 
         val phoneValue = when {
             uiState.phoneName.isEmpty() && uiState.phoneNumber.isEmpty() -> "Pick a contact"
