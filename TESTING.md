@@ -438,17 +438,34 @@ Open a stopwatch app on your computer or use another device so you can see accur
 
 Rules for how movements work:
 
-| Seconds of no movement | Sound           | TXT Message                  | Call Contact |
-| :--------------------: | --------------- | ---------------------------- | :----------: |
-|  5                     | *none*          | *none*                       | *no*         |
-| 10                     | "no movement"   | "hasn't moved in 10 seconds" | *no*         |
-| 15                     | "no movement"   | "hasn't moved in 15 seconds" | *no*         |
-| 20                     | "call in 5 sec" | "hasn't moved in 20 seconds" | *no*         |
-| 25                     | *none*          | three "calling you now!"     | **YES**      |
+| Seconds of no movement | Sound           | Banner       | TXT Message                  | Call Contact |
+| :--------------------: | --------------- | ------------ | ---------------------------- | :----------: |
+|  5                     | *none*          | *none*       | *none*                       | *no*         |
+| 10                     | "no movement"   | "10 seconds" | "hasn't moved in 10 seconds" | *no*         |
+| 15                     | "no movement"   | "15 seconds" | "hasn't moved in 15 seconds" | *no*         |
+| 20                     | "call in 5 sec" | "20 seconds" | "hasn't moved in 20 seconds" | *no*         |
+| 25                     | *none*          | "25 seconds" | three "calling you now!"     | **YES**      |
+| 30, 35, 40, ...        | *none*          | "n seconds"  | *none*                       | *no*         |
 
 
-Set the movement threshold to 20. Turn on the countdown and start the stopwatch at the same instant.  Leave the phone untouched and wait.  Using the table above, confirm the right sounds play at exactly the right times.  Confirm TXT messages are sent correctly as well.  At 25 seconds, confirm multiple TXT messages to contact and phone calls the contact automatically with speakerphone enabled.
+Set the movement threshold to 20. Turn on the countdown and start the stopwatch at the same instant.  Leave the phone untouched and wait.  Using the table above:
 
-**Test resets:** Start the countdown with the phone on a table.  After 10 seconds, confirm "hasn't moved in 10 seconds" TXT message.  Shake the phone briefly and wait another 10 seconds.  Confirm 2nd TXT message also says "hasn't moved in 10 seconds".
+1. Confirm the right sounds play at exactly the right times.
+2. Confirm notification banner appears and is updated (instead of new banners appearing).
+3. Confirm TXT messages are sent correctly as well.
+4. At 25 seconds, confirm multiple TXT messages to contact and phone calls the contact automatically with speakerphone enabled.
+5. Confirm number of seconds on banner continues to increase every 5 seconds past 25 seconds.
+
+
+**Test resets:** Start the countdown with the phone on a table.  After 10 seconds, confirm "hasn't moved in 10 seconds" TXT message.  Shake the phone briefly and wait another 10 seconds.  Confirm 2nd TXT message also says "hasn't moved in 10 seconds".  Confirm notification banner disappears.
 
 **Walking test:** Start walking.  Set the threshold to a reasonable number.  Start the countdown.  Walk for more than 25 seconds and confirm no alerts or messages.  Stop walking and stand in place (but sway slightly, you're waiting for a stoplight).  After 10 seconds, and subsequently alert sounds and TXT messages should be sent.
+
+**No phone perms:** Start countdown and set phone down.  Wait 25 seconds for all alerts.  Confirm app sends TXT messages per above, but doesn't try to make a phone call.  App should not crash, but continue normally with the countdown *(verifies app doesn't try to make call without permissions)*.
+
+
+
+
+# TO DO
+
+Tests for certain notifications to happen even on Do Not Disturb: both notification banners and sounds.

@@ -161,23 +161,33 @@ class Coordinator @Inject constructor(
 
         // This can be done with less code, but this is easier to follow
         when (periodsWithNoMovement) {
-            0 -> if (lastPeriodsWithNoMovement > 0)
+            0 -> if (lastPeriodsWithNoMovement > 0) {
                 soundEffects.movement()
+                notifier.updateNoMovementBanner(null)  // removes the banner
+            }
             1 -> { }
-            2 -> soundEffects.noMovement()
+            2 -> {
+                soundEffects.noMovement()
+                notifier.updateNoMovementBanner(seconds)
+            }
             3 -> {
                 soundEffects.noMovement()
+                notifier.updateNoMovementBanner(seconds)
                 alertSender.haventMoved(phone, seconds)
             }
             4 -> {
                 soundEffects.mvmtCall5Sec()
+                notifier.updateNoMovementBanner(seconds)
                 alertSender.haventMoved(phone, seconds)
             }
             5 -> {
                 alertSender.haventMoved(phone, seconds)
+                notifier.updateNoMovementBanner(seconds)
                 callContact(phone)
             }
-            else -> {}    // TODO: maybe something else?
+            else -> {
+                notifier.updateNoMovementBanner(seconds)
+            }
         }
 
         lastPeriodsWithNoMovement = periodsWithNoMovement

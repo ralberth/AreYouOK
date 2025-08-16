@@ -44,8 +44,11 @@ class RuokNotifier @Inject constructor(
 ) {
     companion object {
         const val TIME_REMAINING_MESSAGE_ID = 900
+        const val MOVEMENT_MESSAGE_ID = 901
+
         const val ALERT_CHANNEL_NAME = "rude"
         const val NOTIFY_CHANNEL_NAME = "polite"
+        const val MOVEMENT_CHANNEL_NAME = "movement"
         const val ERROR_CHANNEL_NAME = "errors"
 
         val SILENT_URI = "file:///android_asset/sounds/silent.mp3".toUri()
@@ -66,6 +69,16 @@ class RuokNotifier @Inject constructor(
         context,
         NOTIFY_CHANNEL_NAME,
         "Time's almost up notifications",
+        isHighImportance = false,
+        bypassDoNotDisturb = false,
+        soundUri = SILENT_URI
+    )
+
+    private val movementChannel = RuokChannel(
+        notificationMgr,
+        context,
+        MOVEMENT_CHANNEL_NAME,
+        "No Movement Detected",
         isHighImportance = false,
         bypassDoNotDisturb = false,
         soundUri = SILENT_URI
@@ -101,6 +114,17 @@ class RuokNotifier @Inject constructor(
         )
     }
 
+
+    fun updateNoMovementBanner(secondsOfNoMovement: Int?) {
+        if (secondsOfNoMovement == null)
+            notificationMgr.cancel(MOVEMENT_MESSAGE_ID)
+        else
+            movementChannel.sendNotification(
+                MOVEMENT_MESSAGE_ID,
+                "No Movement",
+                "No movement in $secondsOfNoMovement seconds"
+            )
+    }
 
     fun cancelAll() {
         notificationMgr.cancelAll()
